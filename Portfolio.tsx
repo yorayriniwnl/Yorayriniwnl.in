@@ -19,6 +19,14 @@ interface ContactLink {
   href: string;
   icon: React.ReactNode;
 }
+interface RepoSummary {
+  name: string;
+  desc: string;
+  repoUrl: string;
+  liveUrl?: string;
+  language?: string;
+  updated: string;
+}
 interface Vec2 { x: number; y: number }
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
@@ -169,6 +177,39 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Talks",
   },
 ];
+
+const GITHUB_IMPORTS: RepoSummary[] = [
+  {
+    name: "Yorayriniwnl.in",
+    desc: "Companion repository connected to the primary domain and recent portfolio deployment work.",
+    repoUrl: "https://github.com/yorayriniwnl/Yorayriniwnl.in",
+    updated: "Apr 20, 2026",
+  },
+  {
+    name: "Yorayriniwnl",
+    desc: "GitHub profile repository used to shape the public identity layer and account-facing presentation.",
+    repoUrl: "https://github.com/yorayriniwnl/Yorayriniwnl",
+    updated: "Apr 20, 2026",
+  },
+  {
+    name: "Eat-a-lot",
+    desc: "A smaller HTML-based web project with a live Vercel deployment outside the main Yor product line.",
+    repoUrl: "https://github.com/yorayriniwnl/Eat-a-lot",
+    liveUrl: "https://eat-a-lot-five.vercel.app",
+    language: "HTML",
+    updated: "Apr 20, 2026",
+  },
+  {
+    name: "Yor-Solar-Nexus",
+    desc: "An earlier solar planning and optimization build that still serves as useful public proof of the renewable-energy direction.",
+    repoUrl: "https://github.com/yorayriniwnl/Yor-Solar-Nexus",
+    language: "HTML",
+    updated: "Jan 21, 2026",
+  },
+];
+
+const CURATED_PROJECT_COUNT = String(PORTFOLIO_PROJECTS.length).padStart(2, "0");
+const PUBLIC_REPO_COUNT = String(PORTFOLIO_PROJECTS.length + GITHUB_IMPORTS.length).padStart(2, "0");
 
 const PORTFOLIO_SKILLS: SkillGroup[] = [
   { category: "Frontend", items: ["React", "Next.js", "TypeScript", "HTML / CSS", "TailwindCSS"] },
@@ -1316,6 +1357,153 @@ const Projects: React.FC = () => (
           </div>
         ))}
       </div>
+
+      <div className="reveal" style={{ marginTop: "4.5rem", marginBottom: "1.4rem" }}>
+        <div className="section-label">Latest on GitHub</div>
+        <p style={{ maxWidth: 620, fontSize: ".88rem", lineHeight: 1.85, color: "var(--muted)" }}>
+          These public repositories are currently visible on GitHub as of April 21, 2026, but are not yet expanded into full portfolio case studies.
+        </p>
+      </div>
+      <div className="projects-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem" }}>
+        {GITHUB_IMPORTS.map((repo) => (
+          <div
+            key={repo.name}
+            className="reveal tilt-card"
+            style={{
+              position: "relative",
+              padding: "1.5rem",
+              border: "1px solid rgba(201,169,110,0.12)",
+              borderRadius: "var(--r)",
+              background: "var(--glass)",
+              backdropFilter: "blur(10px)",
+              display: "flex",
+              flexDirection: "column",
+              gap: ".95rem",
+              minHeight: 250,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-start" }}>
+              <div>
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: ".58rem",
+                    letterSpacing: ".18em",
+                    textTransform: "uppercase",
+                    color: "var(--gold)",
+                    opacity: .7,
+                    marginBottom: ".6rem",
+                  }}
+                >
+                  GitHub Import
+                </div>
+                <h3
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontWeight: 600,
+                    fontSize: "1.8rem",
+                    lineHeight: 1.02,
+                    letterSpacing: "-.02em",
+                    color: "var(--cream)",
+                  }}
+                >
+                  {repo.name}
+                </h3>
+              </div>
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: ".56rem",
+                  letterSpacing: ".12em",
+                  textTransform: "uppercase",
+                  color: "var(--gold-d)",
+                  border: "1px solid rgba(201,169,110,0.16)",
+                  borderRadius: 999,
+                  padding: ".34rem .55rem",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {repo.updated}
+              </span>
+            </div>
+
+            <p style={{ fontSize: ".84rem", color: "var(--muted)", lineHeight: 1.82, flex: 1 }}>
+              {repo.desc}
+            </p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: ".45rem" }}>
+              {repo.language ? (
+                <span
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: ".62rem",
+                    letterSpacing: ".06em",
+                    color: "var(--gold-d)",
+                    padding: ".25rem .75rem",
+                    border: "1px solid rgba(201,169,110,0.16)",
+                    borderRadius: 4,
+                    background: "rgba(201,169,110,0.04)",
+                  }}
+                >
+                  {repo.language}
+                </span>
+              ) : null}
+            </div>
+
+            <div style={{ display: "flex", gap: ".55rem", marginTop: ".25rem" }}>
+              {repo.liveUrl ? (
+                <a
+                  href={repo.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: ".4rem",
+                    fontFamily: "'Syne', sans-serif",
+                    fontWeight: 500,
+                    fontSize: ".72rem",
+                    letterSpacing: ".06em",
+                    textDecoration: "none",
+                    padding: ".58rem 1.1rem",
+                    borderRadius: 5,
+                    flex: 1,
+                    justifyContent: "center",
+                    background: "rgba(201,169,110,0.09)",
+                    color: "var(--gold-l)",
+                    border: "1px solid rgba(201,169,110,0.22)",
+                  }}
+                >
+                  <IconExternal /> Live
+                </a>
+              ) : null}
+              <a
+                href={repo.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: ".4rem",
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 500,
+                  fontSize: ".72rem",
+                  letterSpacing: ".06em",
+                  textDecoration: "none",
+                  padding: ".58rem 1.1rem",
+                  borderRadius: 5,
+                  flex: 1,
+                  justifyContent: "center",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  color: "var(--muted)",
+                }}
+              >
+                <IconGithub /> Repo
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 );
@@ -1354,7 +1542,7 @@ const About: React.FC = () => (
 
           {/* Stats */}
           <div className="reveal" style={{ display: "flex", gap: "3rem", marginTop: "2.8rem", paddingTop: "2rem", borderTop: "1px solid rgba(201,169,110,0.1)" }}>
-            {[["09","Portfolio Projects"],["09","Public Repos"],["2027","Graduation"]].map(([num, label]) => (
+            {[[CURATED_PROJECT_COUNT,"Curated Projects"],[PUBLIC_REPO_COUNT,"Public Repos"],["2027","Graduation"]].map(([num, label]) => (
               <div key={label}>
                 <div style={{
                   fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
@@ -1449,13 +1637,6 @@ const Contact: React.FC = () => {
     { label: "Resume / recruiter mode", href: `${PORTFOLIO_INFO.site}/resume`, icon: <IconExternal /> },
     { label: "yorayriniwnl.in", href: PORTFOLIO_INFO.site, icon: <IconGlobe /> },
   ];
-  const links: ContactLink[] = [
-    { label: "GitHub — YOUR_USERNAME",     href: "https://github.com/YOUR_USERNAME",       icon: <IconGithub   /> },
-    { label: "LinkedIn — Your Name",        href: "https://linkedin.com/in/YOUR_PROFILE",   icon: <IconLinkedIn /> },
-    { label: "Twitter / X — @YOUR_HANDLE", href: "https://twitter.com/YOUR_HANDLE",        icon: <IconTwitter  /> },
-    { label: "yorayriniwnl.in",             href: "https://yorayriniwnl.in",                icon: <IconGlobe    /> },
-  ];
-
   return (
     <section id="contact" style={{ padding: "8rem 0 6rem", position: "relative", zIndex: 2 }}>
       <div className="wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
