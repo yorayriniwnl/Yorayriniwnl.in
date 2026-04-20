@@ -61,3 +61,15 @@ Most of the portfolio content is defined directly in `Portfolio.tsx`, including 
 ## Deployment
 
 This project can be deployed to any static hosting provider that supports Vite builds, such as Vercel, Netlify, or GitHub Pages.
+
+### Vercel
+
+This repository includes a [`vercel.json`](./vercel.json) override so Vercel treats it as a Vite app even if the linked dashboard project was previously configured with a different framework preset.
+
+Typical Vercel workflow:
+
+```bash
+npx vercel link --yes --project <project-name> --scope <team>
+npx vercel pull --yes --environment production --scope <team>
+npx vercel build --prod --scope <team>
+```
