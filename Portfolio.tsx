@@ -281,6 +281,11 @@ const IconGlobe = () => (
     <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
   </svg>
 );
+const IconPhone = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.65 2.81a2 2 0 0 1-.45 2.11L8.04 9.91a16 16 0 0 0 6.05 6.05l1.27-1.27a2 2 0 0 1 2.11-.45c.91.3 1.85.52 2.81.65A2 2 0 0 1 22 16.92z"/>
+  </svg>
+);
 
 // ─── GLOBAL STYLES ───────────────────────────────────────────────────────────
 const GlobalStyles = () => (
@@ -1653,6 +1658,7 @@ const Contact: React.FC = () => {
   const contactLinks: ContactLink[] = [
     { label: "GitHub / yorayriniwnl", href: PORTFOLIO_INFO.github, icon: <IconGithub /> },
     { label: "LinkedIn / yorayriniwnl", href: PORTFOLIO_INFO.linkedin, icon: <IconLinkedIn /> },
+    { label: `Phone / ${PORTFOLIO_INFO.phone}`, href: "tel:+918918940799", icon: <IconPhone /> },
     { label: "Portfolio / recruiter mode", href: PORTFOLIO_INFO.portfolio, icon: <IconExternal /> },
     { label: "Project hub / yorayriniwnl.in", href: PORTFOLIO_INFO.site, icon: <IconGlobe /> },
   ];
@@ -1691,6 +1697,20 @@ const Contact: React.FC = () => {
             onMouseEnter={e => { e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.5)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.18)"; }}>
               {PORTFOLIO_INFO.email}
+            </a>
+            <a href="tel:+918918940799" style={{
+              fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: "italic",
+              fontSize: "clamp(1.25rem, 2.6vw, 1.9rem)",
+              color: "var(--cream-dim)", textDecoration: "none",
+              display: "block", paddingBottom: ".5rem",
+              borderBottom: "1px solid rgba(201,169,110,0.18)",
+              transition: "color .2s, border-color .2s",
+              marginBottom: "2.2rem",
+              letterSpacing: "-.01em",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.5)"; }}
+            onMouseLeave={e => { e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.18)"; }}>
+              {PORTFOLIO_INFO.phone}
             </a>
             <a href={`mailto:${PORTFOLIO_INFO.email}`} style={{
               display: "inline-flex", alignItems: "center", gap: ".55rem",
