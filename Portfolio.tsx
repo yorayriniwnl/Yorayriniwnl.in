@@ -438,6 +438,7 @@ const GlobalStyles = () => (
 
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
+      .premium-gateway { grid-template-columns: 1fr !important; }
       .premium-strip   { grid-template-columns: 1fr !important; }
       .projects-grid    { grid-template-columns: 1fr !important; }
       .featured-layout  { flex-direction: column !important; }
@@ -1036,122 +1037,214 @@ const PremiumTopLinks: React.FC = () => {
     {
       eyebrow: "Watch our flagship product",
       title: "Yor Zenith",
-      desc: "Solar planning and decision support for feasibility, subsidy guidance, and cleaner energy choices.",
+      desc: "The product signal first-time visitors should see first: solar planning, feasibility checks, subsidy guidance, and decision support in one focused build.",
       href: "https://zenith-xi-snowy.vercel.app/",
       action: "Watch Yor Zenith",
       icon: <IconExternal />,
       featured: true,
+      meta: "Live product",
     },
     {
       eyebrow: "My portfolio link",
       title: "Portfolio / Yor Ayrin iwnl",
-      desc: "The dedicated recruiter-ready profile with the full personal story, work signal, and contact surface.",
+      desc: "The human and recruiter-facing layer: background, work narrative, credibility, and direct contact.",
       href: PORTFOLIO_INFO.portfolio,
       action: "Open Portfolio",
       icon: <IconArrow />,
       featured: false,
+      meta: "Personal profile",
     },
   ];
 
   return (
-    <div className="premium-strip" style={{
+    <div className="premium-gateway" style={{
       display: "grid",
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-      gap: ".9rem",
-      marginBottom: "3rem",
+      gridTemplateColumns: "0.86fr 1.36fr",
+      gap: "1rem",
+      alignItems: "stretch",
+      marginBottom: "3.6rem",
     }}>
-      {premiumLinks.map(({ eyebrow, title, desc, href, action, icon, featured }) => (
-        <a
-          key={title}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            minHeight: 150,
-            padding: "1.35rem",
-            borderRadius: "var(--r-sm)",
-            border: featured ? "1px solid rgba(201,169,110,0.42)" : "1px solid rgba(201,169,110,0.16)",
-            background: featured
-              ? "linear-gradient(135deg, rgba(201,169,110,0.16), rgba(255,255,255,0.035))"
-              : "rgba(201,169,110,0.035)",
-            color: "var(--cream)",
-            textDecoration: "none",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            gap: "1.1rem",
-            boxShadow: featured ? "0 18px 60px rgba(201,169,110,0.12)" : "none",
-            transition: "transform .25s, border-color .25s, background .25s, box-shadow .25s",
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = "translateY(-3px)";
-            e.currentTarget.style.borderColor = "rgba(201,169,110,0.62)";
-            e.currentTarget.style.background = featured
-              ? "linear-gradient(135deg, rgba(201,169,110,0.22), rgba(255,255,255,0.055))"
-              : "rgba(201,169,110,0.06)";
-            e.currentTarget.style.boxShadow = "0 18px 62px rgba(201,169,110,0.14)";
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = "";
-            e.currentTarget.style.borderColor = featured ? "rgba(201,169,110,0.42)" : "rgba(201,169,110,0.16)";
-            e.currentTarget.style.background = featured
-              ? "linear-gradient(135deg, rgba(201,169,110,0.16), rgba(255,255,255,0.035))"
-              : "rgba(201,169,110,0.035)";
-            e.currentTarget.style.boxShadow = featured ? "0 18px 60px rgba(201,169,110,0.12)" : "none";
-          }}
-        >
+      <div style={{
+        border: "1px solid rgba(201,169,110,0.12)",
+        borderRadius: "var(--r-sm)",
+        background: "rgba(255,255,255,0.018)",
+        padding: "1.3rem",
+        minHeight: 196,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}>
+        <div>
           <div style={{
-            position: "absolute",
-            inset: 0,
-            background: "radial-gradient(420px circle at 12% 10%, rgba(232,213,168,0.12), transparent 55%)",
-            pointerEvents: "none",
-          }}/>
-          <div style={{ position: "relative" }}>
-            <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: ".58rem",
+            letterSpacing: ".18em",
+            textTransform: "uppercase",
+            color: "var(--gold)",
+            opacity: .76,
+            marginBottom: ".9rem",
+          }}>
+            Primary gateway
+          </div>
+          <h2 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: "clamp(1.9rem, 3vw, 2.65rem)",
+            lineHeight: .96,
+            fontWeight: 700,
+            letterSpacing: "-.02em",
+            color: "var(--cream)",
+            marginBottom: ".85rem",
+          }}>
+            Start with the two signals that matter.
+          </h2>
+          <p style={{ color: "var(--muted)", fontSize: ".84rem", lineHeight: 1.72 }}>
+            Zenith proves the product direction. The portfolio proves the person behind the build. Everything else stays available below.
+          </p>
+        </div>
+        <div style={{
+          display: "flex",
+          gap: ".45rem",
+          flexWrap: "wrap",
+          marginTop: "1.15rem",
+        }}>
+          {["Product", "Portfolio", "Repository hub"].map(label => (
+            <span key={label} style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: ".58rem",
-              letterSpacing: ".18em",
+              letterSpacing: ".08em",
               textTransform: "uppercase",
-              color: "var(--gold)",
-              opacity: .78,
-              marginBottom: ".75rem",
+              color: "var(--gold-d)",
+              border: "1px solid rgba(201,169,110,0.14)",
+              borderRadius: 4,
+              padding: ".28rem .55rem",
+              background: "rgba(201,169,110,0.025)",
             }}>
-              {eyebrow}
-            </div>
-            <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "2rem",
-              lineHeight: 1,
-              fontWeight: 700,
-              letterSpacing: "-.02em",
+              {label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="premium-strip" style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+        gap: ".9rem",
+      }}>
+        {premiumLinks.map(({ eyebrow, title, desc, href, action, icon, featured, meta }) => (
+          <a
+            key={title}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              minHeight: 196,
+              padding: "1.35rem",
+              borderRadius: "var(--r-sm)",
+              border: featured ? "1px solid rgba(201,169,110,0.52)" : "1px solid rgba(201,169,110,0.18)",
+              background: featured
+                ? "linear-gradient(135deg, rgba(201,169,110,0.2), rgba(255,255,255,0.04))"
+                : "rgba(201,169,110,0.035)",
               color: "var(--cream)",
-              marginBottom: ".65rem",
+              textDecoration: "none",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "1.1rem",
+              boxShadow: featured ? "0 18px 70px rgba(201,169,110,0.15)" : "none",
+              transition: "transform .25s, border-color .25s, background .25s, box-shadow .25s",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = "translateY(-3px)";
+              e.currentTarget.style.borderColor = "rgba(201,169,110,0.66)";
+              e.currentTarget.style.background = featured
+                ? "linear-gradient(135deg, rgba(201,169,110,0.26), rgba(255,255,255,0.06))"
+                : "rgba(201,169,110,0.06)";
+              e.currentTarget.style.boxShadow = "0 18px 72px rgba(201,169,110,0.16)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = "";
+              e.currentTarget.style.borderColor = featured ? "rgba(201,169,110,0.52)" : "rgba(201,169,110,0.18)";
+              e.currentTarget.style.background = featured
+                ? "linear-gradient(135deg, rgba(201,169,110,0.2), rgba(255,255,255,0.04))"
+                : "rgba(201,169,110,0.035)";
+              e.currentTarget.style.boxShadow = featured ? "0 18px 70px rgba(201,169,110,0.15)" : "none";
+            }}
+          >
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: featured
+                ? "radial-gradient(460px circle at 18% 0%, rgba(232,213,168,0.16), transparent 58%)"
+                : "radial-gradient(360px circle at 12% 8%, rgba(232,213,168,0.08), transparent 58%)",
+              pointerEvents: "none",
+            }}/>
+            <div style={{ position: "relative" }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: ".8rem",
+                alignItems: "center",
+                marginBottom: ".85rem",
+              }}>
+                <div style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: ".56rem",
+                  letterSpacing: ".16em",
+                  textTransform: "uppercase",
+                  color: "var(--gold)",
+                  opacity: .82,
+                }}>
+                  {eyebrow}
+                </div>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: ".52rem",
+                  letterSpacing: ".1em",
+                  textTransform: "uppercase",
+                  color: featured ? "var(--gold-l)" : "var(--gold-d)",
+                  border: "1px solid rgba(201,169,110,0.16)",
+                  borderRadius: 4,
+                  padding: ".24rem .42rem",
+                  whiteSpace: "nowrap",
+                }}>
+                  {meta}
+                </span>
+              </div>
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: featured ? "2.35rem" : "2.05rem",
+                lineHeight: .96,
+                fontWeight: 700,
+                letterSpacing: "-.02em",
+                color: "var(--cream)",
+                marginBottom: ".75rem",
+              }}>
+                {title}
+              </h3>
+              <p style={{ color: "var(--muted)", fontSize: ".82rem", lineHeight: 1.65 }}>
+                {desc}
+              </p>
+            </div>
+            <span style={{
+              position: "relative",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: ".45rem",
+              width: "fit-content",
+              color: featured ? "var(--gold-l)" : "var(--cream-dim)",
+              fontFamily: "'Syne', sans-serif",
+              fontSize: ".72rem",
+              fontWeight: 600,
+              letterSpacing: ".07em",
+              textTransform: "uppercase",
             }}>
-              {title}
-            </h2>
-            <p style={{ color: "var(--muted)", fontSize: ".82rem", lineHeight: 1.65, maxWidth: 480 }}>
-              {desc}
-            </p>
-          </div>
-          <span style={{
-            position: "relative",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: ".45rem",
-            width: "fit-content",
-            color: featured ? "var(--gold-l)" : "var(--cream-dim)",
-            fontFamily: "'Syne', sans-serif",
-            fontSize: ".72rem",
-            fontWeight: 600,
-            letterSpacing: ".07em",
-            textTransform: "uppercase",
-          }}>
-            {icon} {action}
-          </span>
-        </a>
-      ))}
+              {icon} {action}
+            </span>
+          </a>
+        ))}
+      </div>
     </div>
   );
 };
