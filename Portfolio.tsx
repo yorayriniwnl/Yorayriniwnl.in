@@ -6,7 +6,8 @@ interface Project {
   title: string;
   desc: string;
   tags: string[];
-  liveUrl: string;
+  liveUrl?: string;
+  liveLabel?: string;
   ghUrl: string;
   featured?: boolean;
 }
@@ -24,187 +25,194 @@ interface RepoSummary {
   desc: string;
   repoUrl: string;
   liveUrl?: string;
+  liveLabel?: string;
   language?: string;
   updated: string;
 }
 interface Vec2 { x: number; y: number }
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
-const PROJECTS: Project[] = [
-  {
-    num: "01",
-    title: "Yor Zenith - Solar Energy Planning & Decision Support System",
-    desc: "Your flagship project description goes here. Explain what it does, the problem it solves, and what makes it stand out. This is your hero piece — make it shine in 2–3 sentences.",
-    tags: ["React", "Node.js", "PostgreSQL", "REST API"],
-    liveUrl: "https://your-live-project-1.com",
-    ghUrl: "https://github.com/YOUR_USERNAME/repo-1",
-    featured: true,
-  },
-  {
-    num: "02",
-    title: "Project Title Two",
-    desc: "Describe this project. What challenge did it solve? Who uses it? Keep it punchy and focused — 2–3 lines is the sweet spot.",
-    tags: ["Python", "Flask", "MongoDB"],
-    liveUrl: "https://your-live-project-2.com",
-    ghUrl: "https://github.com/YOUR_USERNAME/repo-2",
-  },
-  {
-    num: "03",
-    title: "Project Title Three",
-    desc: "What's the core idea here? What technology powers it and why was it interesting to build? A crisp, specific description makes all the difference.",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    liveUrl: "https://your-live-project-3.com",
-    ghUrl: "https://github.com/YOUR_USERNAME/repo-3",
-  },
-  {
-    num: "04",
-    title: "Project Title Four",
-    desc: "Add your fourth project here. Remove placeholder text and fill in your real project details before going live.",
-    tags: ["Vue", "Firebase", "Figma"],
-    liveUrl: "https://your-live-project-4.com",
-    ghUrl: "https://github.com/YOUR_USERNAME/repo-4",
-  },
-];
-
-const SKILLS: SkillGroup[] = [
-  { category: "Frontend", items: ["HTML / CSS", "JavaScript", "React", "Next.js", "TypeScript"] },
-  { category: "Backend",  items: ["Node.js", "Python", "Flask", "REST APIs", "GraphQL"] },
-  { category: "Data & Tools", items: ["PostgreSQL", "MongoDB", "Git", "Docker", "Linux"] },
-];
-
-const SKILL_RADAR = [
-  { label: "React",      value: 90 },
-  { label: "Node.js",    value: 82 },
-  { label: "TypeScript", value: 78 },
-  { label: "Python",     value: 75 },
-  { label: "Design",     value: 68 },
-  { label: "DevOps",     value: 60 },
-];
-
-const MARQUEE_ITEMS = [
-  "Full Stack Development", "React & Next.js", "Python & Flask",
-  "REST API Design", "Database Architecture", "UI Engineering",
-  "Open Source", "Clean Code", "Problem Solving",
-];
-
 const PORTFOLIO_INFO = {
   name: "Ayush Roy",
   location: "India",
   email: "yorayriniwnl@gmail.com",
   phone: "+91 8918940799",
-  site: "https://www.yorayriniwnl.in",
+  site: "https://yorayriniwnl.in",
+  portfolio: "https://yorayriniwnl.vercel.app",
   github: "https://github.com/yorayriniwnl",
   linkedin: "https://linkedin.com/in/yorayriniwnl",
-  role: "Founder of Yor Zenith / Full-Stack Developer Intern Candidate",
+  role: "Project Gateway for Yor Ayrin",
   heroDescription:
-    "Building production-minded systems, interactive product surfaces, and recruiter-ready portfolio experiences with a strong editorial point of view. Open to roles that value frontend execution and systems thinking.",
+    "This is the default landing page for the Yorayriniwnl web presence: one launchpad for live apps, source repositories, experiments, and the separate portfolio page.",
   contactDescription:
-    "Open to verified opportunities and collaboration conversations. If you're building something worth building, let's talk.",
+    "For the full recruiter story, open the portfolio. For source, jump straight into GitHub. For collaboration, email still works best.",
 };
 
 const PORTFOLIO_PROJECTS: Project[] = [
   {
     num: "01",
-    title: "Yor Zenith - Solar Energy Planning & Decision Support System",
-    desc: "Full-stack solar decision platform combining rooftop feasibility, subsidy intelligence, long-term return analysis, and 3D visualization. Built to shorten planning cycles from weeks to days with parameter-based analysis and permit-ready reporting.",
-    tags: ["Next.js", "React", "TypeScript", "Three.js", "Python"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/zenith",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Zenith",
+    title: "Portfolio / Yor Ayrin iwnl",
+    desc: "The dedicated portfolio and recruiter-facing experience for Ayush Roy. It stays separate from this default project hub so visitors can choose between browsing projects and reading the full personal profile.",
+    tags: ["Next.js", "TypeScript", "React", "Portfolio", "Vercel"],
+    liveUrl: "https://yorayriniwnl.vercel.app",
+    liveLabel: "Open Portfolio",
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Ayrin-iwnl",
     featured: true,
   },
   {
     num: "02",
-    title: "Yor Ayrin iwnl",
-    desc: "The current portfolio platform: a Next.js system for case studies, recruiter-ready resume surfaces, GitHub-backed project data, games, and interactive identity storytelling.",
-    tags: ["Next.js", "TypeScript", "React", "Framer Motion", "Vercel"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-ayrin-iwnl",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Ayrin-iwnl",
+    title: "Yor Zenith",
+    desc: "Solar energy planning and decision-support platform for feasibility checks, subsidy guidance, energy estimates, and planning workflows.",
+    tags: ["TypeScript", "React", "Solar Planning", "Decision Support"],
+    liveUrl: "https://zenith-xi-snowy.vercel.app/",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Zenith",
   },
   {
     num: "03",
-    title: "Yor AI vs Real Image",
-    desc: "ML pipeline to classify AI-generated vs real images using texture-based features, noise analysis, and an SVM classifier. It turns a computer-vision workflow into a readable, user-facing prediction experience.",
-    tags: ["Python", "OpenCV", "Scikit-Learn", "Streamlit"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/ai-detector",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
-  },
-  {
-    num: "04",
-    title: "Yor Mentor Mentee System",
-    desc: "Full-stack mentorship workflow system with weighted matching, Flask APIs, SQLite persistence, and a Tkinter desktop interface. It turns manual coordination into a structured tool with reusable matching logic.",
-    tags: ["Python", "Flask", "SQLite", "Tkinter", "SQLAlchemy"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/mentor-mentee",
-    ghUrl: "https://github.com/yorayriniwnl/mentor-mentee-system",
-  },
-  {
-    num: "05",
     title: "Yor Smriti",
-    desc: "Narrative-first web experience for memories, timelines, private storytelling, and emotionally aware UI presentation. A frontend-heavy build focused on expressive pacing and cinematic interaction.",
-    tags: ["TypeScript", "JavaScript", "CSS", "Vercel"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-smriti",
+    desc: "Emotion-driven interactive web experience focused on memories, timelines, and narrative storytelling.",
+    tags: ["TypeScript", "Interactive UI", "Storytelling", "Vercel"],
+    liveUrl: "https://yor-smriti.vercel.app",
+    liveLabel: "Open Live",
     ghUrl: "https://github.com/yorayriniwnl/Yor-Smriti",
   },
   {
-    num: "06",
-    title: "Yor Helios",
-    desc: "Energy-monitoring platform with FastAPI ingestion, anomaly detection, WebSocket alerts, map visualizations, and Next.js dashboards. It adds a backend-heavy systems signal to the public portfolio.",
-    tags: ["FastAPI", "Next.js", "TypeScript", "PostgreSQL", "WebSocket"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-helios",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Helios",
-  },
-  {
-    num: "07",
-    title: "Yor Feelings",
-    desc: "Campus-social product direction exploring anonymous posting, moderation, reactions, realtime threads, and emotionally aware UX. The focus is social interaction design with expressive interface systems.",
-    tags: ["TypeScript", "Next.js", "React", "Realtime"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-feelings",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Feelings",
-  },
-  {
-    num: "08",
+    num: "04",
     title: "Yor Status",
-    desc: "Public accountability platform that tracks government promises versus completions in realtime, with verified-community discussion for KIIT students. It frames civic-tech reporting as a product system.",
-    tags: ["TypeScript", "React", "Next.js", "Node.js"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-status",
+    desc: "Public status and accountability interface with a product-led civic-tech direction and student-community framing.",
+    tags: ["JavaScript", "React", "Status Tracking", "Vercel"],
+    liveUrl: "https://yor-status.vercel.app",
+    liveLabel: "Open Live",
     ghUrl: "https://github.com/yorayriniwnl/Yor-Status",
   },
   {
+    num: "05",
+    title: "Yor Feelings",
+    desc: "Expressive frontend project translating human emotions into dynamic UI interactions and visual states.",
+    tags: ["TypeScript", "Next.js", "React", "Realtime UX"],
+    liveUrl: "https://yor-feelings.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Feelings",
+  },
+  {
+    num: "06",
+    title: "Yor AI vs Real Image",
+    desc: "Computer-vision project that classifies AI-generated versus real images and presents the model workflow as a usable web experience.",
+    tags: ["Python", "Computer Vision", "ML", "Vercel"],
+    liveUrl: "https://yor-ai-vs-real-image.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
+  },
+  {
+    num: "07",
+    title: "Yor Mentor Mentee System",
+    desc: "Thoughtful platform for managing mentor-mentee relationships, matching workflows, and growth-oriented coordination.",
+    tags: ["Python", "Flask", "Matching", "Vercel"],
+    liveUrl: "https://mentor-mentee-system.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/mentor-mentee-system",
+  },
+  {
+    num: "08",
+    title: "Taskflow",
+    desc: "Task and workflow interface for organizing work with a small, focused JavaScript app surface.",
+    tags: ["JavaScript", "Productivity", "Task Management", "Vercel"],
+    liveUrl: "https://taskflow-xi-ochre.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/Taskflow",
+  },
+  {
     num: "09",
-    title: "Yor Talks",
-    desc: "Premium social platform concept positioned as an Indian-polished alternative to Instagram with cleaner UX and product-first storytelling. It explores social product framing through a premium visual lens.",
-    tags: ["TypeScript", "React", "Next.js", "CSS"],
-    liveUrl: "https://www.yorayriniwnl.in/projects/yor-talks",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Talks",
+    title: "CBSE Result Analyzer",
+    desc: "Result-analysis utility for turning CBSE result data into clearer summaries and performance signals.",
+    tags: ["Python", "Data Analysis", "Education", "Vercel"],
+    liveUrl: "https://cbse-result-analyzer.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/CBSE-Result-Analyzer",
+  },
+  {
+    num: "10",
+    title: "Eat-a-lot",
+    desc: "A smaller HTML-based web project with a live Vercel deployment outside the main Yor product line.",
+    tags: ["HTML", "CSS", "Web", "Vercel"],
+    liveUrl: "https://eat-a-lot-five.vercel.app",
+    liveLabel: "Open Live",
+    ghUrl: "https://github.com/yorayriniwnl/Eat-a-lot",
+  },
+  {
+    num: "11",
+    title: "Yor Helios",
+    desc: "Python-based system exploring automation, computational logic, and intelligent backend processing.",
+    tags: ["Python", "Backend", "Automation", "Systems"],
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Helios",
+  },
+  {
+    num: "12",
+    title: "Yor Solar Nexus",
+    desc: "Earlier cloud-based solar planning and optimization build for feasibility, energy needs, cost savings, subsidy guidance, and rooftop recommendations.",
+    tags: ["HTML", "Solar Planning", "Optimization", "Research"],
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Solar-Nexus",
   },
 ];
 
 const GITHUB_IMPORTS: RepoSummary[] = [
   {
     name: "Yorayriniwnl.in",
-    desc: "Companion repository connected to the primary domain and recent portfolio deployment work.",
+    desc: "This default gateway repository, connected to the primary domain and used as the entry point for the wider project map.",
     repoUrl: "https://github.com/yorayriniwnl/Yorayriniwnl.in",
-    updated: "Apr 20, 2026",
+    liveUrl: "https://yorayriniwnlin.vercel.app",
+    liveLabel: "Gateway",
+    language: "TypeScript",
+    updated: "Apr 23, 2026",
   },
   {
     name: "Yorayriniwnl",
     desc: "GitHub profile repository used to shape the public identity layer and account-facing presentation.",
     repoUrl: "https://github.com/yorayriniwnl/Yorayriniwnl",
-    updated: "Apr 20, 2026",
+    updated: "Apr 23, 2026",
   },
   {
-    name: "Eat-a-lot",
-    desc: "A smaller HTML-based web project with a live Vercel deployment outside the main Yor product line.",
-    repoUrl: "https://github.com/yorayriniwnl/Eat-a-lot",
-    liveUrl: "https://eat-a-lot-five.vercel.app",
-    language: "HTML",
-    updated: "Apr 20, 2026",
+    name: "C_PlusPlus",
+    desc: "C++ learning and practice repository.",
+    repoUrl: "https://github.com/yorayriniwnl/C_PlusPlus",
+    language: "C++",
+    updated: "Apr 26, 2026",
   },
   {
-    name: "Yor-Solar-Nexus",
-    desc: "An earlier solar planning and optimization build that still serves as useful public proof of the renewable-energy direction.",
-    repoUrl: "https://github.com/yorayriniwnl/Yor-Solar-Nexus",
-    language: "HTML",
-    updated: "Jan 21, 2026",
+    name: "Yor-Project-Health-Tracker",
+    desc: "TypeScript project-health tracker repository from the Yor project family.",
+    repoUrl: "https://github.com/yorayriniwnl/Yor-Project-Health-Tracker",
+    language: "TypeScript",
+    updated: "Apr 26, 2026",
+  },
+  {
+    name: "Yor_Token_Usage",
+    desc: "JavaScript utility repository for tracking or exploring token usage.",
+    repoUrl: "https://github.com/yorayriniwnl/Yor_Token_Usage",
+    language: "JavaScript",
+    updated: "Apr 25, 2026",
+  },
+  {
+    name: "Trading_Bot",
+    desc: "Python trading automation experiment repository.",
+    repoUrl: "https://github.com/yorayriniwnl/Trading_Bot",
+    language: "Python",
+    updated: "Apr 23, 2026",
+  },
+  {
+    name: "Hyperliquid_Analysis",
+    desc: "Python analysis repository for Hyperliquid-related market or data exploration.",
+    repoUrl: "https://github.com/yorayriniwnl/Hyperliquid_Analysis",
+    language: "Python",
+    updated: "Apr 23, 2026",
+  },
+  {
+    name: "Yor-Talks",
+    desc: "Social platform concept exploring premium interaction design and product-first storytelling.",
+    repoUrl: "https://github.com/yorayriniwnl/Yor-Talks",
+    language: "JavaScript",
+    updated: "Apr 23, 2026",
   },
 ];
 
@@ -229,15 +237,15 @@ const PORTFOLIO_SKILL_RADAR = [
 ];
 
 const PORTFOLIO_MARQUEE_ITEMS = [
-  "Case Study Thinking",
-  "Interface Craft",
-  "Systems in Practice",
-  "Design Tokens",
-  "Recruiter Mode",
-  "Game Experiments",
-  "Portfolio Architecture",
-  "Realtime Dashboards",
+  "Project Gateway",
+  "Live Builds",
+  "GitHub Repos",
+  "Portfolio Link",
+  "Solar Tools",
   "Computer Vision",
+  "Python Systems",
+  "Interactive UI",
+  "Vercel Deployments",
 ];
 
 // ─── SVG ICONS ───────────────────────────────────────────────────────────────
@@ -973,7 +981,7 @@ const Nav: React.FC = () => {
           YR<span style={{ color: "var(--gold)" }}>.</span>
         </a>
         <ul className="nav-links" style={{ display: "flex", gap: "2.8rem", listStyle: "none", alignItems: "center" }}>
-          {[["#projects","Work"],["#about","About"]].map(([href, label]) => (
+          {[["#projects","Projects"],["#about","Purpose"]].map(([href, label]) => (
             <li key={href}>
               <a href={href} style={{
                 fontFamily: "'JetBrains Mono', monospace", fontSize: ".65rem",
@@ -1040,7 +1048,7 @@ const Hero: React.FC = () => (
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: ".63rem", color: "var(--muted)",
               letterSpacing: ".2em", textTransform: "uppercase",
-            }}>Open to Internships</span>
+            }}>Default Project Landing</span>
           </div>
 
           {/* Name */}
@@ -1053,7 +1061,7 @@ const Hero: React.FC = () => (
             color: "var(--cream)",
             marginBottom: ".12em",
           }}>
-            Ayush<br/>
+            Yor<br/>
             <span style={{
               background: "linear-gradient(135deg, #c9a96e 0%, #e8d5a8 40%, #a87d45 100%)",
               WebkitBackgroundClip: "text",
@@ -1061,7 +1069,7 @@ const Hero: React.FC = () => (
               backgroundClip: "text",
               fontStyle: "italic",
             }}>
-              Roy.
+              Project Hub.
             </span>
           </h1>
 
@@ -1100,9 +1108,9 @@ const Hero: React.FC = () => (
             }}
             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(201,169,110,0.4)"; }}
             onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 28px rgba(201,169,110,0.25)"; }}>
-              <IconArrow /> View Projects
+              <IconArrow /> Browse Projects
             </a>
-            <a href={`mailto:${PORTFOLIO_INFO.email}`} style={{
+            <a href={PORTFOLIO_INFO.portfolio} target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: ".55rem",
               fontFamily: "'Syne', sans-serif", fontWeight: 500,
               fontSize: ".78rem", letterSpacing: ".08em",
@@ -1113,7 +1121,7 @@ const Hero: React.FC = () => (
             }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.55)"; e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.background = "rgba(201,169,110,0.06)"; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.28)"; e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.background = "transparent"; }}>
-              Contact Me
+              Open Portfolio
             </a>
           </div>
         </div>
@@ -1177,6 +1185,13 @@ const Marquee: React.FC = () => {
 // ─── PROJECT CARD ─────────────────────────────────────────────────────────────
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   const { ref, handleMouseMove, handleMouseLeave } = useTilt(project.featured ? 5 : 9);
+  const projectHref = project.liveUrl ?? project.ghUrl;
+  const projectActions = [
+    ...(project.liveUrl
+      ? [{ href: project.liveUrl, label: project.liveLabel ?? "Open Live", icon: <IconExternal />, primary: true }]
+      : []),
+    { href: project.ghUrl, label: "GitHub", icon: <IconGithub />, primary: false },
+  ];
 
   return (
     <div
@@ -1243,7 +1258,9 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           fontSize: project.featured ? "2.4rem" : "1.9rem",
           letterSpacing: "-.02em", color: "var(--cream)", lineHeight: 1.05,
         }}>
-          {project.title}
+          <a href={projectHref} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+            {project.title}
+          </a>
         </h3>
         <p style={{ fontSize: ".87rem", color: "var(--muted)", lineHeight: 1.85, flex: 1 }}>
           {project.desc}
@@ -1260,10 +1277,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
           ))}
         </div>
         <div style={{ display: "flex", gap: ".55rem", marginTop: ".2rem" }}>
-          {[
-            { href: project.liveUrl, label: "Case Study", icon: <IconExternal />, primary: true },
-            { href: project.ghUrl,   label: "GitHub",    icon: <IconGithub />,   primary: false },
-          ].map(({ href, label, icon, primary }) => (
+          {projectActions.map(({ href, label, icon, primary }) => (
             <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: ".4rem",
               fontFamily: "'Syne', sans-serif", fontWeight: 500,
@@ -1336,19 +1350,22 @@ const Projects: React.FC = () => (
   <section id="projects" style={{ padding: "8rem 0", position: "relative", zIndex: 2 }}>
     <div className="wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
       <div className="reveal" style={{ marginBottom: "4rem" }}>
-        <div className="section-label">Selected Work</div>
+        <div className="section-label">Project Gateway</div>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
           fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)",
           letterSpacing: "-.03em", lineHeight: .9, color: "var(--cream)",
         }}>
-          Projects &amp;<br/>
+          All Projects &amp;<br/>
           <span style={{
             background: "linear-gradient(135deg, #c9a96e, #e8d5a8, #8a6f3e)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             fontStyle: "italic",
-          }}>Experiments</span>
+          }}>Links</span>
         </h2>
+        <p style={{ maxWidth: 620, fontSize: ".9rem", lineHeight: 1.85, color: "var(--muted)", marginTop: "1.5rem" }}>
+          This root page is a directory, not the portfolio. Use it to jump into live builds, GitHub repositories, and the dedicated portfolio page from one place.
+        </p>
       </div>
       <div className="projects-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem" }}>
         {PORTFOLIO_PROJECTS.map((p, i) => (
@@ -1359,9 +1376,9 @@ const Projects: React.FC = () => (
       </div>
 
       <div className="reveal" style={{ marginTop: "4.5rem", marginBottom: "1.4rem" }}>
-        <div className="section-label">Latest on GitHub</div>
+        <div className="section-label">Repository Index</div>
         <p style={{ maxWidth: 620, fontSize: ".88rem", lineHeight: 1.85, color: "var(--muted)" }}>
-          These public repositories are currently visible on GitHub as of April 21, 2026, but are not yet expanded into full portfolio case studies.
+          These additional public repositories were checked from GitHub on April 27, 2026 and are linked here even when they do not have a live deployment.
         </p>
       </div>
       <div className="projects-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem" }}>
@@ -1395,7 +1412,7 @@ const Projects: React.FC = () => (
                     marginBottom: ".6rem",
                   }}
                 >
-                  GitHub Import
+                  Repository Link
                 </div>
                 <h3
                   style={{
@@ -1407,7 +1424,9 @@ const Projects: React.FC = () => (
                     color: "var(--cream)",
                   }}
                 >
-                  {repo.name}
+                  <a href={repo.liveUrl ?? repo.repoUrl} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
+                    {repo.name}
+                  </a>
                 </h3>
               </div>
               <span
@@ -1474,7 +1493,7 @@ const Projects: React.FC = () => (
                     border: "1px solid rgba(201,169,110,0.22)",
                   }}
                 >
-                  <IconExternal /> Live
+                  <IconExternal /> {repo.liveLabel ?? "Live"}
                 </a>
               ) : null}
               <a
@@ -1515,26 +1534,26 @@ const About: React.FC = () => (
       <div className="about-grid" style={{ display: "grid", gridTemplateColumns: "5fr 4fr", gap: "5rem", alignItems: "start" }}>
         <div>
           <div className="reveal">
-            <div className="section-label">About Me</div>
+            <div className="section-label">Purpose</div>
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
               fontSize: "clamp(2.4rem, 5vw, 4.2rem)",
               letterSpacing: "-.03em", lineHeight: .92, color: "var(--cream)",
             }}>
-              The Person<br/>Behind the{" "}
+              One Landing Page<br/>For Every{" "}
               <span style={{
                 background: "linear-gradient(135deg, #c9a96e, #e8d5a8)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                 fontStyle: "italic",
-              }}>Code</span>
+              }}>Project</span>
             </h2>
           </div>
 
           <div className="reveal" style={{ marginTop: "2.2rem" }}>
             {[
-              <>I'm <strong style={{ color: "var(--cream)", fontWeight: 600 }}>{PORTFOLIO_INFO.name}</strong> (virtual alias: <strong style={{ color: "var(--cream)", fontWeight: 600 }}>Yor Ayrin</strong>), a developer based in <strong style={{ color: "var(--cream)", fontWeight: 600 }}>{PORTFOLIO_INFO.location}</strong> building Next.js product surfaces, Python backend systems, realtime dashboards, and computer-vision workflows.</>,
-              <>My strongest public work includes Yor Zenith, Yor AI vs Real Image, Yor Helios, and this portfolio platform itself. I keep this site grounded in resume and GitHub data so every project claim stays current and verifiable.</>,
-              <>Beyond the resume, I play piano and guitar, take chess seriously, solve Rubik's Cubes, and enjoy the game and identity experiments that shape the wider Yor Ayrin universe.</>,
+              <>This page is the front door for <strong style={{ color: "var(--cream)", fontWeight: 600 }}>Yor Ayrin</strong> projects. It keeps the default domain focused on navigation instead of making visitors guess which app, repo, or profile they need.</>,
+              <>The dedicated portfolio still exists as its own destination. It is linked as the first featured project, while the rest of this page maps the live builds and public GitHub repositories.</>,
+              <>Every project card has a direct hyperlink: live deployments open the app, and repo links open the source. Repository-only experiments are still listed so the GitHub surface stays complete.</>,
             ].map((text, i) => (
               <p key={i} style={{ fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.92, fontWeight: 400, marginBottom: "1.2rem" }}>{text}</p>
             ))}
@@ -1542,7 +1561,7 @@ const About: React.FC = () => (
 
           {/* Stats */}
           <div className="reveal" style={{ display: "flex", gap: "3rem", marginTop: "2.8rem", paddingTop: "2rem", borderTop: "1px solid rgba(201,169,110,0.1)" }}>
-            {[[CURATED_PROJECT_COUNT,"Curated Projects"],[PUBLIC_REPO_COUNT,"Public Repos"],["2027","Graduation"]].map(([num, label]) => (
+            {[[CURATED_PROJECT_COUNT,"Featured Links"],[PUBLIC_REPO_COUNT,"GitHub Repos"],["01","Portfolio Page"]].map(([num, label]) => (
               <div key={label}>
                 <div style={{
                   fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
@@ -1610,7 +1629,7 @@ const About: React.FC = () => (
               fontFamily: "'JetBrains Mono', monospace", fontSize: ".6rem",
               letterSpacing: ".2em", textTransform: "uppercase",
               color: "var(--gold)", opacity: .7,
-            }}>Skill Profile</div>
+            }}>Project Mix</div>
             <SkillRadar />
             <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap", justifyContent: "center" }}>
               {PORTFOLIO_SKILL_RADAR.map(({ label, value }) => (
@@ -1634,8 +1653,8 @@ const Contact: React.FC = () => {
   const contactLinks: ContactLink[] = [
     { label: "GitHub / yorayriniwnl", href: PORTFOLIO_INFO.github, icon: <IconGithub /> },
     { label: "LinkedIn / yorayriniwnl", href: PORTFOLIO_INFO.linkedin, icon: <IconLinkedIn /> },
-    { label: "Resume / recruiter mode", href: `${PORTFOLIO_INFO.site}/resume`, icon: <IconExternal /> },
-    { label: "yorayriniwnl.in", href: PORTFOLIO_INFO.site, icon: <IconGlobe /> },
+    { label: "Portfolio / recruiter mode", href: PORTFOLIO_INFO.portfolio, icon: <IconExternal /> },
+    { label: "Project hub / yorayriniwnl.in", href: PORTFOLIO_INFO.site, icon: <IconGlobe /> },
   ];
   return (
     <section id="contact" style={{ padding: "8rem 0 6rem", position: "relative", zIndex: 2 }}>

@@ -1,6 +1,6 @@
-# Yorayriniwnl Portfolio
+# Yorayriniwnl Project Hub
 
-Single-page portfolio built with Vite, React, and TypeScript. The app is designed to present projects, skills, and contact information in a polished, recruiter-friendly format.
+Single-page project gateway built with Vite, React, and TypeScript. The app is designed as the default landing page for Yorayriniwnl projects, linking live builds, GitHub repositories, and the separate portfolio page.
 
 ## Tech Stack
 
@@ -44,13 +44,13 @@ npm run preview
 
 ## Project Structure
 
-- `Portfolio.tsx` contains the main portfolio experience and content data.
-- `src/App.tsx` re-exports the portfolio component for the Vite entry point.
+- `Portfolio.tsx` contains the main project hub experience and content data.
+- `src/App.tsx` re-exports the project hub component for the Vite entry point.
 - `src/main.tsx` mounts the app.
 
 ## Customization
 
-Most of the portfolio content is defined directly in `Portfolio.tsx`, including project cards, skill sections, and contact details. Update those data arrays to replace placeholder text with your own work and links.
+Most of the project hub content is defined directly in `Portfolio.tsx`, including project cards, repository links, and contact details. Update those data arrays when GitHub repositories or live deployments change.
 
 ## Scripts
 
