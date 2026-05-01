@@ -2142,6 +2142,7 @@ export default function App() {
       <Nav />
       <Hero />
       <Marquee />
+      <GoogleAd slot="4260778438" format="autorelaxed" />
       <Projects />
       <GoogleAd slot="7535566625" />
       <Divider />
