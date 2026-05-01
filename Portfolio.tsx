@@ -37,7 +37,7 @@ interface RepoSummary {
 }
 
 // ─── GOOGLE AD COMPONENT ────────────────────────────────────────────────────
-const GoogleAd: React.FC<{ slot: string; format?: string }> = ({ slot, format = "auto" }) => {
+const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string }> = ({ slot, format = "auto", layout }) => {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -64,6 +64,7 @@ const GoogleAd: React.FC<{ slot: string; format?: string }> = ({ slot, format = 
           data-ad-client="ca-pub-9625375445358337"
           data-ad-slot={slot}
           data-ad-format={format}
+          data-ad-layout={layout}
           data-full-width-responsive="true"
         />
       </div>
@@ -2147,6 +2148,7 @@ export default function App() {
       <About />
       <GoogleAd slot="7535566625" />
       <Divider />
+      <GoogleAd slot="1454426352" format="fluid" layout="in-article" />
       <Contact />
       <Footer />
     </>
