@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
+declare global {
+  interface Window {
+    adsbygoogle?: Record<string, unknown>[];
+  }
+}
+
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 interface Project {
   num: string;
@@ -41,16 +47,27 @@ const GoogleAd: React.FC<{ slot: string; format?: string }> = ({ slot, format = 
   }, []);
 
   return (
-    <div style={{ margin: "2rem 0", minHeight: "250px" }}>
-      <ins
-        className="adsbygoogle"
-        style={{ display: "block", textAlign: "center" }}
-        data-ad-client="ca-pub-9625375445358337"
-        data-ad-slot={slot}
-        data-ad-format={format}
-        data-full-width-responsive="true"
-      />
-    </div>
+    <section className="ad-wrap" aria-label="Advertisement" style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
+      <div style={{
+        margin: "2rem 0",
+        minHeight: 140,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        border: "1px solid rgba(201,169,110,0.08)",
+        borderRadius: "var(--r)",
+        background: "rgba(255,255,255,0.012)",
+      }}>
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block", textAlign: "center", width: "100%" }}
+          data-ad-client="ca-pub-9625375445358337"
+          data-ad-slot={slot}
+          data-ad-format={format}
+          data-full-width-responsive="true"
+        />
+      </div>
+    </section>
   );
 };
 
@@ -348,6 +365,10 @@ const GlobalStyles = () => (
     }
     a, button { cursor: pointer; }
     svg { flex-shrink: 0; }
+    #root { min-height: 100%; overflow-x: hidden; }
+    .wrap { width: 100%; }
+    .ad-wrap { width: 100%; min-width: 0; }
+    h1, h2, h3, p { overflow-wrap: break-word; }
     a:focus-visible, button:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 4px;
@@ -429,6 +450,21 @@ const GlobalStyles = () => (
 
     /* ── TILT ── */
     .tilt-card { transform-style: preserve-3d; will-change: transform; }
+    .premium-gateway,
+    .premium-strip,
+    .projects-grid,
+    .featured-layout,
+    .about-grid,
+    .contact-grid,
+    .hero-layout,
+    .premium-gateway > *,
+    .premium-strip > *,
+    .projects-grid > *,
+    .about-grid > *,
+    .contact-grid > *,
+    .tilt-card {
+      min-width: 0;
+    }
     .project-actions a,
     .repo-actions a,
     .hero-btns a {
@@ -471,6 +507,8 @@ const GlobalStyles = () => (
     @media (max-width: 640px) {
       html { scroll-padding-top: 74px; }
       .wrap { padding: 0 1.25rem !important; }
+      .ad-wrap { padding: 0 1.25rem !important; }
+      .ad-wrap > div { margin: 1.25rem 0 !important; min-height: 96px !important; }
       .nav-links { display: flex !important; gap: 0 !important; }
       .nav-links li:not(:last-child) { display: none !important; }
       .hero-section { min-height: auto !important; padding: 7rem 0 4rem !important; }
@@ -506,6 +544,7 @@ const GlobalStyles = () => (
     }
     @media (max-width: 420px) {
       .wrap { padding: 0 1rem !important; }
+      .ad-wrap { padding: 0 1rem !important; }
       .hero-name { font-size: 3.3rem !important; }
       #projects h2,
       #about h2,
@@ -642,6 +681,31 @@ const useScrollReveal = () => {
     );
     document.querySelectorAll(".reveal").forEach(el => obs.observe(el));
     return () => obs.disconnect();
+  }, []);
+};
+
+const useHashScroll = () => {
+  useEffect(() => {
+    const pending = new Set<number>();
+    const scrollToHash = () => {
+      const id = window.location.hash.slice(1);
+      if (!id) return;
+      const scroll = () => document.getElementById(id)?.scrollIntoView({ block: "start" });
+      window.requestAnimationFrame(scroll);
+      [300, 900].forEach(delay => {
+        const timeout = window.setTimeout(() => {
+          pending.delete(timeout);
+          scroll();
+        }, delay);
+        pending.add(timeout);
+      });
+    };
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => {
+      pending.forEach(timeout => window.clearTimeout(timeout));
+      window.removeEventListener("hashchange", scrollToHash);
+    };
   }, []);
 };
 
@@ -2056,6 +2120,7 @@ const Divider: React.FC = () => (
 export default function App() {
   const [loaded, setLoaded] = useState(false);
   useScrollReveal();
+  useHashScroll();
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 260);
