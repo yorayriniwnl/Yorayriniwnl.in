@@ -37,7 +37,7 @@ interface RepoSummary {
 }
 
 // ─── GOOGLE AD COMPONENT ────────────────────────────────────────────────────
-const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string }> = ({ slot, format = "auto", layout }) => {
+const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string; debug?: boolean }> = ({ slot, format = "auto", layout, debug = false }) => {
   const insRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -48,29 +48,32 @@ const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string }> = (
     const tryPush = () => {
       attempts += 1;
       try {
-        if (window && (window as any).adsbygoogle && insRef.current) {
-          // Only push once per element
+        const ads = (window as any).adsbygoogle;
+        if (ads && insRef.current) {
+          if (debug) console.log("GoogleAd: adsbygoogle present, pushing (attempt)", attempts, { slot });
           try {
-            (window as any).adsbygoogle.push({});
+            ads.push({});
+            if (debug) console.log("GoogleAd: push succeeded", { slot });
           } catch (err) {
-            // ignore extension/message-port style errors
-            // keep silent to avoid noisy console output
+            if (debug) console.warn("GoogleAd: push error (ignored)", err && (err as Error).message ? (err as Error).message : err);
           }
           return;
         }
       } catch (e) {
-        // ignore
+        if (debug) console.warn("GoogleAd: unexpected error checking adsbygoogle", e);
       }
 
       if (attempts < maxAttempts) {
         setTimeout(tryPush, interval);
+      } else if (debug) {
+        console.warn("GoogleAd: giving up after attempts", attempts, { slot });
       }
     };
 
     // Start trying after a short delay to let the script load
     const startTimer = setTimeout(tryPush, 250);
     return () => clearTimeout(startTimer);
-  }, []);
+  }, [debug, slot]);
 
   return (
     <section className="ad-wrap" aria-label="Advertisement" style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
@@ -1887,7 +1890,7 @@ export default function App() {
       <Nav />
       <Hero />
       <Marquee />
-      <GoogleAd slot="4260778438" format="autorelaxed" />
+      <GoogleAd slot="4260778438" format="autorelaxed" debug />
       <Projects />
       <GoogleAd slot="7535566625" />
       <Divider />
