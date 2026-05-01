@@ -418,14 +418,6 @@ const GlobalStyles = () => (
       from { opacity:0; transform:translateY(26px); }
       to   { opacity:1; transform:none; }
     }
-    .hero-eyebrow { animation: fadeUp .8s 1.05s cubic-bezier(.16,1,.3,1) both; }
-    .hero-name    { animation: fadeUp 1s  1.2s  cubic-bezier(.16,1,.3,1) both; }
-    .hero-role    { animation: fadeUp .9s 1.35s cubic-bezier(.16,1,.3,1) both; }
-    .hero-desc    { animation: fadeUp .9s 1.5s  cubic-bezier(.16,1,.3,1) both; }
-    .hero-btns    { animation: fadeUp .9s 1.65s cubic-bezier(.16,1,.3,1) both; }
-    .scroll-hint  { animation: fadeUp 1s  2.1s  cubic-bezier(.16,1,.3,1) both; }
-    .hero-visual  { animation: fadeUp 1.2s 1.0s cubic-bezier(.16,1,.3,1) both; }
-
     /* ── LOADER ── */
     @keyframes loaderBar { from{width:0} to{width:100%} }
     @keyframes countUp { from{opacity:0} to{opacity:1} }
@@ -447,7 +439,6 @@ const GlobalStyles = () => (
     .featured-layout,
     .about-grid,
     .contact-grid,
-    .hero-layout,
     .premium-gateway > *,
     .premium-strip > *,
     .projects-grid > *,
@@ -478,8 +469,6 @@ const GlobalStyles = () => (
       content: ''; width: 22px; height: 1px;
       background: var(--gold); display: block; flex-shrink: 0;
     }
-    .hero-name { font-size: 7rem !important; }
-    .hero-role { font-size: 1.35rem !important; }
     #projects h2,
     #about h2,
     #contact h2 { font-size: 4.25rem !important; }
@@ -492,8 +481,6 @@ const GlobalStyles = () => (
       .featured-layout  { flex-direction: column !important; }
       .about-grid       { grid-template-columns: 1fr !important; gap: 3rem !important; }
       .contact-grid     { grid-template-columns: 1fr !important; gap: 3rem !important; }
-      .hero-layout      { flex-direction: column !important; }
-      .hero-visual-wrap { display: none !important; }
     }
     @media (max-width: 640px) {
       html { scroll-padding-top: 74px; }
@@ -509,10 +496,7 @@ const GlobalStyles = () => (
         min-height: auto !important;
         padding: 1.15rem !important;
       }
-      .scroll-hint { display: none !important; }
       .section-label { letter-spacing: .14em !important; }
-      .hero-name { font-size: 4rem !important; line-height: .94 !important; }
-      .hero-role { font-size: 1.05rem !important; }
       #projects h2,
       #about h2,
       #contact h2 { font-size: 2.85rem !important; line-height: .96 !important; }
@@ -534,7 +518,6 @@ const GlobalStyles = () => (
     @media (max-width: 420px) {
       .wrap { padding: 0 1rem !important; }
       .ad-wrap { padding: 0 1rem !important; }
-      .hero-name { font-size: 3.3rem !important; }
       #projects h2,
       #about h2,
       #contact h2 { font-size: 2.45rem !important; }
@@ -1332,129 +1315,12 @@ const PremiumTopLinks: React.FC = () => {
 
 const Hero: React.FC = () => (
   <section id="top" className="hero-section" style={{
-    minHeight: "100vh",
-    display: "flex", alignItems: "center",
-    padding: "10rem 0 6rem", position: "relative",
+    padding: "10rem 0 4rem",
+    position: "relative",
+    zIndex: 2,
   }}>
     <div className="wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem", width: "100%" }}>
       <PremiumTopLinks />
-      <div className="hero-layout" style={{ display: "flex", alignItems: "center", gap: "4rem" }}>
-        {/* Text */}
-        <div style={{ flex: "1 1 auto" }}>
-          {/* Eyebrow */}
-          <div className="hero-eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: ".75rem", marginBottom: "2.5rem" }}>
-            <span style={{
-              width: 7, height: 7, borderRadius: "50%",
-              background: "#4ade80", boxShadow: "0 0 8px #4ade80",
-              flexShrink: 0,
-              animation: "pulse 2.2s ease-in-out infinite",
-            }}/>
-            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}`}</style>
-            <span style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: ".63rem", color: "var(--muted)",
-              letterSpacing: ".2em", textTransform: "uppercase",
-            }}>Default Project Landing</span>
-          </div>
-
-          {/* Name */}
-          <h1 className="hero-name" style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontWeight: 700,
-            fontSize: "7rem",
-            lineHeight: .88,
-            letterSpacing: "0",
-            color: "var(--cream)",
-            marginBottom: ".12em",
-          }}>
-            Yor<br/>
-            <span style={{
-              background: "linear-gradient(135deg, #c9a96e 0%, #e8d5a8 40%, #a87d45 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              fontStyle: "italic",
-            }}>
-              Project Hub.
-            </span>
-          </h1>
-
-          {/* Role */}
-          <p className="hero-role" style={{
-            fontFamily: "'Syne', sans-serif", fontWeight: 400,
-            fontSize: "1.35rem",
-            color: "var(--muted)", letterSpacing: ".04em",
-            marginBottom: "2.5rem",
-          }}>
-            {PORTFOLIO_INFO.role}
-          </p>
-
-          {/* Description */}
-          <p className="hero-desc" style={{
-            fontSize: ".92rem", color: "var(--muted)",
-            maxWidth: 420, lineHeight: 1.9,
-            marginBottom: "3.2rem",
-            borderLeft: "2px solid rgba(201,169,110,0.25)",
-            paddingLeft: "1.2rem",
-          }}>
-            {PORTFOLIO_INFO.heroDescription}
-          </p>
-
-          {/* Buttons */}
-          <div className="hero-btns" style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" }}>
-            <a href="#projects" style={{
-              display: "inline-flex", alignItems: "center", gap: ".55rem",
-              fontFamily: "'Syne', sans-serif", fontWeight: 600,
-              fontSize: ".78rem", letterSpacing: ".08em",
-              textDecoration: "none",
-              padding: ".9rem 2.2rem", borderRadius: 6,
-              background: "linear-gradient(135deg, #8a6f3e, #c9a96e)",
-              color: "#080706", transition: "all .3s",
-              boxShadow: "0 4px 28px rgba(201,169,110,0.25)",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(201,169,110,0.4)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 28px rgba(201,169,110,0.25)"; }}>
-              <IconArrow /> Browse Projects
-            </a>
-            <a href={PORTFOLIO_INFO.portfolio} target="_blank" rel="noopener noreferrer" style={{
-              display: "inline-flex", alignItems: "center", gap: ".55rem",
-              fontFamily: "'Syne', sans-serif", fontWeight: 500,
-              fontSize: ".78rem", letterSpacing: ".08em",
-              textDecoration: "none",
-              padding: ".9rem 2.2rem", borderRadius: 6,
-              border: "1px solid rgba(201,169,110,0.28)",
-              color: "var(--cream-dim)", transition: "all .3s",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.55)"; e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.background = "rgba(201,169,110,0.06)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.28)"; e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.background = "transparent"; }}>
-              Open Portfolio
-            </a>
-          </div>
-        </div>
-
-        {/* VISUAL 1 — Constellation */}
-        <div className="hero-visual hero-visual-wrap" style={{
-          flexShrink: 0, width: "min(420px, 40vw)", height: "min(420px, 40vw)",
-          position: "relative",
-        }}>
-          <div style={{
-            position: "absolute", inset: 0,
-            border: "1px solid rgba(201,169,110,0.1)",
-            borderRadius: "50%",
-          }}/>
-          <HeroConstellation />
-        </div>
-      </div>
-    </div>
-
-    {/* Scroll hint */}
-    <div className="scroll-hint" style={{
-      position: "absolute", bottom: "2.8rem", left: "50%",
-      transform: "translateX(-50%)",
-      display: "flex", flexDirection: "column", alignItems: "center", gap: ".6rem",
-    }}>
-      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: ".58rem", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--muted-d)" }}>Scroll</span>
-      <div className="scroll-line-anim" style={{ width: 1, height: 48, background: "linear-gradient(to bottom, var(--gold), transparent)" }}/>
     </div>
   </section>
 );
