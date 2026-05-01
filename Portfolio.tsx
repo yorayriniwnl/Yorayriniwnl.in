@@ -42,7 +42,7 @@ const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string; debug
 
   useEffect(() => {
     let attempts = 0;
-    const maxAttempts = 12; // ~6 seconds max
+    const maxAttempts = 12;
     const interval = 500;
 
     const tryPush = () => {
@@ -59,8 +59,8 @@ const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string; debug
           }
           return;
         }
-      } catch (e) {
-        if (debug) console.warn("GoogleAd: unexpected error checking adsbygoogle", e);
+      } catch (err) {
+        if (debug) console.warn("GoogleAd: unexpected error checking adsbygoogle", err);
       }
 
       if (attempts < maxAttempts) {
@@ -70,7 +70,6 @@ const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string; debug
       }
     };
 
-    // Start trying after a short delay to let the script load
     const startTimer = setTimeout(tryPush, 250);
     return () => clearTimeout(startTimer);
   }, [debug, slot]);
@@ -112,6 +111,9 @@ const PORTFOLIO_INFO = {
   portfolio: "https://yorayriniwnl.vercel.app",
   github: "https://github.com/yorayriniwnl",
   linkedin: "https://linkedin.com/in/yorayriniwnl",
+  role: "Project gateway for Yor Ayrin",
+  heroDescription:
+    "One practical launchpad for live apps, source repositories, experiments, and the separate portfolio page.",
   contactDescription:
     "Open the portfolio for the full story, browse GitHub for source, or send a note for collaboration.",
 };
@@ -119,6 +121,16 @@ const PORTFOLIO_INFO = {
 const PORTFOLIO_PROJECTS: Project[] = [
   {
     num: "01",
+    title: "Portfolio / Yor Ayrin iwnl",
+    desc: "The dedicated portfolio and recruiter-facing experience for Ayush Roy. It stays separate from this default project hub so visitors can choose between browsing projects and reading the full personal profile.",
+    tags: ["Next.js", "TypeScript", "React", "Portfolio", "Vercel"],
+    liveUrl: "https://yorayriniwnl.vercel.app",
+    liveLabel: "Open Portfolio",
+    ghUrl: "https://github.com/yorayriniwnl/Yor-Ayrin-iwnl",
+    featured: true,
+  },
+  {
+    num: "02",
     title: "Yor Zenith",
     desc: "Solar energy planning and decision-support platform for feasibility checks, subsidy guidance, energy estimates, and planning workflows.",
     tags: ["TypeScript", "React", "Solar Planning", "Decision Support"],
@@ -127,7 +139,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Zenith",
   },
   {
-    num: "02",
+    num: "03",
     title: "Yor Smriti",
     desc: "Emotion-driven interactive web experience focused on memories, timelines, and narrative storytelling.",
     tags: ["TypeScript", "Interactive UI", "Storytelling", "Vercel"],
@@ -136,7 +148,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Smriti",
   },
   {
-    num: "03",
+    num: "04",
     title: "Yor Status",
     desc: "Public status and accountability interface with a product-led civic-tech direction and student-community framing.",
     tags: ["JavaScript", "React", "Status Tracking", "Vercel"],
@@ -145,7 +157,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Status",
   },
   {
-    num: "04",
+    num: "05",
     title: "Yor Feelings",
     desc: "Expressive frontend project translating human emotions into dynamic UI interactions and visual states.",
     tags: ["TypeScript", "Next.js", "React", "Realtime UX"],
@@ -154,7 +166,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Feelings",
   },
   {
-    num: "05",
+    num: "06",
     title: "Yor AI vs Real Image",
     desc: "Computer-vision project that classifies AI-generated versus real images and presents the model workflow as a usable web experience.",
     tags: ["Python", "Computer Vision", "ML", "Vercel"],
@@ -163,7 +175,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
   },
   {
-    num: "06",
+    num: "07",
     title: "Yor Mentor Mentee System",
     desc: "Thoughtful platform for managing mentor-mentee relationships, matching workflows, and growth-oriented coordination.",
     tags: ["Python", "Flask", "Matching", "Vercel"],
@@ -172,7 +184,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/mentor-mentee-system",
   },
   {
-    num: "07",
+    num: "08",
     title: "Taskflow",
     desc: "Task and workflow interface for organizing work with a small, focused JavaScript app surface.",
     tags: ["JavaScript", "Productivity", "Task Management", "Vercel"],
@@ -181,7 +193,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Taskflow",
   },
   {
-    num: "08",
+    num: "09",
     title: "CBSE Result Analyzer",
     desc: "Result-analysis utility for turning CBSE result data into clearer summaries and performance signals.",
     tags: ["Python", "Data Analysis", "Education", "Vercel"],
@@ -190,7 +202,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/CBSE-Result-Analyzer",
   },
   {
-    num: "09",
+    num: "10",
     title: "Eat-a-lot",
     desc: "A smaller HTML-based web project with a live Vercel deployment outside the main Yor product line.",
     tags: ["HTML", "CSS", "Web", "Vercel"],
@@ -199,14 +211,14 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Eat-a-lot",
   },
   {
-    num: "10",
+    num: "11",
     title: "Yor Helios",
     desc: "Python-based system exploring automation, computational logic, and intelligent backend processing.",
     tags: ["Python", "Backend", "Automation", "Systems"],
     ghUrl: "https://github.com/yorayriniwnl/Yor-Helios",
   },
   {
-    num: "11",
+    num: "12",
     title: "Yor Solar Nexus",
     desc: "Earlier cloud-based solar planning and optimization build for feasibility, energy needs, cost savings, subsidy guidance, and rooftop recommendations.",
     tags: ["HTML", "Solar Planning", "Optimization", "Research"],
@@ -445,6 +457,14 @@ const GlobalStyles = () => (
       from { opacity:0; transform:translateY(26px); }
       to   { opacity:1; transform:none; }
     }
+    .hero-eyebrow { animation: fadeUp .8s 1.05s cubic-bezier(.16,1,.3,1) both; }
+    .hero-name    { animation: fadeUp 1s  1.2s  cubic-bezier(.16,1,.3,1) both; }
+    .hero-role    { animation: fadeUp .9s 1.35s cubic-bezier(.16,1,.3,1) both; }
+    .hero-desc    { animation: fadeUp .9s 1.5s  cubic-bezier(.16,1,.3,1) both; }
+    .hero-btns    { animation: fadeUp .9s 1.65s cubic-bezier(.16,1,.3,1) both; }
+    .scroll-hint  { animation: fadeUp 1s  2.1s  cubic-bezier(.16,1,.3,1) both; }
+    .hero-visual  { animation: fadeUp 1.2s 1.0s cubic-bezier(.16,1,.3,1) both; }
+
     /* ── LOADER ── */
     @keyframes loaderBar { from{width:0} to{width:100%} }
     @keyframes countUp { from{opacity:0} to{opacity:1} }
@@ -466,6 +486,7 @@ const GlobalStyles = () => (
     .featured-layout,
     .about-grid,
     .contact-grid,
+    .hero-layout,
     .premium-gateway > *,
     .premium-strip > *,
     .projects-grid > *,
@@ -475,7 +496,8 @@ const GlobalStyles = () => (
       min-width: 0;
     }
     .project-actions a,
-    .repo-actions a {
+    .repo-actions a,
+    .hero-btns a {
       min-height: 44px;
     }
     .contact-link-label {
@@ -495,6 +517,8 @@ const GlobalStyles = () => (
       content: ''; width: 22px; height: 1px;
       background: var(--gold); display: block; flex-shrink: 0;
     }
+    .hero-name { font-size: 7rem !important; }
+    .hero-role { font-size: 1.35rem !important; }
     #projects h2,
     #about h2,
     #contact h2 { font-size: 4.25rem !important; }
@@ -507,6 +531,8 @@ const GlobalStyles = () => (
       .featured-layout  { flex-direction: column !important; }
       .about-grid       { grid-template-columns: 1fr !important; gap: 3rem !important; }
       .contact-grid     { grid-template-columns: 1fr !important; gap: 3rem !important; }
+      .hero-layout      { flex-direction: column !important; }
+      .hero-visual-wrap { display: none !important; }
     }
     @media (max-width: 640px) {
       html { scroll-padding-top: 74px; }
@@ -516,13 +542,18 @@ const GlobalStyles = () => (
       .nav-links { display: flex !important; gap: 0 !important; }
       .nav-links li:not(:last-child) { display: none !important; }
       .hero-section { min-height: auto !important; padding: 7rem 0 4rem !important; }
-      .premium-gateway { gap: .8rem !important; margin-bottom: 0 !important; }
+      .premium-gateway { gap: .8rem !important; margin-bottom: 2.3rem !important; }
       .premium-gateway > div:first-child,
       .premium-strip > a {
         min-height: auto !important;
         padding: 1.15rem !important;
       }
+      .hero-btns { flex-direction: column !important; align-items: stretch !important; }
+      .hero-btns a { justify-content: center !important; width: 100% !important; }
+      .scroll-hint { display: none !important; }
       .section-label { letter-spacing: .14em !important; }
+      .hero-name { font-size: 4rem !important; line-height: .94 !important; }
+      .hero-role { font-size: 1.05rem !important; }
       #projects h2,
       #about h2,
       #contact h2 { font-size: 2.85rem !important; line-height: .96 !important; }
@@ -544,6 +575,7 @@ const GlobalStyles = () => (
     @media (max-width: 420px) {
       .wrap { padding: 0 1rem !important; }
       .ad-wrap { padding: 0 1rem !important; }
+      .hero-name { font-size: 3.3rem !important; }
       #projects h2,
       #about h2,
       #contact h2 { font-size: 2.45rem !important; }
@@ -708,7 +740,139 @@ const useHashScroll = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// VISUAL 1 — SKILL RADAR CHART
+// VISUAL 1 — HERO CONSTELLATION CANVAS
+// ═══════════════════════════════════════════════════════════════════════════════
+const HeroConstellation: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current; if (!canvas) return;
+    const ctx = canvas.getContext("2d"); if (!ctx) return;
+
+    let W = canvas.offsetWidth, H = canvas.offsetHeight;
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1;
+      W = canvas.offsetWidth;
+      H = canvas.offsetHeight;
+      canvas.width = Math.max(1, Math.floor(W * dpr));
+      canvas.height = Math.max(1, Math.floor(H * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resizeCanvas();
+
+    const NUM_NODES = 28;
+    type Node = { x: number; y: number; vx: number; vy: number; r: number; opacity: number };
+    const nodes: Node[] = Array.from({ length: NUM_NODES }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .35,
+      vy: (Math.random() - .5) * .35,
+      r: Math.random() * 1.8 + .6,
+      opacity: Math.random() * .5 + .25,
+    }));
+
+    let raf: number;
+    let t = 0;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.004;
+
+      // Draw connections
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130) {
+            const alpha = (1 - dist / 130) * 0.18;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = `rgba(201,169,110,${alpha})`;
+            ctx.lineWidth = .6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      nodes.forEach((n, i) => {
+        const pulse = Math.sin(t * 1.5 + i * .8) * .3 + .7;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201,169,110,${n.opacity * pulse})`;
+        ctx.fill();
+
+        // Gold halo on larger nodes
+        if (n.r > 1.8) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(201,169,110,${0.04 * pulse})`;
+          ctx.fill();
+        }
+
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+      });
+
+      // Rotating ring
+      const cx = W * .5, cy = H * .5;
+      const ringR = Math.min(W, H) * .38;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(201,169,110,0.06)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Orbiting dot
+      const ox = cx + Math.cos(t) * ringR;
+      const oy = cy + Math.sin(t) * ringR;
+      ctx.beginPath();
+      ctx.arc(ox, oy, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(201,169,110,0.7)";
+      ctx.fill();
+
+      // Inner ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR * .55, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(201,169,110,0.04)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Counter-orbit
+      const ox2 = cx + Math.cos(-t * 1.4) * ringR * .55;
+      const oy2 = cy + Math.sin(-t * 1.4) * ringR * .55;
+      ctx.beginPath();
+      ctx.arc(ox2, oy2, 2, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(232,213,168,0.5)";
+      ctx.fill();
+
+      // Crosshair at center
+      const ch = 14;
+      ctx.strokeStyle = "rgba(201,169,110,0.15)";
+      ctx.lineWidth = .8;
+      ctx.beginPath(); ctx.moveTo(cx - ch, cy); ctx.lineTo(cx + ch, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - ch); ctx.lineTo(cx, cy + ch); ctx.stroke();
+
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+
+    window.addEventListener("resize", resizeCanvas);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resizeCanvas); };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ width: "100%", height: "100%", display: "block", opacity: .9 }}
+    />
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUAL 2 — SKILL RADAR CHART
 // ═══════════════════════════════════════════════════════════════════════════════
 const SkillRadar: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -824,7 +988,7 @@ const SkillRadar: React.FC = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// VISUAL 2 — ANIMATED GRADIENT MESH (featured project)
+// VISUAL 3 — ANIMATED GRADIENT MESH (featured project)
 // ═══════════════════════════════════════════════════════════════════════════════
 const GradientMesh: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1020,7 +1184,7 @@ const PremiumTopLinks: React.FC = () => {
       gridTemplateColumns: "0.86fr 1.36fr",
       gap: "1rem",
       alignItems: "stretch",
-      marginBottom: 0,
+      marginBottom: "3.6rem",
     }}>
       <div style={{
         border: "1px solid rgba(201,169,110,0.12)",
@@ -1209,12 +1373,129 @@ const PremiumTopLinks: React.FC = () => {
 
 const Hero: React.FC = () => (
   <section id="top" className="hero-section" style={{
-    padding: "10rem 0 4rem",
-    position: "relative",
-    zIndex: 2,
+    minHeight: "100vh",
+    display: "flex", alignItems: "center",
+    padding: "10rem 0 6rem", position: "relative",
   }}>
     <div className="wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem", width: "100%" }}>
       <PremiumTopLinks />
+      <div className="hero-layout" style={{ display: "flex", alignItems: "center", gap: "4rem" }}>
+        {/* Text */}
+        <div style={{ flex: "1 1 auto" }}>
+          {/* Eyebrow */}
+          <div className="hero-eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: ".75rem", marginBottom: "2.5rem" }}>
+            <span style={{
+              width: 7, height: 7, borderRadius: "50%",
+              background: "#4ade80", boxShadow: "0 0 8px #4ade80",
+              flexShrink: 0,
+              animation: "pulse 2.2s ease-in-out infinite",
+            }}/>
+            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}`}</style>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: ".63rem", color: "var(--muted)",
+              letterSpacing: ".2em", textTransform: "uppercase",
+            }}>Default Project Landing</span>
+          </div>
+
+          {/* Name */}
+          <h1 className="hero-name" style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontWeight: 700,
+            fontSize: "7rem",
+            lineHeight: .88,
+            letterSpacing: "0",
+            color: "var(--cream)",
+            marginBottom: ".12em",
+          }}>
+            Yor<br/>
+            <span style={{
+              background: "linear-gradient(135deg, #c9a96e 0%, #e8d5a8 40%, #a87d45 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              fontStyle: "italic",
+            }}>
+              Project Hub.
+            </span>
+          </h1>
+
+          {/* Role */}
+          <p className="hero-role" style={{
+            fontFamily: "'Syne', sans-serif", fontWeight: 400,
+            fontSize: "1.35rem",
+            color: "var(--muted)", letterSpacing: ".04em",
+            marginBottom: "2.5rem",
+          }}>
+            {PORTFOLIO_INFO.role}
+          </p>
+
+          {/* Description */}
+          <p className="hero-desc" style={{
+            fontSize: ".92rem", color: "var(--muted)",
+            maxWidth: 420, lineHeight: 1.9,
+            marginBottom: "3.2rem",
+            borderLeft: "2px solid rgba(201,169,110,0.25)",
+            paddingLeft: "1.2rem",
+          }}>
+            {PORTFOLIO_INFO.heroDescription}
+          </p>
+
+          {/* Buttons */}
+          <div className="hero-btns" style={{ display: "flex", gap: ".9rem", flexWrap: "wrap" }}>
+            <a href="#projects" style={{
+              display: "inline-flex", alignItems: "center", gap: ".55rem",
+              fontFamily: "'Syne', sans-serif", fontWeight: 600,
+              fontSize: ".78rem", letterSpacing: ".08em",
+              textDecoration: "none",
+              padding: ".9rem 2.2rem", borderRadius: 6,
+              background: "linear-gradient(135deg, #8a6f3e, #c9a96e)",
+              color: "#080706", transition: "all .3s",
+              boxShadow: "0 4px 28px rgba(201,169,110,0.25)",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(201,169,110,0.4)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 28px rgba(201,169,110,0.25)"; }}>
+              <IconArrow /> Browse Projects
+            </a>
+            <a href={PORTFOLIO_INFO.portfolio} target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-flex", alignItems: "center", gap: ".55rem",
+              fontFamily: "'Syne', sans-serif", fontWeight: 500,
+              fontSize: ".78rem", letterSpacing: ".08em",
+              textDecoration: "none",
+              padding: ".9rem 2.2rem", borderRadius: 6,
+              border: "1px solid rgba(201,169,110,0.28)",
+              color: "var(--cream-dim)", transition: "all .3s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.55)"; e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.background = "rgba(201,169,110,0.06)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(201,169,110,0.28)"; e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.background = "transparent"; }}>
+              Open Portfolio
+            </a>
+          </div>
+        </div>
+
+        {/* VISUAL 1 — Constellation */}
+        <div className="hero-visual hero-visual-wrap" style={{
+          flexShrink: 0, width: "min(420px, 40vw)", height: "min(420px, 40vw)",
+          position: "relative",
+        }}>
+          <div style={{
+            position: "absolute", inset: 0,
+            border: "1px solid rgba(201,169,110,0.1)",
+            borderRadius: "50%",
+          }}/>
+          <HeroConstellation />
+        </div>
+      </div>
+    </div>
+
+    {/* Scroll hint */}
+    <div className="scroll-hint" style={{
+      position: "absolute", bottom: "2.8rem", left: "50%",
+      transform: "translateX(-50%)",
+      display: "flex", flexDirection: "column", alignItems: "center", gap: ".6rem",
+    }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: ".58rem", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--muted-d)" }}>Scroll</span>
+      <div className="scroll-line-anim" style={{ width: 1, height: 48, background: "linear-gradient(to bottom, var(--gold), transparent)" }}/>
     </div>
   </section>
 );
@@ -1383,7 +1664,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         </div>
       </div>
 
-      {/* VISUAL 2 — Gradient Mesh for featured */}
+      {/* VISUAL 3 — Gradient Mesh for featured */}
       {project.featured && (
         <div className="featured-preview" style={{
           width: 320, height: 200, flexShrink: 0,
@@ -1618,7 +1899,7 @@ const About: React.FC = () => (
           <div className="reveal" style={{ marginTop: "2.2rem" }}>
             {[
               <>This page is the front door for <strong style={{ color: "var(--cream)", fontWeight: 600 }}>Yor Ayrin</strong> projects. It keeps the default domain focused on navigation instead of making visitors guess which app, repo, or profile they need.</>,
-              <>The dedicated portfolio stays as a top shortcut instead of repeating as another project card. The project index below is focused on live builds and public GitHub repositories.</>,
+              <>The dedicated portfolio still exists as its own destination. It is linked as the first featured project, while the rest of this page maps the live builds and public GitHub repositories.</>,
               <>Every project card has a direct hyperlink: live deployments open the app, and repo links open the source. Repository-only experiments are still listed so the GitHub surface stays complete.</>,
             ].map((text, i) => (
               <p key={i} style={{ fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.92, fontWeight: 400, marginBottom: "1.2rem" }}>{text}</p>
@@ -1627,7 +1908,7 @@ const About: React.FC = () => (
 
           {/* Stats */}
           <div className="reveal" style={{ display: "flex", gap: "3rem", marginTop: "2.8rem", paddingTop: "2rem", borderTop: "1px solid rgba(201,169,110,0.1)" }}>
-            {[[CURATED_PROJECT_COUNT,"Project Links"],[PUBLIC_REPO_COUNT,"Total Links"],["01","Portfolio Shortcut"]].map(([num, label]) => (
+            {[[CURATED_PROJECT_COUNT,"Featured Links"],[PUBLIC_REPO_COUNT,"GitHub Repos"],["01","Portfolio Page"]].map(([num, label]) => (
               <div key={label}>
                 <div style={{
                   fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
@@ -1681,7 +1962,7 @@ const About: React.FC = () => (
           </div>
         </div>
 
-        {/* VISUAL 1 — Skill Radar */}
+        {/* VISUAL 2 — Skill Radar */}
         <div className="reveal" style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "3rem", gap: "1.5rem" }}>
           <div style={{
             padding: "2.5rem",
@@ -1890,14 +2171,12 @@ export default function App() {
       <Nav />
       <Hero />
       <Marquee />
-      <GoogleAd slot="4260778438" format="autorelaxed" debug />
       <Projects />
       <GoogleAd slot="7535566625" />
       <Divider />
       <About />
       <GoogleAd slot="7535566625" />
       <Divider />
-      <GoogleAd slot="1454426352" format="fluid" layout="in-article" />
       <Contact />
       <Footer />
     </>
