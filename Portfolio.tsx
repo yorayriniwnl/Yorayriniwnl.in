@@ -29,7 +29,30 @@ interface RepoSummary {
   language?: string;
   updated: string;
 }
-interface Vec2 { x: number; y: number }
+
+// ─── GOOGLE AD COMPONENT ────────────────────────────────────────────────────
+const GoogleAd: React.FC<{ slot: string; format?: string }> = ({ slot, format = "auto" }) => {
+  useEffect(() => {
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+      console.error("AdSense error:", err);
+    }
+  }, []);
+
+  return (
+    <div style={{ margin: "2rem 0", minHeight: "250px" }}>
+      <ins
+        className="adsbygoogle"
+        style={{ display: "block", textAlign: "center" }}
+        data-ad-client="ca-pub-9625375445358337"
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive="true"
+      />
+    </div>
+  );
+};
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const PORTFOLIO_INFO = {
@@ -41,11 +64,11 @@ const PORTFOLIO_INFO = {
   portfolio: "https://yorayriniwnl.vercel.app",
   github: "https://github.com/yorayriniwnl",
   linkedin: "https://linkedin.com/in/yorayriniwnl",
-  role: "Project Gateway for Yor Ayrin",
+  role: "Project gateway for Yor Ayrin",
   heroDescription:
-    "This is the default landing page for the Yorayriniwnl web presence: one launchpad for live apps, source repositories, experiments, and the separate portfolio page.",
+    "One practical launchpad for live apps, source repositories, experiments, and the separate portfolio page.",
   contactDescription:
-    "For the full recruiter story, open the portfolio. For source, jump straight into GitHub. For collaboration, email still works best.",
+    "Open the portfolio for the full story, browse GitHub for source, or send a note for collaboration.",
 };
 
 const PORTFOLIO_PROJECTS: Project[] = [
@@ -293,59 +316,42 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
     body {
       background: var(--bg);
       color: var(--cream);
       font-family: 'Syne', sans-serif;
+      line-height: 1.5;
       overflow-x: hidden;
-      cursor: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
     :root {
-      --bg:         #080706;
-      --bg2:        #0f0e0c;
-      --bg3:        #161410;
+      --bg:         #080a0b;
+      --bg2:        #101416;
+      --bg3:        #171a18;
       --gold:       #c9a96e;
       --gold-l:     #e8d5a8;
       --gold-d:     #8a6f3e;
-      --gold-dim:   #4a3c28;
+      --gold-dim:   #7d6844;
+      --accent:     #5bd6c7;
       --cream:      #f0ebe2;
       --cream-dim:  #b5ab9e;
-      --muted:      #5c5248;
-      --muted-d:    #2e2820;
+      --muted:      #aaa094;
+      --muted-d:    #73685c;
       --border:     rgba(201,169,110,0.14);
       --border-h:   rgba(201,169,110,0.38);
       --glass:      rgba(201,169,110,0.03);
       --glass-h:    rgba(201,169,110,0.06);
-      --r:          14px;
-      --r-sm:       8px;
+      --r:          8px;
+      --r-sm:       6px;
     }
-
-    /* ── CURSOR ── */
-    #cur-dot, #cur-ring {
-      pointer-events: none; position: fixed; z-index: 9999; border-radius: 50%;
-    }
-    #cur-dot {
-      width: 5px; height: 5px;
-      background: var(--gold);
-      transform: translate(-50%,-50%);
-      transition: transform .06s, background .2s;
-    }
-    #cur-ring {
-      width: 36px; height: 36px;
-      border: 1px solid rgba(201,169,110,0.4);
-      transform: translate(-50%,-50%);
-      transition: width .3s, height .3s, border-color .3s, background .3s;
-      z-index: 9998;
-    }
-    body.hovering #cur-ring {
-      width: 54px; height: 54px;
-      border-color: var(--gold);
-      background: rgba(201,169,110,0.05);
-    }
-    body.hovering #cur-dot {
-      background: var(--gold-l);
-      transform: translate(-50%,-50%) scale(1.8);
+    a, button { cursor: pointer; }
+    svg { flex-shrink: 0; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 6px;
     }
 
     /* ── AMBIENT MESH ── */
@@ -353,6 +359,7 @@ const GlobalStyles = () => (
       position: fixed; border-radius: 50%; filter: blur(120px);
       pointer-events: none; z-index: 0;
       animation: float 26s ease-in-out infinite alternate;
+      opacity: .72;
     }
     .mesh-1 {
       width: 700px; height: 700px;
@@ -422,6 +429,15 @@ const GlobalStyles = () => (
 
     /* ── TILT ── */
     .tilt-card { transform-style: preserve-3d; will-change: transform; }
+    .project-actions a,
+    .repo-actions a,
+    .hero-btns a {
+      min-height: 44px;
+    }
+    .contact-link-label {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
 
     /* ── SECTION LABEL ── */
     .section-label {
@@ -435,6 +451,11 @@ const GlobalStyles = () => (
       content: ''; width: 22px; height: 1px;
       background: var(--gold); display: block; flex-shrink: 0;
     }
+    .hero-name { font-size: 7rem !important; }
+    .hero-role { font-size: 1.35rem !important; }
+    #projects h2,
+    #about h2,
+    #contact h2 { font-size: 4.25rem !important; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
@@ -448,8 +469,61 @@ const GlobalStyles = () => (
       .hero-visual-wrap { display: none !important; }
     }
     @media (max-width: 640px) {
-      .wrap { padding: 0 1.5rem !important; }
-      .nav-links { display: none !important; }
+      html { scroll-padding-top: 74px; }
+      .wrap { padding: 0 1.25rem !important; }
+      .nav-links { display: flex !important; gap: 0 !important; }
+      .nav-links li:not(:last-child) { display: none !important; }
+      .hero-section { min-height: auto !important; padding: 7rem 0 4rem !important; }
+      .premium-gateway { gap: .8rem !important; margin-bottom: 2.3rem !important; }
+      .premium-gateway > div:first-child,
+      .premium-strip > a {
+        min-height: auto !important;
+        padding: 1.15rem !important;
+      }
+      .hero-btns { flex-direction: column !important; align-items: stretch !important; }
+      .hero-btns a { justify-content: center !important; width: 100% !important; }
+      .scroll-hint { display: none !important; }
+      .section-label { letter-spacing: .14em !important; }
+      .hero-name { font-size: 4rem !important; line-height: .94 !important; }
+      .hero-role { font-size: 1.05rem !important; }
+      #projects h2,
+      #about h2,
+      #contact h2 { font-size: 2.85rem !important; line-height: .96 !important; }
+      .premium-gateway h2 { font-size: 1.9rem !important; }
+      .featured-layout > .tilt-card,
+      .tilt-card { padding: 1.25rem !important; }
+      .featured-layout > .tilt-card {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1.4rem !important;
+      }
+      .featured-preview { display: none !important; }
+      .project-actions,
+      .repo-actions { flex-direction: column !important; }
+      .project-actions a,
+      .repo-actions a { width: 100% !important; }
+      footer .wrap { justify-content: flex-start !important; }
+    }
+    @media (max-width: 420px) {
+      .wrap { padding: 0 1rem !important; }
+      .hero-name { font-size: 3.3rem !important; }
+      #projects h2,
+      #about h2,
+      #contact h2 { font-size: 2.45rem !important; }
+      .premium-strip > a,
+      .premium-gateway > div:first-child,
+      .tilt-card { padding: 1rem !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .marquee-track { animation: none !important; }
     }
 
     /* ── SELECTION ── */
@@ -469,53 +543,6 @@ const GlobalStyles = () => (
   `}</style>
 );
 
-// ─── CURSOR ──────────────────────────────────────────────────────────────────
-const Cursor: React.FC = () => {
-  const dotRef  = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const mouse   = useRef<Vec2>({ x: 0, y: 0 });
-  const ring    = useRef<Vec2>({ x: 0, y: 0 });
-  const raf     = useRef<number>(0);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      if (dotRef.current) {
-        dotRef.current.style.left = e.clientX + "px";
-        dotRef.current.style.top  = e.clientY + "px";
-      }
-    };
-    const animate = () => {
-      ring.current.x += (mouse.current.x - ring.current.x) * 0.09;
-      ring.current.y += (mouse.current.y - ring.current.y) * 0.09;
-      if (ringRef.current) {
-        ringRef.current.style.left = ring.current.x + "px";
-        ringRef.current.style.top  = ring.current.y + "px";
-      }
-      raf.current = requestAnimationFrame(animate);
-    };
-    const onEnter = () => document.body.classList.add("hovering");
-    const onLeave = () => document.body.classList.remove("hovering");
-    document.addEventListener("mousemove", onMove);
-    raf.current = requestAnimationFrame(animate);
-    document.querySelectorAll("a, button, .tilt-card, .skill-pill").forEach(el => {
-      el.addEventListener("mouseenter", onEnter);
-      el.addEventListener("mouseleave", onLeave);
-    });
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(raf.current);
-    };
-  }, []);
-
-  return (
-    <>
-      <div id="cur-dot"  ref={dotRef}  />
-      <div id="cur-ring" ref={ringRef} />
-    </>
-  );
-};
-
 // ─── LOADER ──────────────────────────────────────────────────────────────────
 const Loader: React.FC<{ done: boolean }> = ({ done }) => {
   const [count, setCount] = useState(0);
@@ -532,12 +559,13 @@ const Loader: React.FC<{ done: boolean }> = ({ done }) => {
   }, [done]);
 
   return (
-    <div style={{
+    <div aria-hidden={done} style={{
       position: "fixed", inset: 0,
       background: "#050403",
       zIndex: 9000,
       display: "flex", alignItems: "center", justifyContent: "center",
       flexDirection: "column",
+      pointerEvents: done ? "none" : "auto",
       opacity: done ? 0 : 1,
       visibility: done ? "hidden" : "visible",
       transition: "opacity .9s cubic-bezier(.16,1,.3,1), visibility .9s ease",
@@ -545,8 +573,8 @@ const Loader: React.FC<{ done: boolean }> = ({ done }) => {
       <div style={{
         fontFamily: "'Cormorant Garamond', serif",
         fontWeight: 300,
-        fontSize: "clamp(2.5rem, 8vw, 5.5rem)",
-        letterSpacing: "-.02em",
+        fontSize: "4.5rem",
+        letterSpacing: "0",
         color: "#f0ebe2",
         lineHeight: 1,
         marginBottom: "3rem",
@@ -628,9 +656,15 @@ const HeroConstellation: React.FC = () => {
     const ctx = canvas.getContext("2d"); if (!ctx) return;
 
     let W = canvas.offsetWidth, H = canvas.offsetHeight;
-    canvas.width  = W * devicePixelRatio;
-    canvas.height = H * devicePixelRatio;
-    ctx.scale(devicePixelRatio, devicePixelRatio);
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1;
+      W = canvas.offsetWidth;
+      H = canvas.offsetHeight;
+      canvas.width = Math.max(1, Math.floor(W * dpr));
+      canvas.height = Math.max(1, Math.floor(H * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resizeCanvas();
 
     const NUM_NODES = 28;
     type Node = { x: number; y: number; vx: number; vy: number; r: number; opacity: number };
@@ -731,14 +765,8 @@ const HeroConstellation: React.FC = () => {
     };
     draw();
 
-    const handleResize = () => {
-      W = canvas.offsetWidth; H = canvas.offsetHeight;
-      canvas.width  = W * devicePixelRatio;
-      canvas.height = H * devicePixelRatio;
-      ctx.scale(devicePixelRatio, devicePixelRatio);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", handleResize); };
+    window.addEventListener("resize", resizeCanvas);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resizeCanvas); };
   }, []);
 
   return (
@@ -978,11 +1006,11 @@ const Nav: React.FC = () => {
         transition: "width .1s linear",
       }}/>
       <div className="wrap" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <a href="#" style={{
+        <a href="#top" aria-label="Back to top" style={{
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 600, fontSize: "1.55rem",
           color: "#f0ebe2", textDecoration: "none",
-          letterSpacing: "-.01em",
+          letterSpacing: "0",
           transition: "color .2s",
         }}>
           YR<span style={{ color: "var(--gold)" }}>.</span>
@@ -1035,19 +1063,19 @@ const Nav: React.FC = () => {
 const PremiumTopLinks: React.FC = () => {
   const premiumLinks = [
     {
-      eyebrow: "Watch our flagship product",
+      eyebrow: "Flagship product",
       title: "Yor Zenith",
-      desc: "The product signal first-time visitors should see first: solar planning, feasibility checks, subsidy guidance, and decision support in one focused build.",
+      desc: "A focused solar-planning build for feasibility checks, subsidy guidance, energy estimates, and decision support.",
       href: "https://zenith-xi-snowy.vercel.app/",
-      action: "Watch Yor Zenith",
+      action: "Open Yor Zenith",
       icon: <IconExternal />,
       featured: true,
       meta: "Live product",
     },
     {
-      eyebrow: "My portfolio link",
+      eyebrow: "Portfolio",
       title: "Portfolio / Yor Ayrin iwnl",
-      desc: "The human and recruiter-facing layer: background, work narrative, credibility, and direct contact.",
+      desc: "The recruiter-facing layer with background, work narrative, credibility, and direct contact.",
       href: PORTFOLIO_INFO.portfolio,
       action: "Open Portfolio",
       icon: <IconArrow />,
@@ -1088,17 +1116,17 @@ const PremiumTopLinks: React.FC = () => {
           </div>
           <h2 style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "clamp(1.9rem, 3vw, 2.65rem)",
+            fontSize: "2.35rem",
             lineHeight: .96,
             fontWeight: 700,
-            letterSpacing: "-.02em",
+            letterSpacing: "0",
             color: "var(--cream)",
             marginBottom: ".85rem",
           }}>
-            Start with the two signals that matter.
+            Start with the two strongest links.
           </h2>
           <p style={{ color: "var(--muted)", fontSize: ".84rem", lineHeight: 1.72 }}>
-            Zenith proves the product direction. The portfolio proves the person behind the build. Everything else stays available below.
+            Zenith shows the product direction. The portfolio gives the person and context. Everything else stays easy to scan below.
           </p>
         </div>
         <div style={{
@@ -1217,7 +1245,7 @@ const PremiumTopLinks: React.FC = () => {
                 fontSize: featured ? "2.35rem" : "2.05rem",
                 lineHeight: .96,
                 fontWeight: 700,
-                letterSpacing: "-.02em",
+                letterSpacing: "0",
                 color: "var(--cream)",
                 marginBottom: ".75rem",
               }}>
@@ -1250,7 +1278,7 @@ const PremiumTopLinks: React.FC = () => {
 };
 
 const Hero: React.FC = () => (
-  <section className="hero-section" style={{
+  <section id="top" className="hero-section" style={{
     minHeight: "100vh",
     display: "flex", alignItems: "center",
     padding: "10rem 0 6rem", position: "relative",
@@ -1280,9 +1308,9 @@ const Hero: React.FC = () => (
           <h1 className="hero-name" style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontWeight: 700,
-            fontSize: "clamp(4.5rem, 10vw, 9.5rem)",
+            fontSize: "7rem",
             lineHeight: .88,
-            letterSpacing: "-.03em",
+            letterSpacing: "0",
             color: "var(--cream)",
             marginBottom: ".12em",
           }}>
@@ -1301,7 +1329,7 @@ const Hero: React.FC = () => (
           {/* Role */}
           <p className="hero-role" style={{
             fontFamily: "'Syne', sans-serif", fontWeight: 400,
-            fontSize: "clamp(1.1rem, 2.5vw, 1.75rem)",
+            fontSize: "1.35rem",
             color: "var(--muted)", letterSpacing: ".04em",
             marginBottom: "2.5rem",
           }}>
@@ -1463,7 +1491,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         position: "absolute", top: "-.6rem", right: "1.5rem",
         fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
         fontSize: "7rem", lineHeight: 1,
-        color: "rgba(201,169,110,0.04)", letterSpacing: "-.04em",
+        color: "rgba(201,169,110,0.04)", letterSpacing: "0",
         pointerEvents: "none", userSelect: "none",
       }}>
         {project.num}
@@ -1481,7 +1509,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         <h3 style={{
           fontFamily: "'Cormorant Garamond', serif", fontWeight: 600,
           fontSize: project.featured ? "2.4rem" : "1.9rem",
-          letterSpacing: "-.02em", color: "var(--cream)", lineHeight: 1.05,
+          letterSpacing: "0", color: "var(--cream)", lineHeight: 1.05,
         }}>
           <a href={projectHref} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>
             {project.title}
@@ -1501,7 +1529,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             }}>{tag}</span>
           ))}
         </div>
-        <div style={{ display: "flex", gap: ".55rem", marginTop: ".2rem" }}>
+        <div className="project-actions" style={{ display: "flex", gap: ".55rem", marginTop: ".2rem" }}>
           {projectActions.map(({ href, label, icon, primary }) => (
             <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: ".4rem",
@@ -1546,7 +1574,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
       {project.featured && (
         <div className="featured-preview" style={{
           width: 320, height: 200, flexShrink: 0,
-          borderRadius: 10,
+          borderRadius: 8,
           border: "1px solid rgba(201,169,110,0.14)",
           overflow: "hidden", position: "relative",
         }}>
@@ -1578,8 +1606,8 @@ const Projects: React.FC = () => (
         <div className="section-label">Project Gateway</div>
         <h2 style={{
           fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
-          fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)",
-          letterSpacing: "-.03em", lineHeight: .9, color: "var(--cream)",
+          fontSize: "4.25rem",
+          letterSpacing: "0", lineHeight: .9, color: "var(--cream)",
         }}>
           All Projects &amp;<br/>
           <span style={{
@@ -1645,7 +1673,7 @@ const Projects: React.FC = () => (
                     fontWeight: 600,
                     fontSize: "1.8rem",
                     lineHeight: 1.02,
-                    letterSpacing: "-.02em",
+                    letterSpacing: "0",
                     color: "var(--cream)",
                   }}
                 >
@@ -1694,7 +1722,7 @@ const Projects: React.FC = () => (
               ) : null}
             </div>
 
-            <div style={{ display: "flex", gap: ".55rem", marginTop: ".25rem" }}>
+            <div className="repo-actions" style={{ display: "flex", gap: ".55rem", marginTop: ".25rem" }}>
               {repo.liveUrl ? (
                 <a
                   href={repo.liveUrl}
@@ -1762,8 +1790,8 @@ const About: React.FC = () => (
             <div className="section-label">Purpose</div>
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
-              fontSize: "clamp(2.4rem, 5vw, 4.2rem)",
-              letterSpacing: "-.03em", lineHeight: .92, color: "var(--cream)",
+              fontSize: "3.7rem",
+              letterSpacing: "0", lineHeight: .92, color: "var(--cream)",
             }}>
               One Landing Page<br/>For Every{" "}
               <span style={{
@@ -1790,7 +1818,7 @@ const About: React.FC = () => (
               <div key={label}>
                 <div style={{
                   fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
-                  fontSize: "3.2rem", letterSpacing: "-.04em", lineHeight: 1,
+                  fontSize: "3.2rem", letterSpacing: "0", lineHeight: 1,
                   background: "linear-gradient(135deg, #c9a96e, #e8d5a8)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                 }}>{num}</div>
@@ -1890,8 +1918,8 @@ const Contact: React.FC = () => {
             <div className="section-label">Contact</div>
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
-              fontSize: "clamp(2.6rem, 5.5vw, 4.8rem)",
-              letterSpacing: "-.03em", lineHeight: .9, color: "var(--cream)",
+              fontSize: "4.25rem",
+              letterSpacing: "0", lineHeight: .9, color: "var(--cream)",
               marginBottom: "1.6rem",
             }}>
               Let's build<br/>
@@ -1906,13 +1934,13 @@ const Contact: React.FC = () => {
             </p>
             <a href={`mailto:${PORTFOLIO_INFO.email}`} style={{
               fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: "italic",
-              fontSize: "clamp(1.4rem, 3vw, 2.1rem)",
+              fontSize: "1.85rem",
               color: "var(--cream-dim)", textDecoration: "none",
               display: "block", paddingBottom: ".5rem",
               borderBottom: "1px solid rgba(201,169,110,0.18)",
               transition: "color .2s, border-color .2s",
               marginBottom: "2.2rem",
-              letterSpacing: "-.01em",
+              letterSpacing: "0",
             }}
             onMouseEnter={e => { e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.5)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.18)"; }}>
@@ -1920,13 +1948,13 @@ const Contact: React.FC = () => {
             </a>
             <a href="tel:+918918940799" style={{
               fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontStyle: "italic",
-              fontSize: "clamp(1.25rem, 2.6vw, 1.9rem)",
+              fontSize: "1.65rem",
               color: "var(--cream-dim)", textDecoration: "none",
               display: "block", paddingBottom: ".5rem",
               borderBottom: "1px solid rgba(201,169,110,0.18)",
               transition: "color .2s, border-color .2s",
               marginBottom: "2.2rem",
-              letterSpacing: "-.01em",
+              letterSpacing: "0",
             }}
             onMouseEnter={e => { e.currentTarget.style.color = "var(--gold-l)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.5)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--cream-dim)"; e.currentTarget.style.borderColor = "rgba(201,169,110,0.18)"; }}>
@@ -1948,36 +1976,39 @@ const Contact: React.FC = () => {
           </div>
 
           <div className="reveal" style={{ display: "flex", flexDirection: "column", gap: ".6rem" }}>
-            {contactLinks.map(({ label, href, icon }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" style={{
-                display: "flex", alignItems: "center", gap: "1rem",
-                fontFamily: "'JetBrains Mono', monospace", fontSize: ".73rem",
-                letterSpacing: ".06em", color: "var(--muted)",
-                textDecoration: "none", padding: "1rem 1.3rem",
-                border: "1px solid rgba(255,255,255,0.05)",
-                borderRadius: 10, background: "var(--glass)",
-                backdropFilter: "blur(8px)",
-                transition: "all .25s",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "rgba(201,169,110,0.28)";
-                e.currentTarget.style.color = "var(--gold-l)";
-                e.currentTarget.style.background = "rgba(201,169,110,0.05)";
-                e.currentTarget.style.transform = "translateX(5px)";
-                e.currentTarget.style.boxShadow = "0 4px 24px rgba(201,169,110,0.07)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
-                e.currentTarget.style.color = "var(--muted)";
-                e.currentTarget.style.background = "var(--glass)";
-                e.currentTarget.style.transform = "";
-                e.currentTarget.style.boxShadow = "none";
-              }}>
-                <span style={{ color: "var(--gold)", flexShrink: 0, display: "flex" }}>{icon}</span>
-                <span style={{ flex: 1 }}>{label}</span>
-                <span style={{ opacity: .35, fontSize: ".9rem" }}>→</span>
-              </a>
-            ))}
+            {contactLinks.map(({ label, href, icon }) => {
+              const external = href.startsWith("http");
+              return (
+                <a key={label} href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} className="contact-link" style={{
+                  display: "flex", alignItems: "center", gap: "1rem",
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: ".73rem",
+                  letterSpacing: ".06em", color: "var(--muted)",
+                  textDecoration: "none", padding: "1rem 1.3rem",
+                  border: "1px solid rgba(255,255,255,0.05)",
+                  borderRadius: 8, background: "var(--glass)",
+                  backdropFilter: "blur(8px)",
+                  transition: "all .25s",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = "rgba(201,169,110,0.28)";
+                  e.currentTarget.style.color = "var(--gold-l)";
+                  e.currentTarget.style.background = "rgba(201,169,110,0.05)";
+                  e.currentTarget.style.transform = "translateX(5px)";
+                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(201,169,110,0.07)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)";
+                  e.currentTarget.style.color = "var(--muted)";
+                  e.currentTarget.style.background = "var(--glass)";
+                  e.currentTarget.style.transform = "";
+                  e.currentTarget.style.boxShadow = "none";
+                }}>
+                  <span style={{ color: "var(--gold)", flexShrink: 0, display: "flex" }}>{icon}</span>
+                  <span className="contact-link-label" style={{ flex: 1 }}>{label}</span>
+                  <span aria-hidden="true" style={{ opacity: .35, fontSize: ".9rem" }}>→</span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -2027,7 +2058,7 @@ export default function App() {
   useScrollReveal();
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 980);
+    const t = setTimeout(() => setLoaded(true), 260);
     return () => clearTimeout(t);
   }, []);
 
@@ -2035,7 +2066,6 @@ export default function App() {
     <>
       <GlobalStyles />
       <Loader done={loaded} />
-      <Cursor />
 
       {/* Ambient */}
       <div className="mesh-orb mesh-1"/>
@@ -2047,8 +2077,10 @@ export default function App() {
       <Hero />
       <Marquee />
       <Projects />
+      <GoogleAd slot="7535566625" />
       <Divider />
       <About />
+      <GoogleAd slot="7535566625" />
       <Divider />
       <Contact />
       <Footer />
