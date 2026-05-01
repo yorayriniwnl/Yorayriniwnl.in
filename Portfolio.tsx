@@ -92,16 +92,6 @@ const PORTFOLIO_INFO = {
 const PORTFOLIO_PROJECTS: Project[] = [
   {
     num: "01",
-    title: "Portfolio / Yor Ayrin iwnl",
-    desc: "The dedicated portfolio and recruiter-facing experience for Ayush Roy. It stays separate from this default project hub so visitors can choose between browsing projects and reading the full personal profile.",
-    tags: ["Next.js", "TypeScript", "React", "Portfolio", "Vercel"],
-    liveUrl: "https://yorayriniwnl.vercel.app",
-    liveLabel: "Open Portfolio",
-    ghUrl: "https://github.com/yorayriniwnl/Yor-Ayrin-iwnl",
-    featured: true,
-  },
-  {
-    num: "02",
     title: "Yor Zenith",
     desc: "Solar energy planning and decision-support platform for feasibility checks, subsidy guidance, energy estimates, and planning workflows.",
     tags: ["TypeScript", "React", "Solar Planning", "Decision Support"],
@@ -110,7 +100,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Zenith",
   },
   {
-    num: "03",
+    num: "02",
     title: "Yor Smriti",
     desc: "Emotion-driven interactive web experience focused on memories, timelines, and narrative storytelling.",
     tags: ["TypeScript", "Interactive UI", "Storytelling", "Vercel"],
@@ -119,7 +109,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Smriti",
   },
   {
-    num: "04",
+    num: "03",
     title: "Yor Status",
     desc: "Public status and accountability interface with a product-led civic-tech direction and student-community framing.",
     tags: ["JavaScript", "React", "Status Tracking", "Vercel"],
@@ -128,7 +118,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Status",
   },
   {
-    num: "05",
+    num: "04",
     title: "Yor Feelings",
     desc: "Expressive frontend project translating human emotions into dynamic UI interactions and visual states.",
     tags: ["TypeScript", "Next.js", "React", "Realtime UX"],
@@ -137,7 +127,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Feelings",
   },
   {
-    num: "06",
+    num: "05",
     title: "Yor AI vs Real Image",
     desc: "Computer-vision project that classifies AI-generated versus real images and presents the model workflow as a usable web experience.",
     tags: ["Python", "Computer Vision", "ML", "Vercel"],
@@ -146,7 +136,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
   },
   {
-    num: "07",
+    num: "06",
     title: "Yor Mentor Mentee System",
     desc: "Thoughtful platform for managing mentor-mentee relationships, matching workflows, and growth-oriented coordination.",
     tags: ["Python", "Flask", "Matching", "Vercel"],
@@ -155,7 +145,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/mentor-mentee-system",
   },
   {
-    num: "08",
+    num: "07",
     title: "Taskflow",
     desc: "Task and workflow interface for organizing work with a small, focused JavaScript app surface.",
     tags: ["JavaScript", "Productivity", "Task Management", "Vercel"],
@@ -164,7 +154,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Taskflow",
   },
   {
-    num: "09",
+    num: "08",
     title: "CBSE Result Analyzer",
     desc: "Result-analysis utility for turning CBSE result data into clearer summaries and performance signals.",
     tags: ["Python", "Data Analysis", "Education", "Vercel"],
@@ -173,7 +163,7 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/CBSE-Result-Analyzer",
   },
   {
-    num: "10",
+    num: "09",
     title: "Eat-a-lot",
     desc: "A smaller HTML-based web project with a live Vercel deployment outside the main Yor product line.",
     tags: ["HTML", "CSS", "Web", "Vercel"],
@@ -182,14 +172,14 @@ const PORTFOLIO_PROJECTS: Project[] = [
     ghUrl: "https://github.com/yorayriniwnl/Eat-a-lot",
   },
   {
-    num: "11",
+    num: "10",
     title: "Yor Helios",
     desc: "Python-based system exploring automation, computational logic, and intelligent backend processing.",
     tags: ["Python", "Backend", "Automation", "Systems"],
     ghUrl: "https://github.com/yorayriniwnl/Yor-Helios",
   },
   {
-    num: "12",
+    num: "11",
     title: "Yor Solar Nexus",
     desc: "Earlier cloud-based solar planning and optimization build for feasibility, energy needs, cost savings, subsidy guidance, and rooftop recommendations.",
     tags: ["HTML", "Solar Planning", "Optimization", "Research"],
@@ -513,14 +503,12 @@ const GlobalStyles = () => (
       .nav-links { display: flex !important; gap: 0 !important; }
       .nav-links li:not(:last-child) { display: none !important; }
       .hero-section { min-height: auto !important; padding: 7rem 0 4rem !important; }
-      .premium-gateway { gap: .8rem !important; margin-bottom: 2.3rem !important; }
+      .premium-gateway { gap: .8rem !important; margin-bottom: 0 !important; }
       .premium-gateway > div:first-child,
       .premium-strip > a {
         min-height: auto !important;
         padding: 1.15rem !important;
       }
-      .hero-btns { flex-direction: column !important; align-items: stretch !important; }
-      .hero-btns a { justify-content: center !important; width: 100% !important; }
       .scroll-hint { display: none !important; }
       .section-label { letter-spacing: .14em !important; }
       .hero-name { font-size: 4rem !important; line-height: .94 !important; }
@@ -1155,7 +1143,7 @@ const PremiumTopLinks: React.FC = () => {
       gridTemplateColumns: "0.86fr 1.36fr",
       gap: "1rem",
       alignItems: "stretch",
-      marginBottom: "3.6rem",
+      marginBottom: 0,
     }}>
       <div style={{
         border: "1px solid rgba(201,169,110,0.12)",
