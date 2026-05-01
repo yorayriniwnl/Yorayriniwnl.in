@@ -38,12 +38,38 @@ interface RepoSummary {
 
 // ─── GOOGLE AD COMPONENT ────────────────────────────────────────────────────
 const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string }> = ({ slot, format = "auto", layout }) => {
+  const insRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error("AdSense error:", err);
-    }
+    let attempts = 0;
+    const maxAttempts = 12; // ~6 seconds max
+    const interval = 500;
+
+    const tryPush = () => {
+      attempts += 1;
+      try {
+        if (window && (window as any).adsbygoogle && insRef.current) {
+          // Only push once per element
+          try {
+            (window as any).adsbygoogle.push({});
+          } catch (err) {
+            // ignore extension/message-port style errors
+            // keep silent to avoid noisy console output
+          }
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      if (attempts < maxAttempts) {
+        setTimeout(tryPush, interval);
+      }
+    };
+
+    // Start trying after a short delay to let the script load
+    const startTimer = setTimeout(tryPush, 250);
+    return () => clearTimeout(startTimer);
   }, []);
 
   return (
@@ -59,6 +85,7 @@ const GoogleAd: React.FC<{ slot: string; format?: string; layout?: string }> = (
         background: "rgba(255,255,255,0.012)",
       }}>
         <ins
+          ref={(el) => { insRef.current = el; }}
           className="adsbygoogle"
           style={{ display: "block", textAlign: "center", width: "100%" }}
           data-ad-client="ca-pub-9625375445358337"
@@ -82,9 +109,6 @@ const PORTFOLIO_INFO = {
   portfolio: "https://yorayriniwnl.vercel.app",
   github: "https://github.com/yorayriniwnl",
   linkedin: "https://linkedin.com/in/yorayriniwnl",
-  role: "Project gateway for Yor Ayrin",
-  heroDescription:
-    "One practical launchpad for live apps, source repositories, experiments, and the separate portfolio page.",
   contactDescription:
     "Open the portfolio for the full story, browse GitHub for source, or send a note for collaboration.",
 };
@@ -448,8 +472,7 @@ const GlobalStyles = () => (
       min-width: 0;
     }
     .project-actions a,
-    .repo-actions a,
-    .hero-btns a {
+    .repo-actions a {
       min-height: 44px;
     }
     .contact-link-label {
@@ -682,139 +705,7 @@ const useHashScroll = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// VISUAL 1 — HERO CONSTELLATION CANVAS
-// ═══════════════════════════════════════════════════════════════════════════════
-const HeroConstellation: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-
-    let W = canvas.offsetWidth, H = canvas.offsetHeight;
-    const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
-      W = canvas.offsetWidth;
-      H = canvas.offsetHeight;
-      canvas.width = Math.max(1, Math.floor(W * dpr));
-      canvas.height = Math.max(1, Math.floor(H * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resizeCanvas();
-
-    const NUM_NODES = 28;
-    type Node = { x: number; y: number; vx: number; vy: number; r: number; opacity: number };
-    const nodes: Node[] = Array.from({ length: NUM_NODES }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - .5) * .35,
-      vy: (Math.random() - .5) * .35,
-      r: Math.random() * 1.8 + .6,
-      opacity: Math.random() * .5 + .25,
-    }));
-
-    let raf: number;
-    let t = 0;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      t += 0.004;
-
-      // Draw connections
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            const alpha = (1 - dist / 130) * 0.18;
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(201,169,110,${alpha})`;
-            ctx.lineWidth = .6;
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw nodes
-      nodes.forEach((n, i) => {
-        const pulse = Math.sin(t * 1.5 + i * .8) * .3 + .7;
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(201,169,110,${n.opacity * pulse})`;
-        ctx.fill();
-
-        // Gold halo on larger nodes
-        if (n.r > 1.8) {
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(201,169,110,${0.04 * pulse})`;
-          ctx.fill();
-        }
-
-        n.x += n.vx; n.y += n.vy;
-        if (n.x < 0 || n.x > W) n.vx *= -1;
-        if (n.y < 0 || n.y > H) n.vy *= -1;
-      });
-
-      // Rotating ring
-      const cx = W * .5, cy = H * .5;
-      const ringR = Math.min(W, H) * .38;
-      ctx.beginPath();
-      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201,169,110,0.06)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Orbiting dot
-      const ox = cx + Math.cos(t) * ringR;
-      const oy = cy + Math.sin(t) * ringR;
-      ctx.beginPath();
-      ctx.arc(ox, oy, 3, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(201,169,110,0.7)";
-      ctx.fill();
-
-      // Inner ring
-      ctx.beginPath();
-      ctx.arc(cx, cy, ringR * .55, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(201,169,110,0.04)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Counter-orbit
-      const ox2 = cx + Math.cos(-t * 1.4) * ringR * .55;
-      const oy2 = cy + Math.sin(-t * 1.4) * ringR * .55;
-      ctx.beginPath();
-      ctx.arc(ox2, oy2, 2, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(232,213,168,0.5)";
-      ctx.fill();
-
-      // Crosshair at center
-      const ch = 14;
-      ctx.strokeStyle = "rgba(201,169,110,0.15)";
-      ctx.lineWidth = .8;
-      ctx.beginPath(); ctx.moveTo(cx - ch, cy); ctx.lineTo(cx + ch, cy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy - ch); ctx.lineTo(cx, cy + ch); ctx.stroke();
-
-      raf = requestAnimationFrame(draw);
-    };
-    draw();
-
-    window.addEventListener("resize", resizeCanvas);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resizeCanvas); };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: "100%", height: "100%", display: "block", opacity: .9 }}
-    />
-  );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// VISUAL 2 — SKILL RADAR CHART
+// VISUAL 1 — SKILL RADAR CHART
 // ═══════════════════════════════════════════════════════════════════════════════
 const SkillRadar: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -930,7 +821,7 @@ const SkillRadar: React.FC = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// VISUAL 3 — ANIMATED GRADIENT MESH (featured project)
+// VISUAL 2 — ANIMATED GRADIENT MESH (featured project)
 // ═══════════════════════════════════════════════════════════════════════════════
 const GradientMesh: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1489,7 +1380,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         </div>
       </div>
 
-      {/* VISUAL 3 — Gradient Mesh for featured */}
+      {/* VISUAL 2 — Gradient Mesh for featured */}
       {project.featured && (
         <div className="featured-preview" style={{
           width: 320, height: 200, flexShrink: 0,
@@ -1724,7 +1615,7 @@ const About: React.FC = () => (
           <div className="reveal" style={{ marginTop: "2.2rem" }}>
             {[
               <>This page is the front door for <strong style={{ color: "var(--cream)", fontWeight: 600 }}>Yor Ayrin</strong> projects. It keeps the default domain focused on navigation instead of making visitors guess which app, repo, or profile they need.</>,
-              <>The dedicated portfolio still exists as its own destination. It is linked as the first featured project, while the rest of this page maps the live builds and public GitHub repositories.</>,
+              <>The dedicated portfolio stays as a top shortcut instead of repeating as another project card. The project index below is focused on live builds and public GitHub repositories.</>,
               <>Every project card has a direct hyperlink: live deployments open the app, and repo links open the source. Repository-only experiments are still listed so the GitHub surface stays complete.</>,
             ].map((text, i) => (
               <p key={i} style={{ fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.92, fontWeight: 400, marginBottom: "1.2rem" }}>{text}</p>
@@ -1733,7 +1624,7 @@ const About: React.FC = () => (
 
           {/* Stats */}
           <div className="reveal" style={{ display: "flex", gap: "3rem", marginTop: "2.8rem", paddingTop: "2rem", borderTop: "1px solid rgba(201,169,110,0.1)" }}>
-            {[[CURATED_PROJECT_COUNT,"Featured Links"],[PUBLIC_REPO_COUNT,"GitHub Repos"],["01","Portfolio Page"]].map(([num, label]) => (
+            {[[CURATED_PROJECT_COUNT,"Project Links"],[PUBLIC_REPO_COUNT,"Total Links"],["01","Portfolio Shortcut"]].map(([num, label]) => (
               <div key={label}>
                 <div style={{
                   fontFamily: "'Cormorant Garamond', serif", fontWeight: 700,
@@ -1787,7 +1678,7 @@ const About: React.FC = () => (
           </div>
         </div>
 
-        {/* VISUAL 2 — Skill Radar */}
+        {/* VISUAL 1 — Skill Radar */}
         <div className="reveal" style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "3rem", gap: "1.5rem" }}>
           <div style={{
             padding: "2.5rem",
