@@ -359,6 +359,11 @@ function App() {
             <div><p className="eyebrow"><span>03</span> Playable systems</p><h2 id="arcade-title">The <em>arcade</em><br />is open.</h2></div>
             <p className="section-intro">Small games are honest laboratories. They reveal how motion feels, how feedback lands, and whether the details survive contact with a real person.</p>
           </div>
+          <div className="arcade-status-bar" aria-label="Arcade status">
+            <span><i /> ALL SYSTEMS ONLINE</span>
+            <span>08 WORLDS / 01 PLAYER</span>
+            <span>CHOOSE YOUR STATE</span>
+          </div>
           <div className="arcade-grid">
             {games.map((game) => (
               <button className={`game-card game-${game.color}`} key={game.id} onClick={() => setActiveGame(game.id)} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
@@ -410,7 +415,19 @@ function App() {
 
       {CurrentGame && currentGame && (
         <div className="game-modal" role="dialog" aria-modal="true" aria-label={`${currentGame.name} game`}>
-          <div className="game-modal-bar"><span>{currentGame.index} / {currentGame.name}</span><button autoFocus onClick={() => setActiveGame(null)} aria-label="Close game">Close ×</button></div>
+          <div className="game-modal-bar">
+            <div className="game-modal-bar__identity">
+              <span className="game-modal-bar__index">{currentGame.index}</span>
+              <div>
+                <strong>{currentGame.name}</strong>
+                <small>{currentGame.category}</small>
+              </div>
+            </div>
+            <div className="game-modal-bar__tools">
+              <span className="game-modal-bar__input">{currentGame.key}</span>
+              <button autoFocus onClick={() => setActiveGame(null)} aria-label={`Close ${currentGame.name}`}>Exit session <span aria-hidden="true">×</span></button>
+            </div>
+          </div>
           <div className="game-stage"><Suspense fallback={<div className="game-loading"><span>Loading field…</span></div>}><CurrentGame /></Suspense></div>
         </div>
       )}
