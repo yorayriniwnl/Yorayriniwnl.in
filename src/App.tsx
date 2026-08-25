@@ -187,6 +187,13 @@ const archive = [
   },
 ];
 
+const playerStats = [
+  { value: "13,633", label: "CS hours", note: "the long game" },
+  { value: "125", label: "Steam level", note: "earned, not assigned" },
+  { value: "53", label: "games", note: "worlds entered" },
+  { value: "99", label: "screenshots", note: "proof of play" },
+];
+
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
@@ -287,18 +294,19 @@ function App() {
       <main id="top">
         <section className="hub-hero" aria-labelledby="hero-title">
           <div className="hero-copy">
-            <p className="eyebrow"><span>01</span> An evolving personal internet</p>
+            <p className="eyebrow"><span>01</span> ♥ Yor Ayrin - iwnl ♥ / player profile</p>
             <h1 id="hero-title">
               The world
               <em>around</em>
               the work.
             </h1>
             <p className="hero-lede">
-              A living index of experiments, playable things, quiet notes, and the projects that happen when curiosity gets a screen.
+              A living index of experiments, playable things, quiet notes, and the systems built between one match, one idea, and the next.
             </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#world">Enter the field <Arrow /></a>
               <a className="button button-quiet" href="https://yorayriniwnl.vercel.app">Meet the maker <Arrow /></a>
+              <a className="button button-steam" href="https://steamcommunity.com/id/yorayriniwnl/">Open player profile <Arrow /></a>
             </div>
             <div className="hero-aside"><span>LAT 28.61° N</span><span>LONG 77.20° E</span><span>STATUS: EXPLORING</span></div>
           </div>
@@ -306,7 +314,7 @@ function App() {
             <div className="orbit orbit-a"><i /></div>
             <div className="orbit orbit-b"><i /></div>
             <div className="orbit orbit-c"><i /></div>
-            <div className="hero-planet"><GrainMark /><b>Y</b></div>
+            <div className="hero-planet"><img src="/ayush-avatar.png" alt="" /><GrainMark /><b>Y</b></div>
             <span className="orbit-label label-one">curiosity / 24</span>
             <span className="orbit-label label-two">build → play</span>
             <span className="orbit-label label-three">∞</span>
@@ -320,6 +328,11 @@ function App() {
           <span>OPEN EXPERIMENTS</span><i />
           <span>PERSONAL SYSTEMS</span>
         </div>
+
+        <section className="profile-stat-rack" aria-label="Player profile telemetry">
+          <div className="profile-stat-rack__identity"><span>PLAYER PROFILE / 01</span><strong>YOR AYRIN</strong><small>GRIND. DIE. REPEAT.</small></div>
+          {playerStats.map((stat) => <div className="profile-stat" key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span><small>{stat.note}</small></div>)}
+        </section>
 
         <section className="world-section section-shell" id="world" aria-labelledby="world-title">
           <div className="section-heading">
