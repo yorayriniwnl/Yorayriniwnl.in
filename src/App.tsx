@@ -5,6 +5,7 @@ import {
   useState,
   type ComponentType,
   type LazyExoticComponent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import "./styles.css";
 
@@ -202,9 +203,27 @@ function GrainMark() {
   );
 }
 
+function tiltCard(event: ReactPointerEvent<HTMLElement>) {
+  const card = event.currentTarget;
+  const bounds = card.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+  const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+  card.style.setProperty("--tilt-x", `${y * -4}deg`);
+  card.style.setProperty("--tilt-y", `${x * 4}deg`);
+  card.style.setProperty("--glow-x", `${(x + 0.5) * 100}%`);
+  card.style.setProperty("--glow-y", `${(y + 0.5) * 100}%`);
+}
+
+function resetTilt(event: ReactPointerEvent<HTMLElement>) {
+  const card = event.currentTarget;
+  card.style.setProperty("--tilt-x", "0deg");
+  card.style.setProperty("--tilt-y", "0deg");
+}
+
 function App() {
   const [activeGame, setActiveGame] = useState<GameId | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("world");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 28);
@@ -212,6 +231,25 @@ function App() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const sections = ["world", "arcade", "archive"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveSection(visible.target.id);
+    }, { rootMargin: "-22% 0px -62% 0px", threshold: [0.15, 0.4, 0.7] });
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!activeGame) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setActiveGame(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeGame]);
 
   useEffect(() => {
     document.body.style.overflow = activeGame ? "hidden" : "";
@@ -236,10 +274,11 @@ function App() {
           <small>FIELD 02</small>
         </a>
         <nav className="nav-links" aria-label="Primary navigation">
-          <a href="#world">World</a>
-          <a href="#arcade">Arcade</a>
-          <a href="#archive">Archive</a>
+          <a className={activeSection === "world" ? "is-active" : ""} href="#world">World</a>
+          <a className={activeSection === "arcade" ? "is-active" : ""} href="#arcade">Arcade</a>
+          <a className={activeSection === "archive" ? "is-active" : ""} href="#archive">Archive</a>
         </nav>
+        <span className="nav-field-readout" aria-live="polite">{activeSection} / 05</span>
         <a className="nav-portfolio" href="https://yorayriniwnl.vercel.app">
           Portfolio <Arrow />
         </a>
@@ -289,7 +328,7 @@ function App() {
           </div>
           <div className="project-grid">
             {projects.map((project) => (
-              <article className={`world-card card-${project.tone}`} key={project.title}>
+              <article className={`world-card card-${project.tone}`} key={project.title} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
                 <div className="card-topline"><span>{project.number} / {project.type}</span><span className="card-signal">● live</span></div>
                 <div className="card-glow" aria-hidden="true" />
                 <h3>{project.title}</h3>
@@ -308,7 +347,7 @@ function App() {
           </div>
           <div className="arcade-grid">
             {games.map((game) => (
-              <button className={`game-card game-${game.color}`} key={game.id} onClick={() => setActiveGame(game.id)}>
+              <button className={`game-card game-${game.color}`} key={game.id} onClick={() => setActiveGame(game.id)} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
                 <span className="game-index">{game.index}</span>
                 <span className="game-icon" aria-hidden="true">{game.id === "chess" ? "♞" : game.id === "snake" ? "≈" : game.id === "road-racing" ? "⌁" : game.id === "strike-arena" ? "+" : "✦"}</span>
                 <span className="game-name">{game.name}</span>
@@ -357,7 +396,7 @@ function App() {
 
       {CurrentGame && currentGame && (
         <div className="game-modal" role="dialog" aria-modal="true" aria-label={`${currentGame.name} game`}>
-          <div className="game-modal-bar"><span>{currentGame.index} / {currentGame.name}</span><button onClick={() => setActiveGame(null)} aria-label="Close game">Close ×</button></div>
+          <div className="game-modal-bar"><span>{currentGame.index} / {currentGame.name}</span><button autoFocus onClick={() => setActiveGame(null)} aria-label="Close game">Close ×</button></div>
           <div className="game-stage"><Suspense fallback={<div className="game-loading"><span>Loading field…</span></div>}><CurrentGame /></Suspense></div>
         </div>
       )}

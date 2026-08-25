@@ -153,3 +153,19 @@ main, .site-footer { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+.nav-links a { position: relative; padding: .35rem 0; }
+.nav-links a::after { content: ''; position: absolute; right: 0; bottom: 0; left: 0; height: 1px; background: var(--acid); transform: scaleX(0); transform-origin: right; transition: transform .25s ease; }
+.nav-links a:hover::after, .nav-links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav-links a.is-active { color: var(--paper); }
+.nav-field-readout { margin-left: auto; color: #666a76; font: .57rem var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.nav-portfolio { margin-left: 1.5rem; }
+.world-card, .game-card { --tilt-x: 0deg; --tilt-y: 0deg; --glow-x: 50%; --glow-y: 50%; transform-style: preserve-3d; will-change: transform; }
+.world-card:hover { transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-8px); }
+.world-card::before { content: ''; position: absolute; z-index: 1; inset: 0; pointer-events: none; opacity: 0; border-radius: inherit; background: radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(255,255,255,.2), transparent 35%); transition: opacity .35s ease; }
+.world-card:hover::before { opacity: .45; }
+.game-card:hover { transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-7px) rotate(-.5deg); }
+.game-card::before { background: radial-gradient(circle at var(--glow-x) var(--glow-y), var(--accent), transparent 36%); transition: opacity .35s ease, background .15s ease; }
+.game-card > * { transform: translateZ(1px); }
+@media (max-width: 620px) { .nav-field-readout { display: none; }.nav-portfolio { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .world-card:hover, .game-card:hover { transform: none; } }
