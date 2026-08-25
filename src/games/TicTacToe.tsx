@@ -572,6 +572,7 @@ function TicTacToeInner({ isPaused, setScore }: Pick<GameRenderProps, 'isPaused'
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div
+      className="game-scene game-scene--tictactoe"
       style={{
         height: '100%', display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',

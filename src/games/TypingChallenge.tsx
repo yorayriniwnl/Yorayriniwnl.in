@@ -335,7 +335,7 @@ function TypingGame({ isPaused, setScore }: GameRenderProps) {
   // ─────────────────────────────────────────────────────────────────────────────
   if (phase === 'select') {
     return (
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
+      <div className="game-scene game-scene--typing" style={{ padding: '2rem 1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
         <style>{CURSOR_CSS}</style>
 
         <p style={{ fontFamily: 'var(--ds-font-mono,monospace)', fontSize: '0.72rem',
@@ -380,7 +380,7 @@ function TypingGame({ isPaused, setScore }: GameRenderProps) {
     const accPct = Math.round(result.accuracy * 100)
     const mult   = accuracyMultiplier(result.accuracy)
     return (
-      <div style={{ padding: '2rem 1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
+      <div className="game-scene game-scene--typing" style={{ padding: '2rem 1.5rem', maxWidth: '48rem', margin: '0 auto' }}>
         <style>{CURSOR_CSS}</style>
 
         {/* Header */}
@@ -475,7 +475,7 @@ function TypingGame({ isPaused, setScore }: GameRenderProps) {
   //  PLAYING SCREEN
   // ─────────────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ padding: '1.25rem 1.5rem', maxWidth: '52rem', margin: '0 auto' }}>
+    <div className="game-scene game-scene--typing" style={{ padding: '1.25rem 1.5rem', maxWidth: '52rem', margin: '0 auto' }}>
       <style>{CURSOR_CSS}</style>
 
       {/* ── Stats bar ──────────────────────────────────────────────────────── */}

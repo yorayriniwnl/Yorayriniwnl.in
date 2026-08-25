@@ -102,6 +102,7 @@ function TopBarButton({
       onClick={onClick}
       title={title}
       aria-label={title}
+      aria-pressed={active}
       style={{
         display: 'flex',
         alignItems: 'center',

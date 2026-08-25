@@ -259,6 +259,7 @@ function MemoryMatchInner({
 
   return (
     <div
+      className="game-scene game-scene--memory"
       style={{
         height: '100%',
         overflowY: 'auto',

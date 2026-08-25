@@ -718,7 +718,7 @@ function WordGuessGame({
 
   // ── Layout ────────────────────────────────────────────────────────────────
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+    <div className="game-scene game-scene--word-guess" style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <style>{ANIMATIONS}</style>
 
       {/* Mode bar */}

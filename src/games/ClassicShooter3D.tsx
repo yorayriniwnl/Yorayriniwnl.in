@@ -1087,6 +1087,7 @@ function ClassicShooterViewport({
 
   return (
     <div
+      className="game-scene game-scene--strike-arena"
       ref={wrapperRef}
       style={{
         position: 'relative',

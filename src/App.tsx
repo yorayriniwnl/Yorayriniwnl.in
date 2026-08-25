@@ -240,7 +240,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const sections = ["world", "arcade", "archive"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const sections = ["world", "arcade", "archive", "about"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     const observer = new IntersectionObserver((entries) => {
       const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
       if (visible) setActiveSection(visible.target.id);
@@ -284,8 +284,9 @@ function App() {
           <a className={activeSection === "world" ? "is-active" : ""} href="#world">World</a>
           <a className={activeSection === "arcade" ? "is-active" : ""} href="#arcade">Arcade</a>
           <a className={activeSection === "archive" ? "is-active" : ""} href="#archive">Archive</a>
+          <a className={activeSection === "about" ? "is-active" : ""} href="#about">About</a>
         </nav>
-        <span className="nav-field-readout" aria-live="polite">{activeSection} / 05</span>
+        <span className="nav-field-readout" aria-live="polite">{activeSection} / 04</span>
         <a className="nav-portfolio" href="https://yorayriniwnl.vercel.app">
           Portfolio <Arrow />
         </a>

@@ -974,6 +974,7 @@ function CarGameCanvas(props: GameRenderProps): React.ReactElement {
 
   return (
     <div
+      className="game-scene game-scene--road-runner"
       ref={wrapperRef}
       style={{
         position: 'relative',

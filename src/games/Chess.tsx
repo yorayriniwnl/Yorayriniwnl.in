@@ -694,7 +694,7 @@ export default function YorChess() {
   }, []);
 
   return (
-    <div className="yor-chess-root">
+    <div className="game-scene game-scene--chess yor-chess-root">
       <style>{`
 :root{--gold:#C9A84C;--gold-bright:#F0CF6A;--gold-dim:#8B6E2E;--gold-dark:#3E2C10;--sq-light:#EDD9A0;--sq-dark:#7A3D1C;--text:#F0E4C0;--text-mid:#A89060;--text-muted:#6A5030;}
       `}</style>

@@ -652,6 +652,7 @@ function SnakeCanvas({
 
   return (
     <div
+      className="game-scene game-scene--snake"
       ref={wrapperRef}
       style={{
         flex:            1,

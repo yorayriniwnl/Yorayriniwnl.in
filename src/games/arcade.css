@@ -19,6 +19,15 @@
   color: var(--arcade-ink);
 }
 
+.game-shell[data-game='snake'] { --arcade-acid: #ff3e64; --arcade-orange: #ffb15c; }
+.game-shell[data-game='memory-match'] { --arcade-acid: #9eaeff; --arcade-orange: #ff7994; }
+.game-shell[data-game='typing-challenge'] { --arcade-acid: #9eaeff; --arcade-orange: #ffb15c; }
+.game-shell[data-game^='devwordle'] { --arcade-acid: #ffb15c; --arcade-orange: #ff7994; }
+.game-shell[data-game='tic-tac-toe'] { --arcade-acid: #ff7994; --arcade-orange: #9eaeff; }
+.game-shell[data-game='yor-road-runner'] { --arcade-acid: #ff3e64; --arcade-orange: #ffb15c; }
+.game-shell[data-game='yor-strike-arena'] { --arcade-acid: #ff3e64; --arcade-orange: #9eaeff; }
+.game-shell[data-game='yor-chess'] { --arcade-acid: #ff3e64; --arcade-orange: #ffb15c; }
+
 .game-shell::before {
   content: '';
   position: absolute;
@@ -240,6 +249,8 @@
     #06070b !important;
 }
 
+.game-scene--road-runner::after { content: 'VELOCITY / 06'; }
+
 /* Chess uses the same red-black identity as the player profile. */
 .game-shell[data-game='yor-chess'] .yor-chess-root {
   background: #07080b !important;
@@ -337,5 +348,170 @@
   .game-shell::before,
   .game-shell__live-status > span:first-child {
     animation: none;
+  }
+}
+
+/* Individual game identities. The shell is shared; the mood should not be. */
+.game-scene {
+  position: relative;
+  isolation: isolate;
+}
+
+.game-scene::after {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 3;
+  color: rgba(255, 255, 255, 0.28);
+  font: 0.52rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.16em;
+  pointer-events: none;
+}
+
+.game-scene--snake {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 62, 100, 0.13), transparent 18rem),
+    #07080c !important;
+}
+
+.game-scene--snake::after { content: 'REFLEX / 01'; }
+
+.game-scene--snake > div {
+  border-color: rgba(255, 62, 100, 0.46) !important;
+  background: linear-gradient(180deg, rgba(24, 12, 20, 0.96), rgba(7, 8, 12, 0.98)) !important;
+  box-shadow: 0 0 0 1px rgba(255, 62, 100, 0.08), 0 22px 70px rgba(0, 0, 0, 0.62), 0 0 4rem rgba(255, 62, 100, 0.08) !important;
+}
+
+.game-shell[data-game='snake'] .game-shell__game > div:last-child {
+  border-color: rgba(255, 62, 100, 0.16) !important;
+  background: rgba(7, 8, 12, 0.92) !important;
+}
+
+.game-shell[data-game='snake'] .game-shell__game > div:last-child button {
+  border-color: rgba(255, 62, 100, 0.25) !important;
+  background: rgba(255, 62, 100, 0.04) !important;
+  color: #bda0a9 !important;
+}
+
+.game-shell[data-game='snake'] .game-shell__game > div:last-child button:hover {
+  border-color: rgba(255, 62, 100, 0.7) !important;
+  color: #ff7994 !important;
+}
+
+.game-scene--memory {
+  background:
+    radial-gradient(circle at 50% 22%, rgba(142, 116, 255, 0.12), transparent 24rem),
+    #09080e !important;
+}
+
+.game-scene--memory::after { content: 'RECALL / 02'; }
+
+.game-scene--memory .mm-back {
+  border-color: rgba(255, 62, 100, 0.32) !important;
+  background:
+    radial-gradient(circle, rgba(255, 62, 100, 0.12) 1px, transparent 1px),
+    linear-gradient(155deg, #24111c 0%, #0b0b10 100%) !important;
+}
+
+.game-scene--memory .mm-face {
+  border-color: rgba(158, 174, 255, 0.3) !important;
+  background: linear-gradient(155deg, #19152a 0%, #0c0b12 100%) !important;
+}
+
+.game-scene--memory .mm-card--matched .mm-face {
+  border-color: rgba(255, 177, 92, 0.68) !important;
+  background: linear-gradient(155deg, #291b25 0%, #171016 100%) !important;
+  box-shadow: 0 0 28px rgba(255, 62, 100, 0.25) !important;
+}
+
+.game-scene--memory .mm-back-monogram,
+.game-scene--memory .mm-label {
+  color: #ff7994 !important;
+}
+
+.game-scene--memory .mm-diff-btn--active {
+  border-color: rgba(255, 62, 100, 0.7) !important;
+  background: rgba(255, 62, 100, 0.14) !important;
+  color: #ff7994 !important;
+}
+
+.game-scene--typing {
+  color: var(--arcade-ink);
+  background:
+    radial-gradient(circle at 86% 12%, rgba(158, 174, 255, 0.12), transparent 18rem),
+    #090a10;
+}
+
+.game-scene--typing::after { content: 'INPUT / 03'; }
+
+.game-scene--typing > div[style*='border-radius'] {
+  border-color: rgba(158, 174, 255, 0.28) !important;
+  background: rgba(11, 12, 20, 0.88) !important;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+.game-scene--typing button:hover {
+  filter: brightness(1.18);
+}
+
+.game-scene--word-guess {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 62, 100, 0.1), transparent 22rem),
+    #09080d;
+}
+
+.game-scene--word-guess::after { content: 'INFERENCE / 04'; }
+
+.game-shell[data-game^='devwordle'] .game-scene--word-guess button {
+  border-color: rgba(255, 62, 100, 0.24) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  color: #b8aeb5 !important;
+}
+
+.game-shell[data-game^='devwordle'] .game-scene--word-guess button:hover {
+  border-color: rgba(255, 62, 100, 0.7) !important;
+  color: #ff7994 !important;
+}
+
+.game-scene--tictactoe {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(143, 41, 73, 0.18), transparent 20rem),
+    #08090d !important;
+}
+
+.game-scene--tictactoe::after { content: 'GRID LOGIC / 05'; }
+
+.game-scene--tictactoe .ttt-cell-btn {
+  background: #0d0a0f !important;
+}
+
+.game-scene--tictactoe .ttt-cell-btn:hover:not(:disabled) {
+  background: rgba(255, 62, 100, 0.1) !important;
+}
+
+.game-scene--strike-arena {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 62, 100, 0.13), transparent 24rem),
+    #07080b !important;
+}
+
+.game-scene--strike-arena::after { content: 'COMBAT / 07'; }
+
+.game-scene--strike-arena canvas {
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.game-scene--chess::after { content: 'STRATEGY / 08'; }
+
+.game-scene--chess .sq.poss::after {
+  background: rgba(255, 62, 100, 0.42) !important;
+  box-shadow: 0 0 0 1px rgba(255, 177, 92, 0.3) !important;
+}
+
+@media (max-width: 620px) {
+  .game-scene::after {
+    top: 0.45rem;
+    right: 0.55rem;
+    font-size: 0.45rem;
   }
 }
