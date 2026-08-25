@@ -104,30 +104,30 @@ interface Palette {
 
 const PALETTES: Record<PaletteKey, Palette> = {
   day: {
-    skyTop: '#0a1628', skyBot: '#0d1f3e',
-    skylineColor: 'rgba(8,18,42,0.92)',
-    roadTop: '#14142a', roadBot: '#1c1c36',
-    grassColor: '#0b2216',
-    edgeColor: '#f97316',
-    lampPole: '#6b7280', lampHead: '#9ca3af', lampGlow: '#d1d5db',
+    skyTop: '#140f1a', skyBot: '#2a0e1d',
+    skylineColor: 'rgba(12,5,18,0.92)',
+    roadTop: '#16131c', roadBot: '#241523',
+    grassColor: '#071111',
+    edgeColor: '#ff3e64',
+    lampPole: '#6f5663', lampHead: '#e7a1ad', lampGlow: '#ff7994',
     dashColor: 'rgba(255,255,255,0.28)',
   },
   night: {
-    skyTop: '#000408', skyBot: '#010510',
-    skylineColor: 'rgba(1,3,10,0.96)',
-    roadTop: '#080812', roadBot: '#0c0c1a',
+    skyTop: '#020207', skyBot: '#10030b',
+    skylineColor: 'rgba(1,2,7,0.96)',
+    roadTop: '#08090f', roadBot: '#160812',
     grassColor: '#04090a',
-    edgeColor: '#f97316',
-    lampPole: '#c2800a', lampHead: '#f59e0b', lampGlow: '#fbbf24',
+    edgeColor: '#ff3e64',
+    lampPole: '#7d243e', lampHead: '#ff7994', lampGlow: '#ff3e64',
     dashColor: 'rgba(255,235,160,0.32)',
   },
   mountain: {
-    skyTop: '#18181e', skyBot: '#1c1e28',
-    skylineColor: 'rgba(10,10,20,0.94)',
-    roadTop: '#20202c', roadBot: '#282838',
-    grassColor: '#112210',
-    edgeColor: '#f97316',
-    lampPole: '#7a9a7a', lampHead: '#a0c4a0', lampGlow: '#c0dfc0',
+    skyTop: '#130f18', skyBot: '#24111f',
+    skylineColor: 'rgba(10,6,18,0.94)',
+    roadTop: '#1f1523', roadBot: '#301826',
+    grassColor: '#09120e',
+    edgeColor: '#ffb15c',
+    lampPole: '#715362', lampHead: '#ffb15c', lampGlow: '#ffd39e',
     dashColor: 'rgba(190,240,190,0.28)',
   },
 }
@@ -479,11 +479,11 @@ function drawPowerup(ctx: CanvasRenderingContext2D, p: Powerup, frame: number): 
     // Fuel canister: yellow rounded rect + cap + emoji
     const fw = 24 * s; const fh = 28 * s; const fr = 4 * s
     ctx.save()
-    ctx.shadowBlur = 10 * s; ctx.shadowColor = '#fbbf24'
-    ctx.fillStyle = '#f59e0b'
+    ctx.shadowBlur = 10 * s; ctx.shadowColor = '#ffb15c'
+    ctx.fillStyle = '#ff3e64'
     rrect(ctx, -fw / 2, -fh, fw, fh, fr); ctx.fill()
     // Cap nozzle
-    ctx.fillStyle = '#92400e'
+    ctx.fillStyle = '#7d243e'
     rrect(ctx, -fw * 0.28, -fh - 5 * s, fw * 0.56, 5 * s, 2 * s); ctx.fill()
     ctx.restore()
     if (s > 0.28) {
@@ -493,7 +493,7 @@ function drawPowerup(ctx: CanvasRenderingContext2D, p: Powerup, frame: number): 
     }
   } else {
     const emoji = p.kind === 'heart' ? '❤️' : '⭐'
-    const glowColor = p.kind === 'heart' ? '#f43f5e' : '#fbbf24'
+    const glowColor = p.kind === 'heart' ? '#ff3e64' : '#ffb15c'
     ctx.save()
     ctx.shadowBlur = 14 * s; ctx.shadowColor = glowColor
     ctx.font = `${Math.max(10, Math.round(26 * s))}px serif`
@@ -600,7 +600,7 @@ function drawHUD(ctx: CanvasRenderingContext2D, st: GameState): void {
   // ── Score badge ───────────────────────────────────────────────────────────
   ctx.fillStyle = 'rgba(0,0,0,0.56)'
   rrect(ctx, 22, 10, 128, 32, 7); ctx.fill()
-  ctx.fillStyle = '#fde68a'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'left'
+  ctx.fillStyle = '#ff7994'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'left'
   ctx.fillText(`SCORE: ${st.score}`, 30, 30)
 
   // ── Lives (hearts) ────────────────────────────────────────────────────────
@@ -612,13 +612,13 @@ function drawHUD(ctx: CanvasRenderingContext2D, st: GameState): void {
   // ── Speed text badge ──────────────────────────────────────────────────────
   ctx.fillStyle = 'rgba(0,0,0,0.46)'
   rrect(ctx, 22, 48, 96, 19, 5); ctx.fill()
-  ctx.fillStyle = '#6ee7b7'; ctx.font = '10px monospace'; ctx.textAlign = 'left'
+  ctx.fillStyle = '#ffb15c'; ctx.font = '10px monospace'; ctx.textAlign = 'left'
   const mph = Math.round((Math.min(1, (st.speed - 4) / 16)) * 200)
   ctx.fillText(`SPD  ${mph} MPH`, 28, 61)
 
   // ── Star-power flash ──────────────────────────────────────────────────────
   if (st.invincible) {
-    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center'
+    ctx.fillStyle = '#ffb15c'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center'
     ctx.fillText('⭐ STAR POWER!', VW / 2, 26)
   }
 
@@ -637,9 +637,9 @@ function drawBanner(ctx: CanvasRenderingContext2D, text: string, timer: number):
   ctx.globalAlpha = alpha
   ctx.fillStyle = 'rgba(4,6,16,0.72)'
   rrect(ctx, VP_X - 138, VH / 2 - 28, 276, 56, 10); ctx.fill()
-  ctx.strokeStyle = 'rgba(201,168,76,0.45)'; ctx.lineWidth = 1
+  ctx.strokeStyle = 'rgba(255,62,100,0.52)'; ctx.lineWidth = 1
   rrect(ctx, VP_X - 138, VH / 2 - 28, 276, 56, 10); ctx.stroke()
-  ctx.fillStyle = '#fde68a'; ctx.font = 'bold 17px monospace'
+  ctx.fillStyle = '#ffb15c'; ctx.font = 'bold 17px monospace'
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
   ctx.fillText(text, VP_X, VH / 2)
   ctx.restore()
@@ -947,12 +947,12 @@ function CarGameCanvas(props: GameRenderProps): React.ReactElement {
       const pY = perspY(PLAYER_T)
       ctx.save()
       if (st.invincible) {
-        ctx.shadowBlur = 22; ctx.shadowColor = '#fbbf24'
+        ctx.shadowBlur = 22; ctx.shadowColor = '#ffb15c'
         if (st.frame % 6 < 3) ctx.globalAlpha = 0.62
       }
       drawCar(
         ctx, st.playerX, pY, PLAYER_T,
-        st.invincible ? '#fbbf24' : '#6366f1',
+        st.invincible ? '#ffb15c' : '#ff3e64',
         true, st.frame,
       )
       ctx.restore()

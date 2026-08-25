@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import './arcade.css'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -309,6 +310,8 @@ export default function GameShell({
     highScore,
   }
 
+  const gameSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
   // ── Styles (inline so this file is standalone) ────────────────────────────
   const overlayBase: React.CSSProperties = {
     position: 'absolute',
@@ -388,6 +391,9 @@ export default function GameShell({
 
   return (
     <div
+      className="game-shell"
+      data-game={gameSlug}
+      data-status={isGameOver ? 'over' : isPaused ? 'paused' : 'live'}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -399,6 +405,7 @@ export default function GameShell({
     >
       {/* ── Top Bar ──────────────────────────────────────────────────────────── */}
       <div
+        className="game-shell__topbar"
         role="toolbar"
         aria-label="Game controls"
         style={{
@@ -417,6 +424,7 @@ export default function GameShell({
       >
         {/* Back link */}
         <a
+          className="game-shell__back"
           href="#arcade"
           style={{
             display: 'flex',
@@ -451,6 +459,7 @@ export default function GameShell({
 
         {/* Title */}
         <span
+          className="game-shell__title"
           style={{
             fontFamily: 'var(--ds-font-display, serif)',
             fontSize: '0.92rem',
@@ -467,11 +476,17 @@ export default function GameShell({
           {title}
         </span>
 
+        <div className="game-shell__live-status" aria-label="Live arcade session">
+          <span aria-hidden="true" />
+          <span>Live session</span>
+        </div>
+
         {/* Spacer */}
         <div style={{ flex: 1, minWidth: '0.25rem' }} />
 
         {/* Score */}
         <div
+          className="game-shell__metric"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -517,6 +532,7 @@ export default function GameShell({
 
         {/* Best */}
         <div
+          className="game-shell__metric"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -551,6 +567,7 @@ export default function GameShell({
 
         {/* Action buttons */}
         <div
+          className="game-shell__actions"
           style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}
         >
           <TopBarButton
@@ -583,6 +600,7 @@ export default function GameShell({
 
       {/* ── Game Area ────────────────────────────────────────────────────────── */}
       <div
+        className="game-shell__arena"
         ref={containerRef}
         style={{
           position: 'relative',
@@ -591,14 +609,14 @@ export default function GameShell({
           overflow: 'hidden',
         }}
       >
-        <div key={roundId} style={{ height: '100%' }}>
+        <div className="game-shell__game" key={roundId} style={{ height: '100%' }}>
           {children(renderProps)}
         </div>
 
         {/* ── Pause Overlay ─────────────────────────────────────────────────── */}
         {isPaused && !isGameOver && (
-          <div style={overlayBase} role="dialog" aria-modal aria-label="Game paused">
-            <div style={overlayCard}>
+          <div className="game-shell__overlay" style={overlayBase} role="dialog" aria-modal aria-label="Game paused">
+            <div className="game-shell__overlay-card" style={overlayCard}>
               {/* Decorative top rule */}
               <div
                 aria-hidden
@@ -644,8 +662,8 @@ export default function GameShell({
 
         {/* ── Game Over Overlay ─────────────────────────────────────────────── */}
         {isGameOver && (
-          <div style={overlayBase} role="dialog" aria-modal aria-label="Game over">
-            <div style={overlayCard}>
+          <div className="game-shell__overlay" style={overlayBase} role="dialog" aria-modal aria-label="Game over">
+            <div className="game-shell__overlay-card" style={overlayCard}>
               <div
                 aria-hidden
                 style={{
@@ -921,6 +939,7 @@ export default function GameShell({
       {/* ── Controls Modal ────────────────────────────────────────────────────── */}
       {showControls && (
         <div
+          className="game-shell__controls-overlay"
           role="dialog"
           aria-modal
           aria-label="Game controls"
@@ -941,6 +960,7 @@ export default function GameShell({
           }}
         >
           <div
+            className="game-shell__controls-card"
             style={{
               display: 'flex',
               flexDirection: 'column',

@@ -1,0 +1,341 @@
+/* Shared arcade chrome: every game should feel like a chapter of the same world. */
+
+.game-shell {
+  --arcade-bg: #07080b;
+  --arcade-panel: rgba(12, 13, 18, 0.9);
+  --arcade-line: rgba(255, 62, 100, 0.2);
+  --arcade-line-strong: rgba(255, 62, 100, 0.52);
+  --arcade-ink: #f5f3ef;
+  --arcade-muted: #8e8a91;
+  --arcade-acid: #ff3e64;
+  --arcade-orange: #ffb15c;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(255, 62, 100, 0.12), transparent 26rem),
+    radial-gradient(circle at 12% 94%, rgba(109, 88, 255, 0.09), transparent 25rem),
+    var(--arcade-bg) !important;
+  color: var(--arcade-ink);
+}
+
+.game-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0.14;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0,
+    rgba(255, 255, 255, 0.06) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  mix-blend-mode: screen;
+}
+
+.game-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 62, 100, 0.12), inset 0 -5rem 6rem rgba(0, 0, 0, 0.22);
+}
+
+.game-shell > .game-shell__topbar {
+  position: relative;
+  height: 3.15rem !important;
+  padding: 0 1rem !important;
+  gap: 0.65rem !important;
+  border-bottom: 1px solid var(--arcade-line) !important;
+  background: linear-gradient(180deg, rgba(18, 15, 22, 0.96), rgba(7, 8, 11, 0.88)) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.game-shell__topbar::before {
+  content: 'YA / ARCADE';
+  margin-right: 0.35rem;
+  color: rgba(255, 62, 100, 0.78);
+  font: 0.56rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.game-shell__back {
+  color: var(--arcade-muted) !important;
+  padding: 0.42rem 0.58rem !important;
+  border: 1px solid transparent;
+  font-size: 0.68rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.11em !important;
+}
+
+.game-shell__back:hover {
+  color: var(--arcade-acid) !important;
+  border-color: var(--arcade-line) !important;
+  background: rgba(255, 62, 100, 0.06);
+}
+
+.game-shell__title {
+  color: var(--arcade-ink) !important;
+  font-family: var(--ds-font-mono, monospace) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase;
+}
+
+.game-shell__live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin-left: 0.45rem;
+  color: #a6a1a9;
+  font: 0.58rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.game-shell__live-status > span:first-child {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--arcade-acid);
+  box-shadow: 0 0 0 0.22rem rgba(255, 62, 100, 0.12), 0 0 0.9rem rgba(255, 62, 100, 0.9);
+  animation: arcade-live-pulse 1.8s ease-in-out infinite;
+}
+
+.game-shell[data-status='paused'] .game-shell__live-status > span:first-child {
+  background: var(--arcade-orange);
+  box-shadow: 0 0 0 0.22rem rgba(255, 177, 92, 0.12), 0 0 0.9rem rgba(255, 177, 92, 0.8);
+  animation: none;
+}
+
+.game-shell[data-status='over'] .game-shell__live-status > span:first-child {
+  background: #75717a;
+  box-shadow: none;
+  animation: none;
+}
+
+.game-shell__metric {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.game-shell__metric > span:first-child {
+  color: #7f7a83 !important;
+  font-size: 0.57rem !important;
+  letter-spacing: 0.12em !important;
+}
+
+.game-shell__metric > span:last-child {
+  color: var(--arcade-ink) !important;
+  font-size: 0.78rem !important;
+}
+
+.game-shell__metric:last-of-type > span:last-child {
+  color: var(--arcade-orange) !important;
+}
+
+.game-shell__actions button {
+  width: 2.12rem !important;
+  height: 2.12rem !important;
+  border-color: var(--arcade-line) !important;
+  border-radius: 0.52rem !important;
+  background: rgba(255, 62, 100, 0.035) !important;
+  color: #a6a1a9 !important;
+}
+
+.game-shell__actions button:hover,
+.game-shell__actions button[aria-pressed='true'] {
+  border-color: var(--arcade-line-strong) !important;
+  background: rgba(255, 62, 100, 0.14) !important;
+  color: var(--arcade-acid) !important;
+}
+
+.game-shell__arena {
+  background:
+    linear-gradient(135deg, rgba(255, 62, 100, 0.025), transparent 34%),
+    radial-gradient(circle at 50% 0%, rgba(255, 62, 100, 0.06), transparent 34rem),
+    #08090d !important;
+}
+
+.game-shell__arena::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 49.95%, rgba(255, 62, 100, 0.05) 50%, transparent 50.05%),
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 100% 100%, 34px 34px, 34px 34px;
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+}
+
+.game-shell__game {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+}
+
+.game-shell__game:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(255, 62, 100, 0.18);
+}
+
+.game-shell__overlay,
+.game-shell__controls-overlay {
+  background: rgba(3, 4, 7, 0.82) !important;
+  backdrop-filter: blur(14px) saturate(1.2) !important;
+}
+
+.game-shell__overlay-card,
+.game-shell__controls-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--arcade-line-strong) !important;
+  border-radius: 1rem !important;
+  background:
+    linear-gradient(145deg, rgba(22, 15, 23, 0.98), rgba(7, 8, 12, 0.98)) !important;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 62, 100, 0.08), 0 0 5rem rgba(255, 62, 100, 0.08) !important;
+}
+
+.game-shell__overlay-card::before,
+.game-shell__controls-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.18rem;
+  background: linear-gradient(90deg, transparent, var(--arcade-acid), var(--arcade-orange), transparent);
+}
+
+.game-shell__overlay-card button,
+.game-shell__controls-card button {
+  border-color: var(--arcade-line-strong) !important;
+  color: var(--arcade-acid) !important;
+  background: rgba(255, 62, 100, 0.11) !important;
+}
+
+.game-shell__overlay-card button:hover,
+.game-shell__controls-card button:hover {
+  background: rgba(255, 62, 100, 0.22) !important;
+}
+
+.game-shell button:focus-visible,
+.game-shell a:focus-visible {
+  outline: 2px solid var(--arcade-orange);
+  outline-offset: 3px;
+}
+
+/* Road Runner gets a hotter night-drive frame without touching its canvas math. */
+.game-shell[data-game='yor-road-runner'] .game-shell__game > div {
+  background:
+    radial-gradient(circle at 50% 84%, rgba(255, 62, 100, 0.12), transparent 20rem),
+    #06070b !important;
+}
+
+/* Chess uses the same red-black identity as the player profile. */
+.game-shell[data-game='yor-chess'] .yor-chess-root {
+  background: #07080b !important;
+  color: var(--arcade-ink) !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root::before {
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(255, 62, 100, 0.2), transparent 70%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 35%, rgba(0, 0, 0, 0.78) 100%),
+    repeating-conic-gradient(#09070a 0% 25%, #0d080d 0% 50%) 0 0 / 22px 22px !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .hd-title,
+.game-shell[data-game='yor-chess'] .yor-chess-root .ob-name,
+.game-shell[data-game='yor-chess'] .yor-chess-root .sc-v,
+.game-shell[data-game='yor-chess'] .yor-chess-root .dep-btn.on {
+  color: var(--arcade-acid) !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .player-card,
+.game-shell[data-game='yor-chess'] .yor-chess-root .log-card,
+.game-shell[data-game='yor-chess'] .yor-chess-root .stat-card,
+.game-shell[data-game='yor-chess'] .yor-chess-root .score-card,
+.game-shell[data-game='yor-chess'] .yor-chess-root .dep-card,
+.game-shell[data-game='yor-chess'] .yor-chess-root .blitz-card {
+  border-color: rgba(255, 62, 100, 0.2) !important;
+  background: linear-gradient(145deg, rgba(25, 14, 22, 0.92), rgba(9, 10, 14, 0.92)) !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .board-frame {
+  border-color: rgba(255, 62, 100, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(255, 177, 92, 0.14), 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 4rem rgba(255, 62, 100, 0.13) !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .sq.lt {
+  background: #e7d7d0 !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .sq.dk {
+  background: #4a2033 !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .btn.pr,
+.game-shell[data-game='yor-chess'] .yor-chess-root .mbt.pr {
+  border-color: rgba(255, 62, 100, 0.68) !important;
+  background: linear-gradient(135deg, rgba(255, 62, 100, 0.22), rgba(110, 27, 55, 0.22)) !important;
+}
+
+.game-shell[data-game='yor-chess'] .yor-chess-root .sq.hint-to::after,
+.game-shell[data-game='yor-chess'] .yor-chess-root .sq.hint-from::after {
+  background: rgba(255, 177, 92, 0.28) !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 177, 92, 0.78) !important;
+}
+
+@keyframes arcade-live-pulse {
+  0%, 100% { transform: scale(0.84); opacity: 0.68; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+@media (max-width: 620px) {
+  .game-shell > .game-shell__topbar {
+    height: 2.9rem !important;
+    padding: 0 0.55rem !important;
+  }
+
+  .game-shell__topbar::before,
+  .game-shell__live-status,
+  .game-shell__metric > span:first-child {
+    display: none;
+  }
+
+  .game-shell__metric {
+    padding: 0.28rem 0.4rem;
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .game-shell__metric > span:last-child {
+    font-size: 0.7rem !important;
+  }
+
+  .game-shell__back {
+    font-size: 0 !important;
+  }
+
+  .game-shell__back::before {
+    content: '←';
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-shell::before,
+  .game-shell__live-status > span:first-child {
+    animation: none;
+  }
+}
