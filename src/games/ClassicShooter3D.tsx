@@ -1073,9 +1073,18 @@ function ClassicShooterViewport({
     }
   }, [coarsePointer, isGameOver, isPaused, locked, pointerSupported, setScore])
 
-  function handleEngage() {
+  async function handleEngage() {
     if (!pointerSupported || coarsePointer || isPaused || isGameOver) return
-    wrapperRef.current?.requestPointerLock()
+    try {
+      await wrapperRef.current?.requestPointerLock()
+    } catch {
+      // Embedded browsers can reject pointer lock when the canvas is not the
+      // active document. Keep the room usable and let the user click again.
+      setHud((current) => ({
+        ...current,
+        message: 'Click the arena directly to take control.',
+      }))
+    }
   }
 
   function handleHudSync(state: MatchState) {

@@ -1,11 +1,16 @@
 import {
+  Component,
   lazy,
   Suspense,
+  useCallback,
   useEffect,
+  useRef,
   useState,
   type ComponentType,
+  type ErrorInfo,
   type LazyExoticComponent,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
 } from "react";
 import "./styles.css";
 
@@ -18,6 +23,17 @@ type GameId =
   | "road-racing"
   | "strike-arena"
   | "chess";
+
+type Game = {
+  id: GameId;
+  index: string;
+  name: string;
+  category: string;
+  description: string;
+  input: string;
+  glyph: string;
+  color: string;
+};
 
 const gameViews: Record<GameId, LazyExoticComponent<ComponentType>> = {
   snake: lazy(() => import("./games/Snake")),
@@ -34,180 +50,168 @@ const projects = [
   {
     number: "01",
     title: "Yor Zenith",
-    type: "Solar intelligence / product system",
-    description:
-      "A decision layer for rooftop solar: scan, estimate, explain, and move from curiosity to a credible next step.",
-    tone: "amber",
+    type: "Decision system / solar intelligence",
+    description: "Rooftop feasibility, yield, subsidy logic, and long-term return in one inspectable planning surface.",
+    tone: "solar",
+    signal: "LIVE BUILD",
     live: "https://zenith-xi-snowy.vercel.app/",
-    repo: "https://github.com/yorayriniwnl/Yor-Zenith",
+    source: "https://github.com/yorayriniwnl/Yor-Zenith",
   },
   {
     number: "02",
     title: "Yor AI vs Real",
     type: "Computer vision / trust interface",
-    description:
-      "An image classification experience designed around uncertainty, evidence, and clear human-readable reasoning.",
-    tone: "violet",
+    description: "Classical image features and SVM inference presented as evidence a person can actually review.",
+    tone: "vision",
+    signal: "LIVE BUILD",
     live: "https://yor-ai-vs-real-image.vercel.app",
-    repo: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
+    source: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
   },
   {
     number: "03",
-    title: "Yor Smriti",
-    type: "Memory / personal software",
-    description:
-      "A quiet digital space for holding moments with enough structure to find them again and enough softness to keep them human.",
-    tone: "rose",
-    live: "https://yor-smriti.vercel.app",
-    repo: "https://github.com/yorayriniwnl/Yor-Smriti",
+    title: "Mentor / Mentee",
+    type: "Matching logic / workflow",
+    description: "A weighted coordination system that turns hidden spreadsheet work into a repeatable process.",
+    tone: "match",
+    signal: "SYSTEM",
+    live: "https://mentor-mentee-system.vercel.app",
+    source: "https://github.com/yorayriniwnl/mentor-mentee-system",
   },
   {
     number: "04",
-    title: "Mentor / Mentee",
-    type: "Matching system / workflow design",
-    description:
-      "A focused matching product that makes the hidden work of mentorship visible, navigable, and easier to act on.",
-    tone: "cyan",
-    live: "https://mentor-mentee-system.vercel.app",
-    repo: "https://github.com/yorayriniwnl/mentor-mentee-system",
+    title: "Yor Smriti",
+    type: "Narrative UI / personal software",
+    description: "A cinematic memory surface built around pacing, atmosphere, chronology, and emotional intent.",
+    tone: "memory",
+    signal: "EXPERIENCE",
+    live: "https://yor-smriti.vercel.app",
+    source: "https://github.com/yorayriniwnl/Yor-Smriti",
   },
 ];
 
-const games: Array<{
-  id: GameId;
-  index: string;
-  name: string;
-  category: string;
-  description: string;
-  key: string;
-  color: string;
-}> = [
+const games: Game[] = [
   {
     id: "snake",
     index: "A1",
     name: "Neon Snake",
-    category: "arcade / reflex",
-    description: "A luminous loop with momentum, risk, and just enough chaos.",
-    key: "ARROW KEYS",
-    color: "lime",
+    category: "Arcade · reflex",
+    description: "Thread the grid, chase risky food, and keep the luminous line alive.",
+    input: "Arrow keys",
+    glyph: "⌁",
+    color: "acid",
   },
   {
     id: "memory",
     index: "A2",
-    name: "Memory Match",
-    category: "puzzle / recall",
-    description: "Pair the stack. Keep your eyes open. The board remembers.",
-    key: "MOUSE",
+    name: "Memory Protocol",
+    category: "Puzzle · recall",
+    description: "Read the board, pair the stack, and finish before the pattern fades.",
+    input: "Pointer",
+    glyph: "✣",
     color: "pink",
   },
   {
     id: "typing",
     index: "A3",
-    name: "Typing Challenge",
-    category: "speed / code",
-    description: "Actual fragments from the workbench, measured in clean keystrokes.",
-    key: "KEYBOARD",
+    name: "Type // Rush",
+    category: "Speed · code",
+    description: "Real code fragments measured in clean keystrokes, accuracy, and nerve.",
+    input: "Keyboard",
+    glyph: "⌨",
     color: "blue",
   },
   {
     id: "wordle",
     index: "A4",
     name: "Dev Word",
-    category: "word / inference",
-    description: "Decode a compact language of APIs, systems, and shipped ideas.",
-    key: "6 LETTERS",
-    color: "gold",
+    category: "Word · inference",
+    description: "Decode the compact language of APIs, systems, and shipped ideas.",
+    input: "5 / 6 letters",
+    glyph: "W",
+    color: "amber",
   },
   {
     id: "tic-tac-toe",
     index: "A5",
     name: "Grid Logic",
-    category: "strategy / classic",
-    description: "A small board with a surprising amount of room to think.",
-    key: "MOUSE",
+    category: "Strategy · classic",
+    description: "A tiny arena with three AI depths and no room for careless moves.",
+    input: "Pointer",
+    glyph: "×",
     color: "violet",
   },
   {
     id: "road-racing",
     index: "A6",
-    name: "Night Drive",
-    category: "3D / arcade",
-    description: "Find the line, keep the pace, and let the road render itself.",
-    key: "WASD",
+    name: "Road Runner",
+    category: "Arcade · velocity",
+    description: "Change lanes, read the horizon, collect power, and survive the night run.",
+    input: "A / D · swipe",
+    glyph: "◆",
     color: "orange",
   },
   {
     id: "strike-arena",
     index: "A7",
     name: "Strike Arena",
-    category: "3D / action",
-    description: "A compact first-person arena for testing motion, timing, and focus.",
-    key: "WASD + MOUSE",
+    category: "Action · first person",
+    description: "A compact aim-and-movement trial built around rhythm, pressure, and focus.",
+    input: "WASD · mouse",
+    glyph: "+",
     color: "red",
   },
   {
     id: "chess",
     index: "A8",
     name: "Yor Chess",
-    category: "strategy / board",
-    description: "A full board, a stubborn opponent, and time to see the pattern.",
-    key: "MOUSE",
-    color: "white",
-  },
-];
-
-const archive = [
-  {
-    index: "01",
-    label: "FIELD NOTES",
-    title: "Devlog / observations",
-    body: "Small essays on building, debugging, attention, and the strange distance between an idea and a useful interface.",
-    link: "#notes",
-  },
-  {
-    index: "02",
-    label: "SIGNALS",
-    title: "Activity / proof of motion",
-    body: "GitHub work, experiments, metrics, and the traces that show what is being learned in public.",
-    link: "https://github.com/yorayriniwnl",
-  },
-  {
-    index: "03",
-    label: "MEDIA SHELF",
-    title: "Screens, clips, fragments",
-    body: "A visual archive for project captures, game sessions, design studies, and anything worth revisiting.",
-    link: "#media",
-  },
-  {
-    index: "04",
-    label: "THE PERSON",
-    title: "Profile / beyond the build",
-    body: "Computer science student, product-minded maker, and an enthusiast for systems that feel more considered than they need to.",
-    link: "#about",
+    category: "Strategy · board",
+    description: "A complete board, adaptive engine depth, clocks, hints, and a stubborn opponent.",
+    input: "Pointer",
+    glyph: "♞",
+    color: "ivory",
   },
 ];
 
 const playerStats = [
-  { value: "13,633", label: "CS hours", note: "the long game" },
-  { value: "125", label: "Steam level", note: "earned, not assigned" },
-  { value: "53", label: "games", note: "worlds entered" },
-  { value: "99", label: "screenshots", note: "proof of play" },
+  { value: "125", label: "Steam level" },
+  { value: "13.6K", label: "CS hours" },
+  { value: "53", label: "Games" },
+  { value: "99", label: "Screenshots" },
+];
+
+const archiveLinks = [
+  {
+    index: "01",
+    label: "BUILD LOG",
+    title: "GitHub / proof of motion",
+    body: "Repositories, experiments, commit trails, and the engineering record behind the finished surfaces.",
+    href: "https://github.com/yorayriniwnl",
+  },
+  {
+    index: "02",
+    label: "PLAYER LOG",
+    title: "Steam / the long game",
+    body: "Matches, screenshots, badges, and the off-hours identity that shaped this hub's language.",
+    href: "https://steamcommunity.com/id/yorayriniwnl/",
+  },
+  {
+    index: "03",
+    label: "CASE FILES",
+    title: "Portfolio / finished work",
+    body: "The quieter front door: selected products explained through problem, contribution, and result.",
+    href: "https://yorayriniwnl.vercel.app",
+  },
+  {
+    index: "04",
+    label: "PROFESSIONAL",
+    title: "LinkedIn / open channel",
+    body: "Education, role context, and a direct route into a serious conversation about the work.",
+    href: "https://linkedin.com/in/yorayriniwnl",
+  },
 ];
 
 function Arrow() {
-  return <span aria-hidden="true">↗</span>;
-}
-
-function GrainMark() {
-  return (
-    <div className="grain-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-      <span />
-      <i />
-    </div>
-  );
+  return <span className="arrow" aria-hidden="true">↗</span>;
 }
 
 function tiltCard(event: ReactPointerEvent<HTMLElement>) {
@@ -215,36 +219,80 @@ function tiltCard(event: ReactPointerEvent<HTMLElement>) {
   const bounds = card.getBoundingClientRect();
   const x = (event.clientX - bounds.left) / bounds.width - 0.5;
   const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-  card.style.setProperty("--tilt-x", `${y * -4}deg`);
-  card.style.setProperty("--tilt-y", `${x * 4}deg`);
+  card.style.setProperty("--tilt-x", `${y * -2.5}deg`);
+  card.style.setProperty("--tilt-y", `${x * 2.5}deg`);
   card.style.setProperty("--glow-x", `${(x + 0.5) * 100}%`);
   card.style.setProperty("--glow-y", `${(y + 0.5) * 100}%`);
 }
 
 function resetTilt(event: ReactPointerEvent<HTMLElement>) {
-  const card = event.currentTarget;
-  card.style.setProperty("--tilt-x", "0deg");
-  card.style.setProperty("--tilt-y", "0deg");
+  event.currentTarget.style.setProperty("--tilt-x", "0deg");
+  event.currentTarget.style.setProperty("--tilt-y", "0deg");
+}
+
+type GameErrorBoundaryProps = {
+  gameName: string;
+  onExit: () => void;
+  children: ReactNode;
+};
+
+class GameErrorBoundary extends Component<GameErrorBoundaryProps, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`Game room failed: ${this.props.gameName}`, error, info);
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <div className="game-failure" role="alert">
+        <span>SESSION INTERRUPTED / 500</span>
+        <h2>{this.props.gameName} could not start.</h2>
+        <p>The rest of the hub is still safe. Exit this room and choose another run.</p>
+        <button type="button" onClick={this.props.onExit}>Return to arcade <Arrow /></button>
+      </div>
+    );
+  }
 }
 
 function App() {
   const [activeGame, setActiveGame] = useState<GameId | null>(null);
-  const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("world");
+  const [scrolled, setScrolled] = useState(false);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const closeGame = useCallback(() => {
+    setActiveGame(null);
+    window.setTimeout(() => lastTriggerRef.current?.focus(), 0);
+  }, []);
+
+  const launchGame = useCallback((gameId: GameId, trigger: HTMLButtonElement) => {
+    lastTriggerRef.current = trigger;
+    setActiveGame(gameId);
+  }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 28);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const sections = ["world", "arcade", "archive", "about"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const sections = ["world", "arcade", "archive", "about"]
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
     const observer = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
       if (visible) setActiveSection(visible.target.id);
-    }, { rootMargin: "-22% 0px -62% 0px", threshold: [0.15, 0.4, 0.7] });
+    }, { rootMargin: "-24% 0px -60% 0px", threshold: [0.12, 0.4, 0.7] });
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
@@ -252,17 +300,15 @@ function App() {
   useEffect(() => {
     if (!activeGame) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setActiveGame(null);
+      if (event.key === "Escape" && (event.shiftKey || activeGame === "chess")) closeGame();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeGame]);
+  }, [activeGame, closeGame]);
 
   useEffect(() => {
     document.body.style.overflow = activeGame ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [activeGame]);
 
   const currentGame = games.find((game) => game.id === activeGame);
@@ -270,165 +316,183 @@ function App() {
 
   return (
     <div className="hub-shell">
-      <div className="ambient ambient-one" aria-hidden="true" />
-      <div className="ambient ambient-two" aria-hidden="true" />
-      <div className="ambient ambient-three" aria-hidden="true" />
+      <div className="hub-noise" aria-hidden="true" />
+      <div className="hub-aurora hub-aurora--red" aria-hidden="true" />
+      <div className="hub-aurora hub-aurora--blue" aria-hidden="true" />
 
-      <header className={`site-nav ${scrolled ? "is-scrolled" : ""}`}>
-        <a className="wordmark" href="#top" aria-label="Yor Ayrin home">
-          <span className="wordmark-dot" />
-          <span>YOR / AYRIN</span>
-          <small>FIELD 02</small>
+      <header className={`command-nav ${scrolled ? "is-scrolled" : ""}`}>
+        <a className="hub-brand" href="#top" aria-label="Yor Ayrin home">
+          <i /><span>YOR // AYRIN</span><small>WORLD_02</small>
         </a>
-        <nav className="nav-links" aria-label="Primary navigation">
-          <a className={activeSection === "world" ? "is-active" : ""} href="#world">World</a>
+        <nav className="command-links" aria-label="Primary navigation">
+          <a className={activeSection === "world" ? "is-active" : ""} href="#world">Worlds</a>
           <a className={activeSection === "arcade" ? "is-active" : ""} href="#arcade">Arcade</a>
           <a className={activeSection === "archive" ? "is-active" : ""} href="#archive">Archive</a>
-          <a className={activeSection === "about" ? "is-active" : ""} href="#about">About</a>
+          <a className={activeSection === "about" ? "is-active" : ""} href="#about">Profile</a>
         </nav>
-        <span className="nav-field-readout" aria-live="polite">{activeSection} / 04</span>
-        <a className="nav-portfolio" href="https://yorayriniwnl.vercel.app">
-          Portfolio <Arrow />
-        </a>
+        <div className="nav-player">
+          <span><i /> ONLINE</span>
+          <div><strong>Yor Ayrin</strong><small>LEVEL 125</small></div>
+        </div>
+        <a className="portfolio-link" href="https://yorayriniwnl.vercel.app">Portfolio <Arrow /></a>
       </header>
 
       <main id="top">
-        <section className="hub-hero" aria-labelledby="hero-title">
-          <div className="hero-copy">
-            <p className="eyebrow"><span>01</span> ♥ Yor Ayrin - iwnl ♥ / player profile</p>
-            <h1 id="hero-title">
-              The world
-              <em>around</em>
-              the work.
-            </h1>
-            <p className="hero-lede">
-              A living index of experiments, playable things, quiet notes, and the systems built between one match, one idea, and the next.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#world">Enter the field <Arrow /></a>
-              <a className="button button-quiet" href="https://yorayriniwnl.vercel.app">Meet the maker <Arrow /></a>
-              <a className="button button-steam" href="https://steamcommunity.com/id/yorayriniwnl/">Open player profile <Arrow /></a>
+        <section className="hub-hero hub-container" aria-labelledby="hub-title">
+          <aside className="player-card" aria-label="Yor Ayrin player profile">
+            <div className="player-card__cover">
+              <img src="/ayush-avatar.png" alt="Ayush Roy" />
+              <span className="player-card__status"><i /> Online</span>
+              <span className="player-card__level">125</span>
             </div>
-            <div className="hero-aside"><span>LAT 28.61° N</span><span>LONG 77.20° E</span><span>STATUS: EXPLORING</span></div>
-          </div>
-          <div className="hero-orbit" aria-hidden="true">
-            <div className="orbit orbit-a"><i /></div>
-            <div className="orbit orbit-b"><i /></div>
-            <div className="orbit orbit-c"><i /></div>
-            <div className="hero-planet"><img src="/ayush-avatar.png" alt="" /><GrainMark /><b>Y</b></div>
-            <span className="orbit-label label-one">curiosity / 24</span>
-            <span className="orbit-label label-two">build → play</span>
-            <span className="orbit-label label-three">∞</span>
+            <div className="player-card__identity">
+              <small>PLAYER_01 / INDIA</small>
+              <h2>♥ Yor Ayrin - iwnl ♥</h2>
+              <p>Grind. Die. Repeat.</p>
+            </div>
+            <div className="player-card__meta">
+              <span><small>Current state</small><strong>Building</strong></span>
+              <span><small>Main loop</small><strong>Play → learn</strong></span>
+            </div>
+          </aside>
+
+          <div className="hub-hero__copy">
+            <p className="hub-eyebrow"><span>FIELD 02</span> / PERSONAL INTERNET</p>
+            <h1 id="hub-title">Playable ideas.<br /><em>Shipped systems.</em><br />One living world.</h1>
+            <p>A personal command center for side quests, finished builds, game rooms, screenshots, notes, and everything that does not belong in a conventional portfolio.</p>
+            <div className="hub-actions">
+              <a className="hub-button hub-button--primary" href="#arcade">Enter the arcade <span aria-hidden="true">↓</span></a>
+              <a className="hub-button hub-button--ghost" href="#world">Browse worlds <Arrow /></a>
+              <a className="hub-button hub-button--steam" href="https://steamcommunity.com/id/yorayriniwnl/" target="_blank" rel="noreferrer">Steam profile <Arrow /></a>
+            </div>
+            <div className="hero-system-line"><span>DELHI / UTC +5:30</span><i /><span>08 PLAYABLE ROOMS</span><i /><span>BUILD 2026.08</span></div>
           </div>
         </section>
 
-        <div className="ticker" aria-label="Site index">
-          <span>PERSONAL SYSTEMS</span><i />
-          <span>GAMES &amp; PLAY</span><i />
-          <span>FIELD NOTES</span><i />
-          <span>OPEN EXPERIMENTS</span><i />
-          <span>PERSONAL SYSTEMS</span>
-        </div>
-
-        <section className="profile-stat-rack" aria-label="Player profile telemetry">
-          <div className="profile-stat-rack__identity"><span>PLAYER PROFILE / 01</span><strong>YOR AYRIN</strong><small>GRIND. DIE. REPEAT.</small></div>
-          {playerStats.map((stat) => <div className="profile-stat" key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span><small>{stat.note}</small></div>)}
+        <section className="stat-deck hub-container" aria-label="Player profile statistics">
+          <div className="stat-deck__lead"><span>PROFILE TELEMETRY</span><strong>THE LONG GAME</strong><small>Public signals from the player profile</small></div>
+          {playerStats.map((stat) => <div className="stat-unit" key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}
         </section>
 
-        <section className="world-section section-shell" id="world" aria-labelledby="world-title">
-          <div className="section-heading">
-            <div><p className="eyebrow"><span>02</span> Selected coordinates</p><h2 id="world-title">Worlds <em>built</em><br />to be entered.</h2></div>
-            <p className="section-intro">The portfolio is the polished front door. This is the house behind it: the prototypes, side quests, and systems that keep the lights on.</p>
+        <section className="world-section hub-section hub-container" id="world" aria-labelledby="world-title">
+          <div className="hub-section-heading">
+            <div><p className="hub-eyebrow"><span>01</span> / BUILT WORLDS</p><h2 id="world-title">Systems worth<br /><em>entering.</em></h2></div>
+            <p>These are not thumbnails from the portfolio. Think of them as installed worlds—the systems behind the work, ready to open.</p>
           </div>
-          <div className="project-grid">
+          <div className="world-library">
             {projects.map((project) => (
-              <article className={`world-card card-${project.tone}`} key={project.title} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
-                <div className="card-topline"><span>{project.number} / {project.type}</span><span className="card-signal">● live</span></div>
-                <div className="card-glow" aria-hidden="true" />
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="card-links"><a href={project.live}>Open world <Arrow /></a><a href={project.repo}>Source <Arrow /></a></div>
+              <article className={`world-tile world-tile--${project.tone}`} key={project.title} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
+                <div className="world-cover" aria-hidden="true">
+                  <span className="world-cover__grid" />
+                  <span className="world-cover__index">WORLD_{project.number}</span>
+                  <strong>{project.title.slice(0, 1)}</strong>
+                  <small>{project.signal}</small>
+                </div>
+                <div className="world-copy">
+                  <span>{project.type}</span>
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
+                  <div><a href={project.live} target="_blank" rel="noreferrer">Open world <Arrow /></a><a href={project.source} target="_blank" rel="noreferrer">Source</a></div>
+                </div>
               </article>
             ))}
           </div>
-          <div className="world-footer"><span>11+ shipped / explored projects</span><a href="https://github.com/yorayriniwnl">Browse the full archive <Arrow /></a></div>
         </section>
 
-        <section className="arcade-section section-shell" id="arcade" aria-labelledby="arcade-title">
-          <div className="section-heading arcade-heading">
-            <div><p className="eyebrow"><span>03</span> Playable systems</p><h2 id="arcade-title">The <em>arcade</em><br />is open.</h2></div>
-            <p className="section-intro">Small games are honest laboratories. They reveal how motion feels, how feedback lands, and whether the details survive contact with a real person.</p>
-          </div>
-          <div className="arcade-status-bar" aria-label="Arcade status">
-            <span><i /> ALL SYSTEMS ONLINE</span>
-            <span>08 WORLDS / 01 PLAYER</span>
-            <span>CHOOSE YOUR STATE</span>
-          </div>
-          <div className="arcade-grid">
-            {games.map((game) => (
-              <button className={`game-card game-${game.color}`} key={game.id} onClick={() => setActiveGame(game.id)} onPointerMove={tiltCard} onPointerLeave={resetTilt}>
-                <span className="game-index">{game.index}</span>
-                <span className="game-icon" aria-hidden="true">{game.id === "chess" ? "♞" : game.id === "snake" ? "≈" : game.id === "road-racing" ? "⌁" : game.id === "strike-arena" ? "+" : "✦"}</span>
-                <span className="game-name">{game.name}</span>
-                <span className="game-category">{game.category}</span>
-                <span className="game-description">{game.description}</span>
-                <span className="game-footer"><small>{game.key}</small><b>PLAY <Arrow /></b></span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="archive-section section-shell" id="archive" aria-labelledby="archive-title">
-          <div className="section-heading">
-            <div><p className="eyebrow"><span>04</span> Everything between</p><h2 id="archive-title">The <em>archive</em><br />keeps growing.</h2></div>
-            <p className="section-intro">Not every useful thing needs to become a case study. Some of it is a note, a screenshot, a half-finished thought, or a trail worth following.</p>
-          </div>
-          <div className="archive-list">
-            {archive.map((item) => (
-              <a className="archive-row" href={item.link} key={item.index}>
-                <span className="archive-index">{item.index}</span><span className="archive-label">{item.label}</span><span className="archive-copy"><strong>{item.title}</strong><span>{item.body}</span></span><span className="archive-arrow"><Arrow /></span>
-              </a>
-            ))}
-          </div>
-          <div className="archive-supplement">
-            <article id="notes"><span className="archive-supplement__label">NOTEBOOK / 001</span><strong>Build the thing people can understand.</strong><p>A working principle for the projects here: complexity is allowed in the engine, but it should arrive as clarity at the surface.</p></article>
-            <article id="media"><span className="archive-supplement__label">MEDIA SHELF / 002</span><strong>Fragments are part of the record.</strong><p>Game sessions, interface studies, and small visual experiments live here as evidence of the making—not decoration after the fact.</p></article>
+        <section className="arcade-section hub-section" id="arcade" aria-labelledby="arcade-title">
+          <div className="hub-container">
+            <div className="hub-section-heading arcade-heading">
+              <div><p className="hub-eyebrow"><span>02</span> / PLAYABLE ROOMS</p><h2 id="arcade-title">Choose your<br /><em>next run.</em></h2></div>
+              <p>Eight small games, each with its own mechanics, feedback language, score state, and reason to play one more round.</p>
+            </div>
+            <div className="arcade-console" aria-label="Arcade system status">
+              <span><i /> ARCADE ONLINE</span><span>08 INSTALLED</span><span>LOCAL HIGH SCORES</span><span>SHIFT + ESC TO EXIT</span>
+            </div>
+            <div className="game-library">
+              {games.map((game) => (
+                <button
+                  className={`game-library-card game-library-card--${game.color}`}
+                  data-game={game.id}
+                  key={game.id}
+                  type="button"
+                  onClick={(event) => launchGame(game.id, event.currentTarget)}
+                  onPointerMove={tiltCard}
+                  onPointerLeave={resetTilt}
+                >
+                  <span className="game-cover" aria-hidden="true">
+                    <span className="game-cover__grid" />
+                    <span className="game-cover__index">{game.index}</span>
+                    <strong>{game.glyph}</strong>
+                    <small>INSTALLED</small>
+                  </span>
+                  <span className="game-card-copy">
+                    <small>{game.category}</small>
+                    <strong>{game.name}</strong>
+                    <span>{game.description}</span>
+                  </span>
+                  <span className="game-card-footer"><small>{game.input}</small><b>Launch <Arrow /></b></span>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="contact-section section-shell" id="about" aria-labelledby="contact-title">
-          <div className="contact-panel">
-            <div className="contact-stamp"><GrainMark /><span>YOR / 02</span></div>
-            <p className="eyebrow"><span>05</span> Open channel</p>
-            <h2 id="contact-title">Have a good<br /><em>problem?</em></h2>
-            <p>For collaborations, unusual builds, or a conversation about making software feel more alive:</p>
-            <a className="contact-email" href="mailto:ayushroy.dev@gmail.com">ayushroy.dev@gmail.com <Arrow /></a>
+        <section className="archive-section hub-section hub-container" id="archive" aria-labelledby="archive-title">
+          <div className="hub-section-heading">
+            <div><p className="hub-eyebrow"><span>03</span> / EXTERNAL SIGNALS</p><h2 id="archive-title">The record<br /><em>stays open.</em></h2></div>
+            <p>The hub is a map, not a dead end. These routes lead to the public traces behind the identity and the work.</p>
+          </div>
+          <div className="archive-deck">
+            <div className="archive-list">
+              {archiveLinks.map((item) => (
+                <a href={item.href} target="_blank" rel="noreferrer" key={item.index}>
+                  <span>{item.index}</span><small>{item.label}</small><div><strong>{item.title}</strong><p>{item.body}</p></div><b><Arrow /></b>
+                </a>
+              ))}
+            </div>
+            <aside className="manifest-card" id="field-note">
+              <span>MANIFEST / 001</span>
+              <h3>Build the thing people can understand.</h3>
+              <p>Complexity can live in the engine. At the surface, it should arrive as clarity, feedback, and a next move worth taking.</p>
+              <div className="badge-wall" aria-label="Interests"><span>CHESS</span><span>VISION</span><span>3D</span><span>SYSTEMS</span><span>MUSIC</span><span>CS2</span></div>
+              <small>LAST UPDATED / AUG 2026</small>
+            </aside>
+          </div>
+        </section>
+
+        <section className="profile-section hub-section" id="about" aria-labelledby="profile-title">
+          <div className="hub-container profile-panel">
+            <div className="profile-panel__copy">
+              <p className="hub-eyebrow"><span>04</span> / OPEN CHANNEL</p>
+              <h2 id="profile-title">The person<br /><em>behind the player.</em></h2>
+              <p>I’m Ayush Roy—a computer science student, product-minded engineer, competitive player, and builder of systems that feel considered all the way down.</p>
+              <div className="profile-actions"><a href="mailto:ayushroy.dev@gmail.com">Start a conversation <Arrow /></a><a href="https://yorayriniwnl.vercel.app">Read the portfolio <Arrow /></a></div>
+            </div>
+            <div className="profile-panel__signal" aria-hidden="true"><span>Y</span><i /><i /><i /><small>BUILD / PLAY / REPEAT</small></div>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div><span className="wordmark-dot" /> YOR / AYRIN <small>© 2026</small></div>
-        <div className="footer-links"><a href="https://github.com/yorayriniwnl">GitHub</a><a href="https://linkedin.com/in/yorayriniwnl">LinkedIn</a><a href="https://yorayriniwnl.vercel.app">Portfolio</a></div>
-        <span>MADE WITH CURIOSITY / DELHI</span>
+      <footer className="hub-footer">
+        <div><i /> YOR // AYRIN <small>WORLD_02</small></div>
+        <p>A living index of work, play, and everything between.</p>
+        <div><a href="https://github.com/yorayriniwnl">GitHub</a><a href="https://steamcommunity.com/id/yorayriniwnl/">Steam</a><a href="#top">Top ↑</a></div>
       </footer>
 
       {CurrentGame && currentGame && (
-        <div className="game-modal" role="dialog" aria-modal="true" aria-label={`${currentGame.name} game`}>
-          <div className="game-modal-bar">
-            <div className="game-modal-bar__identity">
-              <span className="game-modal-bar__index">{currentGame.index}</span>
-              <div>
-                <strong>{currentGame.name}</strong>
-                <small>{currentGame.category}</small>
-              </div>
-            </div>
-            <div className="game-modal-bar__tools">
-              <span className="game-modal-bar__input">{currentGame.key}</span>
-              <button autoFocus onClick={() => setActiveGame(null)} aria-label={`Close ${currentGame.name}`}>Exit session <span aria-hidden="true">×</span></button>
-            </div>
+        <div className={`game-room game-room--${currentGame.color}`} role="dialog" aria-modal="true" aria-label={`${currentGame.name} game room`}>
+          <header className="game-room__header">
+            <div className="game-room__identity"><span>{currentGame.index}</span><div><small>{currentGame.category}</small><strong>{currentGame.name}</strong></div></div>
+            <div className="game-room__session"><i /> LIVE SESSION <span>{currentGame.input}</span></div>
+            <button type="button" onClick={closeGame} autoFocus aria-label={`Close ${currentGame.name}`}>Exit room <kbd>Shift Esc</kbd><b>×</b></button>
+          </header>
+          <div className="game-room__stage">
+            <GameErrorBoundary key={activeGame} gameName={currentGame.name} onExit={closeGame}>
+              <Suspense fallback={<div className="game-loading"><span /><strong>Loading {currentGame.name}</strong><small>Preparing room {currentGame.index}</small></div>}>
+                <CurrentGame />
+              </Suspense>
+            </GameErrorBoundary>
           </div>
-          <div className="game-stage"><Suspense fallback={<div className="game-loading"><span>Loading field…</span></div>}><CurrentGame /></Suspense></div>
         </div>
       )}
     </div>

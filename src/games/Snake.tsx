@@ -290,6 +290,7 @@ function SnakeCanvas({
 }: SnakeCanvasProps) {
   const canvasRef  = useRef<HTMLCanvasElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const [hasStarted, setHasStarted] = useState(false)
 
   // ── All mutable game state lives in refs (no re-renders from the loop) ─────
   const snakeRef      = useRef<Pos[]>([])
@@ -301,6 +302,7 @@ function SnakeCanvas({
   const scoreRef      = useRef<number>(0)
   const speedRef      = useRef<number>(INITIAL_SPEED)
   const doneRef       = useRef<boolean>(false)
+  const startedRef    = useRef<boolean>(false)
 
   // Prop mirrors in refs (read inside RAF without stale closures)
   const colsRef     = useRef(cols)
@@ -349,6 +351,8 @@ function SnakeCanvas({
     scoreRef.current      = 0
     speedRef.current      = INITIAL_SPEED
     doneRef.current       = false
+    startedRef.current    = false
+    setHasStarted(false)
     accumRef.current      = 0
     foodRef.current       = spawnFood(snakeRef.current, c, r)
     foodTypeRef.current   = 0
@@ -412,10 +416,31 @@ function SnakeCanvas({
       // Queue direction from keyboard
       const k   = keysRef.current
       const cur = dirRef.current
-      if ((k['ArrowUp']    || k['w']) && !opposites(DIR_UP,    cur)) pendingDirRef.current = DIR_UP
-      if ((k['ArrowDown']  || k['s']) && !opposites(DIR_DOWN,  cur)) pendingDirRef.current = DIR_DOWN
-      if ((k['ArrowLeft']  || k['a']) && !opposites(DIR_LEFT,  cur)) pendingDirRef.current = DIR_LEFT
-      if ((k['ArrowRight'] || k['d']) && !opposites(DIR_RIGHT, cur)) pendingDirRef.current = DIR_RIGHT
+      const inputDir = k['ArrowUp'] || k['w']
+        ? DIR_UP
+        : k['ArrowDown'] || k['s']
+          ? DIR_DOWN
+          : k['ArrowLeft'] || k['a']
+            ? DIR_LEFT
+            : k['ArrowRight'] || k['d']
+              ? DIR_RIGHT
+              : null
+
+      if (!startedRef.current) {
+        if (pendingDirRef.current || inputDir) {
+          pendingDirRef.current = pendingDirRef.current ?? inputDir
+          if (pendingDirRef.current) {
+            dirRef.current = pendingDirRef.current
+            startedRef.current = true
+            setHasStarted(true)
+          }
+        } else {
+          drawFrameRef.current(ctx, canvas.width, canvas.height)
+          return
+        }
+      }
+
+      if (inputDir && !opposites(inputDir, cur)) pendingDirRef.current = inputDir
 
       // Tick the game at the configured speed
       accumRef.current += dt
@@ -665,7 +690,9 @@ function SnakeCanvas({
       }}
     >
       <div
+        className="game-scene__field"
         style={{
+          position: 'relative',
           padding: '0.45rem',
           borderRadius: '1rem',
           border: '1px solid rgba(201, 168, 76, 0.22)',
@@ -673,6 +700,7 @@ function SnakeCanvas({
           boxShadow: '0 0 0 1px rgba(201,168,76,0.08), 0 18px 48px rgba(0,0,0,0.45)',
         }}
       >
+        {!hasStarted ? <div className="game-scene__start-hint">Press an arrow key or swipe to start</div> : null}
         <canvas
           ref={canvasRef}
           style={{

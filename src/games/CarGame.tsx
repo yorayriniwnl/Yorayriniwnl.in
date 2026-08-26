@@ -6,20 +6,22 @@ import { useGameLoop } from '../hooks/useGameLoop'
 import { useKeyboard } from '../hooks/useKeyboard'
 
 // ─── Virtual canvas dimensions (all game coordinates are in these units) ──────
-const VW = 420
-const VH = 560
+// A wide virtual canvas keeps Road Runner readable in the desktop game room
+// while still scaling cleanly down to a phone-sized viewport.
+const VW = 960
+const VH = 540
 
 // ─── Perspective constants ────────────────────────────────────────────────────
-const HORIZON_Y = 174          // y of the vanishing point (virtual units)
-const VP_X = VW / 2            // x of the vanishing point = 210
-const ROAD_HALF_W = 150        // half-width of road at its widest (bottom)
-const ROAD_LEFT_BTM = VP_X - ROAD_HALF_W   // = 60
-const ROAD_RIGHT_BTM = VP_X + ROAD_HALF_W  // = 360
+const HORIZON_Y = 156          // y of the vanishing point (virtual units)
+const VP_X = VW / 2
+const ROAD_HALF_W = 360        // half-width of road at its widest (bottom)
+const ROAD_LEFT_BTM = VP_X - ROAD_HALF_W
+const ROAD_RIGHT_BTM = VP_X + ROAD_HALF_W
 const NUM_LANES = 3
 
 // Car dimensions at progress t = 1 (full-size, at player's row)
-const CAR_BASE_W = 38
-const CAR_BASE_H = 62
+const CAR_BASE_W = 58
+const CAR_BASE_H = 86
 
 // Player sits at this fixed progress value (0 = horizon, 1 = very bottom)
 const PLAYER_T = 0.925

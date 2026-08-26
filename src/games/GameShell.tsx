@@ -1,9 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import './arcade.css'
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface ControlItem {
   key: string
@@ -15,7 +13,7 @@ export interface GameRenderProps {
   isGameOver: boolean
   roundId: number
   score: number
-  setScore: (n: number) => void
+  setScore: (score: number) => void
   setGameOver: (over: boolean, finalScore?: number) => void
   highScore: number
 }
@@ -38,111 +36,65 @@ export interface GameShellProps {
   controls: ControlItem[]
   onPause?: (paused: boolean) => void
   namedHighScore?: NamedHighScoreConfig
-  children: (props: GameRenderProps) => React.ReactNode
+  children: (props: GameRenderProps) => ReactNode
 }
 
-function readNumericScore(key: string): number {
+function readNumericScore(key: string) {
   try {
-    const stored = localStorage.getItem(key)
-    return stored !== null ? parseInt(stored, 10) || 0 : 0
+    return Math.max(0, Number.parseInt(localStorage.getItem(key) ?? '0', 10) || 0)
   } catch {
     return 0
   }
 }
 
-function sanitizeNamedScoreRecord(
-  value: Partial<NamedScoreRecord> | null | undefined,
-  fallbackName: string,
-): NamedScoreRecord | null {
-  if (!value || typeof value.score !== 'number') return null
-
-  return {
-    name:
-      typeof value.name === 'string' && value.name.trim().length > 0
-        ? value.name.trim().slice(0, 24)
-        : fallbackName,
-    score: Math.max(0, Math.trunc(value.score)),
-    updatedAt: typeof value.updatedAt === 'string' ? value.updatedAt : '',
-  }
-}
-
-function readNamedScoreRecord(recordKey: string, fallbackName: string): NamedScoreRecord | null {
+function readNamedScore(recordKey: string, fallbackName: string): NamedScoreRecord | null {
   try {
     const raw = localStorage.getItem(recordKey)
     if (!raw) return null
-    return sanitizeNamedScoreRecord(JSON.parse(raw) as Partial<NamedScoreRecord>, fallbackName)
+    const parsed = JSON.parse(raw) as Partial<NamedScoreRecord>
+    if (typeof parsed.score !== 'number') return null
+    return {
+      name: typeof parsed.name === 'string' && parsed.name.trim() ? parsed.name.trim().slice(0, 24) : fallbackName,
+      score: Math.max(0, Math.trunc(parsed.score)),
+      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : '',
+    }
   } catch {
     return null
   }
 }
 
-function writeNamedScoreRecord(recordKey: string, record: NamedScoreRecord) {
+function writeNamedScore(recordKey: string, record: NamedScoreRecord) {
   try {
     localStorage.setItem(recordKey, JSON.stringify(record))
   } catch {
-    // localStorage unavailable
+    // High scores remain session-only when storage is unavailable.
   }
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function TopBarButton({
-  onClick,
+function ActionButton({
+  label,
   title,
-  children,
+  onClick,
   active = false,
 }: {
-  onClick: () => void
+  label: ReactNode
   title: string
-  children: React.ReactNode
+  onClick: () => void
   active?: boolean
 }) {
   return (
     <button
+      type="button"
+      className="game-shell__action"
       onClick={onClick}
       title={title}
       aria-label={title}
       aria-pressed={active}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '2rem',
-        height: '2rem',
-        borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-        border: active
-          ? '1px solid rgba(201, 168, 76, 0.55)'
-          : '1px solid rgba(42, 37, 32, 0.95)',
-        background: active
-          ? 'rgba(201, 168, 76, 0.14)'
-          : 'rgba(26, 23, 16, 0.7)',
-        color: active ? '#c9a84c' : '#a89878',
-        fontSize: '0.95rem',
-        cursor: 'pointer',
-        transition: 'all 0.15s ease',
-        flexShrink: 0,
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-            'rgba(201, 168, 76, 0.35)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#c9a84c'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-            'rgba(42, 37, 32, 0.95)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#a89878'
-        }
-      }}
     >
-      {children}
+      {label}
     </button>
   )
 }
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function GameShell({
   title,
@@ -152,7 +104,6 @@ export default function GameShell({
   namedHighScore,
   children,
 }: GameShellProps) {
-  // ── State ──────────────────────────────────────────────────────────────────
   const [isPaused, setIsPaused] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
   const [roundId, setRoundId] = useState(0)
@@ -161,983 +112,233 @@ export default function GameShell({
   const [highScore, setHighScore] = useState(0)
   const [isNewBest, setIsNewBest] = useState(false)
   const [topScorer, setTopScorer] = useState<NamedScoreRecord | null>(null)
-  const [pendingTopScorerName, setPendingTopScorerName] = useState('')
-  const [needsTopScorerName, setNeedsTopScorerName] = useState(false)
+  const [pendingName, setPendingName] = useState('')
+  const [needsName, setNeedsName] = useState(false)
   const [showControls, setShowControls] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const arenaRef = useRef<HTMLDivElement>(null)
   const onPauseRef = useRef(onPause)
-  useEffect(() => { onPauseRef.current = onPause }, [onPause])
-  const topScorerLabel = namedHighScore?.label ?? 'Top scorer'
-  const fallbackTopScorerName = namedHighScore?.defaultName ?? 'Road Runner Ace'
+  const fallbackName = namedHighScore?.defaultName ?? 'Road Runner Ace'
+  const scorerLabel = namedHighScore?.label ?? 'Top scorer'
+  const gameSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-  // ── Load high score from localStorage ─────────────────────────────────────
   useEffect(() => {
-    const storedTopScorer = namedHighScore?.recordKey
-      ? readNamedScoreRecord(namedHighScore.recordKey, fallbackTopScorerName)
-      : null
+    onPauseRef.current = onPause
+  }, [onPause])
 
-    setHighScore(Math.max(readNumericScore(highScoreKey), storedTopScorer?.score ?? 0))
-    setTopScorer(storedTopScorer)
-  }, [fallbackTopScorerName, highScoreKey, namedHighScore?.recordKey])
+  useEffect(() => {
+    const record = namedHighScore?.recordKey ? readNamedScore(namedHighScore.recordKey, fallbackName) : null
+    setTopScorer(record)
+    setHighScore(Math.max(readNumericScore(highScoreKey), record?.score ?? 0))
+  }, [fallbackName, highScoreKey, namedHighScore?.recordKey])
 
-  // ── Pause toggle ───────────────────────────────────────────────────────────
+  const setPaused = useCallback((next: boolean) => {
+    setIsPaused(next)
+    onPauseRef.current?.(next)
+  }, [])
+
   const togglePause = useCallback(() => {
     if (isGameOver) return
-    setIsPaused((prev) => {
-      const next = !prev
-      onPauseRef.current?.(next)
-      return next
-    })
-  }, [isGameOver])
+    setPaused(!isPaused)
+  }, [isGameOver, isPaused, setPaused])
 
-  // ── Game over handler ──────────────────────────────────────────────────────
-  const handleSetGameOver = useCallback(
-    (over: boolean, fs?: number) => {
+  const setGameOver = useCallback(
+    (over: boolean, reportedScore?: number) => {
       setIsGameOver(over)
-      if (over) {
-        setIsPaused(false)
-        const reported = fs ?? score
-        const storedTopScorer = namedHighScore?.recordKey
-          ? readNamedScoreRecord(namedHighScore.recordKey, fallbackTopScorerName)
-          : null
-        const previousBest = Math.max(readNumericScore(highScoreKey), storedTopScorer?.score ?? 0)
-        setFinalScore(reported)
-        if (reported > previousBest) {
-          try {
-            localStorage.setItem(highScoreKey, String(reported))
-          } catch {
-            // localStorage unavailable
-          }
-          setHighScore(reported)
-          setIsNewBest(true)
-        } else {
-          setHighScore(previousBest)
-          setIsNewBest(false)
-        }
+      if (!over) return
 
-        if (namedHighScore?.recordKey) {
-          setTopScorer(storedTopScorer)
-          if (reported > (storedTopScorer?.score ?? 0)) {
-            setPendingTopScorerName(storedTopScorer?.name ?? '')
-            setNeedsTopScorerName(true)
-          } else {
-            setPendingTopScorerName('')
-            setNeedsTopScorerName(false)
-          }
+      setPaused(false)
+      const result = Math.max(0, Math.trunc(reportedScore ?? score))
+      const previousRecord = namedHighScore?.recordKey ? readNamedScore(namedHighScore.recordKey, fallbackName) : null
+      const previousBest = Math.max(readNumericScore(highScoreKey), previousRecord?.score ?? 0)
+
+      setFinalScore(result)
+      setHighScore(Math.max(previousBest, result))
+      setIsNewBest(result > previousBest)
+
+      if (result > previousBest) {
+        try {
+          localStorage.setItem(highScoreKey, String(result))
+        } catch {
+          // High scores remain session-only when storage is unavailable.
         }
       }
+
+      if (namedHighScore?.recordKey) {
+        setTopScorer(previousRecord)
+        const beatNamedRecord = result > (previousRecord?.score ?? 0)
+        setNeedsName(beatNamedRecord)
+        setPendingName(beatNamedRecord ? previousRecord?.name ?? '' : '')
+      }
     },
-    [fallbackTopScorerName, highScoreKey, namedHighScore, score],
+    [fallbackName, highScoreKey, namedHighScore, score, setPaused],
   )
 
-  const handleSaveTopScorer = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+  const saveTopScorer = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
       if (!namedHighScore?.recordKey) return
-
-      const nextRecord: NamedScoreRecord = {
-        name: pendingTopScorerName.trim().slice(0, 24) || fallbackTopScorerName,
+      const record: NamedScoreRecord = {
+        name: pendingName.trim().slice(0, 24) || fallbackName,
         score: finalScore,
         updatedAt: new Date().toISOString(),
       }
-
-      writeNamedScoreRecord(namedHighScore.recordKey, nextRecord)
-      setTopScorer(nextRecord)
-      setHighScore((prev) => Math.max(prev, nextRecord.score))
-      setPendingTopScorerName(nextRecord.name)
-      setNeedsTopScorerName(false)
+      writeNamedScore(namedHighScore.recordKey, record)
+      setTopScorer(record)
+      setHighScore((current) => Math.max(current, record.score))
+      setNeedsName(false)
     },
-    [fallbackTopScorerName, finalScore, namedHighScore, pendingTopScorerName],
+    [fallbackName, finalScore, namedHighScore, pendingName],
   )
 
-  // ── Play again ─────────────────────────────────────────────────────────────
-  const handlePlayAgain = useCallback(() => {
+  const playAgain = useCallback(() => {
     setIsGameOver(false)
-    setRoundId((prev) => prev + 1)
     setIsNewBest(false)
-    setNeedsTopScorerName(false)
-    setPendingTopScorerName('')
+    setNeedsName(false)
+    setPendingName('')
     setScore(0)
-    setIsPaused(false)
-  }, [])
+    setPaused(false)
+    setRoundId((current) => current + 1)
+  }, [setPaused])
 
-  // ── Escape → toggle pause ──────────────────────────────────────────────────
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        if (showControls) {
-          setShowControls(false)
-          return
-        }
-        togglePause()
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      if (showControls) {
+        setShowControls(false)
+        return
       }
+      togglePause()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [togglePause, showControls])
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showControls, togglePause])
 
-  // ── Fullscreen API ─────────────────────────────────────────────────────────
   useEffect(() => {
-    function onFsChange() {
-      setIsFullscreen(Boolean(document.fullscreenElement))
-    }
-    document.addEventListener('fullscreenchange', onFsChange)
-    return () => document.removeEventListener('fullscreenchange', onFsChange)
+    const onFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
   }, [])
 
   const toggleFullscreen = useCallback(async () => {
-    if (!containerRef.current) return
+    if (!arenaRef.current) return
     try {
-      if (!document.fullscreenElement) {
-        await containerRef.current.requestFullscreen()
-      } else {
-        await document.exitFullscreen()
-      }
+      if (document.fullscreenElement) await document.exitFullscreen()
+      else await arenaRef.current.requestFullscreen()
     } catch {
-      /* Fullscreen not supported — silently ignore */
+      // Fullscreen is optional on embedded/mobile browsers.
     }
   }, [])
 
-  // ── Render props ───────────────────────────────────────────────────────────
   const renderProps: GameRenderProps = {
     isPaused,
     isGameOver,
     roundId,
     score,
     setScore,
-    setGameOver: handleSetGameOver,
+    setGameOver,
     highScore,
   }
 
-  const gameSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-
-  // ── Styles (inline so this file is standalone) ────────────────────────────
-  const overlayBase: React.CSSProperties = {
-    position: 'absolute',
-    inset: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '1.25rem',
-    backgroundColor: 'rgba(0,0,0,0.72)',
-    backdropFilter: 'blur(6px)',
-    WebkitBackdropFilter: 'blur(6px)',
-    zIndex: 20,
-  }
-
-  const overlayCard: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1rem',
-    padding: '2rem 2.5rem',
-    borderRadius: 'var(--ds-radius-lg, 1.35rem)',
-    border: '1px solid rgba(201, 168, 76, 0.28)',
-    background: 'rgba(16, 13, 8, 0.96)',
-    boxShadow: '0 24px 64px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.08)',
-    minWidth: '18rem',
-    maxWidth: '90vw',
-  }
-
-  const primaryBtn: React.CSSProperties = {
-    padding: '0.55rem 1.5rem',
-    borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-    border: '1px solid rgba(201, 168, 76, 0.5)',
-    background: 'linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.1))',
-    color: '#e8c96e',
-    fontFamily: 'var(--ds-font-mono, monospace)',
-    fontSize: '0.85rem',
-    fontWeight: 500,
-    letterSpacing: '0.06em',
-    cursor: 'pointer',
-    transition: 'all 0.15s ease',
-  }
-
-  const ghostBtn: React.CSSProperties = {
-    padding: '0.5rem 1.25rem',
-    borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-    border: '1px solid rgba(42, 37, 32, 0.95)',
-    background: 'transparent',
-    color: '#a89878',
-    fontFamily: 'var(--ds-font-mono, monospace)',
-    fontSize: '0.8rem',
-    cursor: 'pointer',
-    transition: 'all 0.15s ease',
-  }
-
-  const inputStyle: React.CSSProperties = {
-    flex: '1 1 12rem',
-    minWidth: 0,
-    padding: '0.7rem 0.85rem',
-    borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-    border: '1px solid rgba(201, 168, 76, 0.24)',
-    background: 'rgba(8, 7, 4, 0.7)',
-    color: '#f0e8d8',
-    fontFamily: 'var(--ds-font-mono, monospace)',
-    fontSize: '0.82rem',
-    letterSpacing: '0.04em',
-  }
-
-  const overlayTitle: React.CSSProperties = {
-    fontFamily: 'var(--ds-font-display, serif)',
-    fontSize: 'clamp(1.6rem, 5vw, 2.25rem)',
-    fontWeight: 700,
-    color: '#f0e8d8',
-    letterSpacing: '-0.02em',
-    margin: 0,
-  }
-
   return (
-    <div
+    <section
       className="game-shell"
       data-game={gameSlug}
       data-status={isGameOver ? 'over' : isPaused ? 'paused' : 'live'}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        minHeight: 0,
-        background: 'var(--ds-bg, #0a0906)',
-        fontFamily: 'var(--ds-font-body, sans-serif)',
-      }}
+      aria-label={`${title} game room`}
     >
-      {/* ── Top Bar ──────────────────────────────────────────────────────────── */}
-      <div
-        className="game-shell__topbar"
-        role="toolbar"
-        aria-label="Game controls"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0 0.75rem',
-          height: '2.5rem',
-          flexShrink: 0,
-          borderBottom: '1px solid rgba(42, 37, 32, 0.95)',
-          background: 'rgba(10, 9, 6, 0.9)',
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          zIndex: 10,
-        }}
-      >
-        {/* Back link */}
-        <a
-          className="game-shell__back"
-          href="#arcade"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            color: '#7a7060',
-            textDecoration: 'none',
-            fontSize: '0.78rem',
-            fontFamily: 'var(--ds-font-mono, monospace)',
-            letterSpacing: '0.03em',
-            flexShrink: 0,
-            padding: '0.25rem 0.5rem',
-            borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-            transition: 'color 0.15s',
-          }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#c9a84c')}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = '#7a7060')}
-        >
-          ← arcade
+      <header className="game-shell__topbar" role="toolbar" aria-label="Game controls">
+        <a className="game-shell__back" href="#arcade" aria-label="Back to arcade">
+          <span aria-hidden="true">←</span> arcade
         </a>
-
-        {/* Separator */}
-        <div
-          aria-hidden
-          style={{
-            width: '1px',
-            height: '1.1rem',
-            background: 'rgba(42, 37, 32, 0.95)',
-            flexShrink: 0,
-          }}
-        />
-
-        {/* Title */}
-        <span
-          className="game-shell__title"
-          style={{
-            fontFamily: 'var(--ds-font-display, serif)',
-            fontSize: '0.92rem',
-            fontWeight: 700,
-            color: '#c9a84c',
-            letterSpacing: '-0.01em',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            flexShrink: 1,
-            minWidth: 0,
-          }}
-        >
-          {title}
-        </span>
-
+        <span className="game-shell__separator" aria-hidden="true" />
+        <div className="game-shell__identity">
+          <span className="game-shell__eyebrow">YA / ARCADE</span>
+          <span className="game-shell__title">{title}</span>
+        </div>
         <div className="game-shell__live-status" aria-label="Live arcade session">
           <span aria-hidden="true" />
-          <span>Live session</span>
+          <span>{isPaused ? 'Paused' : isGameOver ? 'Session ended' : 'Live session'}</span>
         </div>
-
-        {/* Spacer */}
-        <div style={{ flex: 1, minWidth: '0.25rem' }} />
-
-        {/* Score */}
-        <div
-          className="game-shell__metric"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            style={{
-              fontSize: '0.7rem',
-              color: '#7a7060',
-              fontFamily: 'var(--ds-font-mono, monospace)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Score
-          </span>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontFamily: 'var(--ds-font-mono, monospace)',
-              fontWeight: 500,
-              color: '#ddd5c0',
-              minWidth: '2ch',
-              textAlign: 'right',
-            }}
-          >
-            {score}
-          </span>
+        <div className="game-shell__spacer" />
+        <div className="game-shell__metric" aria-label={`Score ${score}`}>
+          <span>Score</span>
+          <strong>{score}</strong>
         </div>
-
-        {/* Separator */}
-        <div
-          aria-hidden
-          style={{
-            width: '1px',
-            height: '1.1rem',
-            background: 'rgba(42, 37, 32, 0.95)',
-            flexShrink: 0,
-          }}
-        />
-
-        {/* Best */}
-        <div
-          className="game-shell__metric"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            style={{
-              fontSize: '0.7rem',
-              color: '#7a7060',
-              fontFamily: 'var(--ds-font-mono, monospace)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Best
-          </span>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontFamily: 'var(--ds-font-mono, monospace)',
-              fontWeight: 500,
-              color: highScore > 0 ? '#c9a84c' : '#7a7060',
-              minWidth: '2ch',
-              textAlign: 'right',
-            }}
-          >
-            {highScore}
-          </span>
+        <div className="game-shell__metric" aria-label={`Best score ${highScore}`}>
+          <span>Best</span>
+          <strong>{highScore}</strong>
         </div>
-
-        {/* Action buttons */}
-        <div
-          className="game-shell__actions"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexShrink: 0 }}
-        >
-          <TopBarButton
-            onClick={() => setShowControls(true)}
-            title="How to play"
-          >
-            ?
-          </TopBarButton>
-
-          <TopBarButton
-            onClick={togglePause}
-            title={isPaused ? 'Resume (Esc)' : 'Pause (Esc)'}
-            active={isPaused}
-          >
-            {isPaused ? '▶' : '⏸'}
-          </TopBarButton>
-
-          {/* Fullscreen — hidden on small screens */}
-          <div className="hidden sm:flex">
-            <TopBarButton
-              onClick={toggleFullscreen}
-              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-              active={isFullscreen}
-            >
-              {isFullscreen ? '✕' : '⛶'}
-            </TopBarButton>
-          </div>
+        <div className="game-shell__actions">
+          <ActionButton label="?" title="How to play" onClick={() => setShowControls(true)} />
+          <ActionButton label={isPaused ? '▶' : 'Ⅱ'} title={isPaused ? 'Resume (Esc)' : 'Pause (Esc)'} onClick={togglePause} active={isPaused} />
+          <ActionButton label={isFullscreen ? '×' : '⛶'} title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'} onClick={toggleFullscreen} active={isFullscreen} />
         </div>
-      </div>
+      </header>
 
-      {/* ── Game Area ────────────────────────────────────────────────────────── */}
-      <div
-        className="game-shell__arena"
-        ref={containerRef}
-        style={{
-          position: 'relative',
-          flex: 1,
-          minHeight: 0,
-          overflow: 'hidden',
-        }}
-      >
-        <div className="game-shell__game" key={roundId} style={{ height: '100%' }}>
+      <div className="game-shell__arena" ref={arenaRef}>
+        <div className="game-shell__game" key={roundId}>
           {children(renderProps)}
         </div>
 
-        {/* ── Pause Overlay ─────────────────────────────────────────────────── */}
-        {isPaused && !isGameOver && (
-          <div className="game-shell__overlay" style={overlayBase} role="dialog" aria-modal aria-label="Game paused">
-            <div className="game-shell__overlay-card" style={overlayCard}>
-              {/* Decorative top rule */}
-              <div
-                aria-hidden
-                style={{
-                  width: '2.5rem',
-                  height: '2px',
-                  borderRadius: '1px',
-                  background: 'linear-gradient(90deg, transparent, #c9a84c, transparent)',
-                  marginBottom: '0.25rem',
-                }}
-              />
-              <p style={overlayTitle}>Paused</p>
-              <p
-                style={{
-                  fontSize: '0.78rem',
-                  color: '#7a7060',
-                  fontFamily: 'var(--ds-font-mono, monospace)',
-                  margin: 0,
-                  letterSpacing: '0.04em',
-                }}
-              >
-                press Esc to resume
-              </p>
-              <button
-                style={{ ...primaryBtn, marginTop: '0.5rem' }}
-                onClick={togglePause}
-                onMouseEnter={(e) => {
-                  ;(e.currentTarget as HTMLButtonElement).style.background =
-                    'linear-gradient(135deg, rgba(201,168,76,0.35), rgba(201,168,76,0.18))'
-                  ;(e.currentTarget as HTMLButtonElement).style.color = '#f0e8d8'
-                }}
-                onMouseLeave={(e) => {
-                  ;(e.currentTarget as HTMLButtonElement).style.background =
-                    'linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.1))'
-                  ;(e.currentTarget as HTMLButtonElement).style.color = '#e8c96e'
-                }}
-              >
-                Resume
-              </button>
+        {isPaused && !isGameOver ? (
+          <div className="game-shell__overlay" role="dialog" aria-modal="true" aria-label="Game paused">
+            <div className="game-shell__overlay-card game-shell__overlay-card--pause">
+              <span className="game-shell__overlay-kicker">SESSION HOLD</span>
+              <h2>Paused</h2>
+              <p>Everything is frozen. Resume when you’re ready.</p>
+              <button type="button" className="game-shell__primary" onClick={togglePause}>Resume run <span aria-hidden="true">↗</span></button>
             </div>
           </div>
-        )}
+        ) : null}
 
-        {/* ── Game Over Overlay ─────────────────────────────────────────────── */}
-        {isGameOver && (
-          <div className="game-shell__overlay" style={overlayBase} role="dialog" aria-modal aria-label="Game over">
-            <div className="game-shell__overlay-card" style={overlayCard}>
-              <div
-                aria-hidden
-                style={{
-                  width: '2.5rem',
-                  height: '2px',
-                  borderRadius: '1px',
-                  background: 'linear-gradient(90deg, transparent, #c04a3a, transparent)',
-                  marginBottom: '0.25rem',
-                }}
-              />
-              <p
-                style={{
-                  ...overlayTitle,
-                  color: '#ddd5c0',
-                  fontSize: 'clamp(1.4rem, 4.5vw, 2rem)',
-                }}
-              >
-                Game Over
-              </p>
-
-              {/* Scores */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-                  border: '1px solid rgba(42, 37, 32, 0.95)',
-                  background: 'rgba(22, 19, 13, 0.8)',
-                  width: '100%',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#7a7060',
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Score
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      fontWeight: 500,
-                      color: '#ddd5c0',
-                    }}
-                  >
-                    {finalScore}
-                  </span>
-                </div>
-                <div
-                  aria-hidden
-                  style={{
-                    width: '100%',
-                    height: '1px',
-                    background: 'rgba(42, 37, 32, 0.95)',
-                  }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#7a7060',
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Best
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      fontWeight: 500,
-                      color: '#c9a84c',
-                    }}
-                  >
-                    {highScore}
-                  </span>
-                </div>
-
-                {namedHighScore?.recordKey ? (
-                  <>
-                    <div
-                      aria-hidden
-                      style={{
-                        width: '100%',
-                        height: '1px',
-                        background: 'rgba(42, 37, 32, 0.95)',
-                      }}
-                    />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '1rem' }}>
-                      <span
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#7a7060',
-                          fontFamily: 'var(--ds-font-mono, monospace)',
-                          letterSpacing: '0.06em',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {topScorerLabel}
-                      </span>
-                      <div style={{ textAlign: 'right' }}>
-                        <div
-                          style={{
-                            fontFamily: 'var(--ds-font-mono, monospace)',
-                            fontWeight: 500,
-                            color: topScorer ? '#f0e8d8' : '#7a7060',
-                          }}
-                        >
-                          {topScorer?.name ?? 'Waiting for first run'}
-                        </div>
-                        <div
-                          style={{
-                            marginTop: '0.15rem',
-                            fontSize: '0.72rem',
-                            color: '#7a7060',
-                            fontFamily: 'var(--ds-font-mono, monospace)',
-                          }}
-                        >
-                          {topScorer ? `${topScorer.score} pts` : 'No saved score yet'}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : null}
+        {isGameOver ? (
+          <div className="game-shell__overlay" role="dialog" aria-modal="true" aria-label="Game over">
+            <div className="game-shell__overlay-card game-shell__overlay-card--result">
+              <span className="game-shell__overlay-kicker">RUN COMPLETE</span>
+              <h2>Game over</h2>
+              <div className="game-shell__result-score"><span>Final score</span><strong>{finalScore}</strong></div>
+              <div className="game-shell__result-meta">
+                <span>{isNewBest ? '★ New personal best' : `Best ${highScore}`}</span>
+                {topScorer ? <span>{scorerLabel}: {topScorer.name}</span> : null}
               </div>
 
-              {/* New best badge */}
-              {isNewBest && (
-                <div
-                  role="status"
-                  aria-live="polite"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.35rem 0.85rem',
-                    borderRadius: 'var(--ds-radius-pill, 999px)',
-                    border: '1px solid rgba(201, 168, 76, 0.45)',
-                    background: 'rgba(201, 168, 76, 0.12)',
-                    color: '#c9a84c',
-                    fontSize: '0.78rem',
-                    fontFamily: 'var(--ds-font-mono, monospace)',
-                    letterSpacing: '0.05em',
-                    fontWeight: 500,
-                  }}
-                >
-                  🏆 New Best!
-                </div>
-              )}
-
-              {needsTopScorerName ? (
-                <form
-                  onSubmit={handleSaveTopScorer}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.7rem',
-                  }}
-                >
-                  <label
-                    htmlFor="top-scorer-name"
-                    style={{
-                      color: '#ddd5c0',
-                      fontSize: '0.82rem',
-                      lineHeight: 1.6,
-                      textAlign: 'left',
-                      width: '100%',
-                    }}
-                  >
-                    New record. Add a name for the saved {topScorerLabel.toLowerCase()} entry.
-                    Leave it blank to save as {fallbackTopScorerName}.
-                  </label>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '0.6rem',
-                      flexWrap: 'wrap',
-                      width: '100%',
-                    }}
-                  >
-                    <input
-                      id="top-scorer-name"
-                      type="text"
-                      value={pendingTopScorerName}
-                      onChange={(event) => setPendingTopScorerName(event.target.value.slice(0, 24))}
-                      maxLength={24}
-                      autoFocus
-                      placeholder="Enter your name"
-                      style={inputStyle}
-                    />
-                    <button
-                      type="submit"
-                      style={{ ...primaryBtn, minWidth: '9.5rem' }}
-                      onMouseEnter={(e) => {
-                        ;(e.currentTarget as HTMLButtonElement).style.background =
-                          'linear-gradient(135deg, rgba(201,168,76,0.35), rgba(201,168,76,0.18))'
-                        ;(e.currentTarget as HTMLButtonElement).style.color = '#f0e8d8'
-                      }}
-                      onMouseLeave={(e) => {
-                        ;(e.currentTarget as HTMLButtonElement).style.background =
-                          'linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.1))'
-                        ;(e.currentTarget as HTMLButtonElement).style.color = '#e8c96e'
-                      }}
-                    >
-                      Save Record
-                    </button>
+              {needsName ? (
+                <form className="game-shell__name-form" onSubmit={saveTopScorer}>
+                  <label htmlFor={`${gameSlug}-scorer`}>{scorerLabel} unlocked</label>
+                  <div>
+                    <input id={`${gameSlug}-scorer`} value={pendingName} maxLength={24} onChange={(event) => setPendingName(event.target.value)} placeholder={fallbackName} autoFocus />
+                    <button type="submit" className="game-shell__primary">Save</button>
                   </div>
                 </form>
               ) : null}
 
-              {/* Buttons */}
-              {!needsTopScorerName ? (
-                <div
-                style={{
-                  display: 'flex',
-                  gap: '0.6rem',
-                  marginTop: '0.25rem',
-                  flexWrap: 'wrap',
-                  justifyContent: 'center',
-                }}
-              >
-                <button
-                  style={primaryBtn}
-                  onClick={handlePlayAgain}
-                  onMouseEnter={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.background =
-                      'linear-gradient(135deg, rgba(201,168,76,0.35), rgba(201,168,76,0.18))'
-                    ;(e.currentTarget as HTMLButtonElement).style.color = '#f0e8d8'
-                  }}
-                  onMouseLeave={(e) => {
-                    ;(e.currentTarget as HTMLButtonElement).style.background =
-                      'linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.1))'
-                    ;(e.currentTarget as HTMLButtonElement).style.color = '#e8c96e'
-                  }}
-                >
-                  Play Again
-                </button>
-                <a href="#arcade" style={{ textDecoration: 'none' }}>
-                  <button
-                    style={ghostBtn}
-                    onMouseEnter={(e) => {
-                      ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-                        'rgba(201, 168, 76, 0.35)'
-                      ;(e.currentTarget as HTMLButtonElement).style.color = '#c9a84c'
-                    }}
-                    onMouseLeave={(e) => {
-                      ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-                        'rgba(42, 37, 32, 0.95)'
-                      ;(e.currentTarget as HTMLButtonElement).style.color = '#a89878'
-                    }}
-                  >
-                    ← Arcade
-                  </button>
-                </a>
+              {!needsName ? (
+                <div className="game-shell__result-actions">
+                  <button type="button" className="game-shell__primary" onClick={playAgain}>Play again <span aria-hidden="true">↗</span></button>
+                  <a className="game-shell__secondary" href="#arcade">← Arcade</a>
                 </div>
               ) : null}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
-      {/* ── Controls Modal ────────────────────────────────────────────────────── */}
-      {showControls && (
-        <div
-          className="game-shell__controls-overlay"
-          role="dialog"
-          aria-modal
-          aria-label="Game controls"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-            backgroundColor: 'rgba(0,0,0,0.72)',
-            backdropFilter: 'blur(6px)',
-            WebkitBackdropFilter: 'blur(6px)',
-            zIndex: 50,
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowControls(false)
-          }}
-        >
-          <div
-            className="game-shell__controls-card"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-              padding: '1.75rem',
-              borderRadius: 'var(--ds-radius-lg, 1.35rem)',
-              border: '1px solid rgba(201, 168, 76, 0.28)',
-              background: 'rgba(16, 13, 8, 0.97)',
-              boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-              width: '100%',
-              maxWidth: '22rem',
-              maxHeight: '85vh',
-              overflowY: 'auto',
-            }}
-          >
-            {/* Modal header */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1rem' }}>🎮</span>
-                <span
-                  style={{
-                    fontFamily: 'var(--ds-font-display, serif)',
-                    fontSize: '1.1rem',
-                    fontWeight: 700,
-                    color: '#f0e8d8',
-                  }}
-                >
-                  How to Play
-                </span>
-              </div>
-              <button
-                onClick={() => setShowControls(false)}
-                aria-label="Close controls"
-                style={{
-                  background: 'none',
-                  border: '1px solid rgba(42, 37, 32, 0.95)',
-                  borderRadius: 'var(--ds-radius-sm, 0.65rem)',
-                  color: '#7a7060',
-                  width: '1.75rem',
-                  height: '1.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  flexShrink: 0,
-                }}
-              >
-                ✕
-              </button>
+      {showControls ? (
+        <div className="game-shell__controls-overlay" role="dialog" aria-modal="true" aria-label="Game controls" onClick={(event) => { if (event.target === event.currentTarget) setShowControls(false) }}>
+          <div className="game-shell__controls-card">
+            <div className="game-shell__controls-heading">
+              <div><span className="game-shell__overlay-kicker">FIELD MANUAL</span><h2>How to play</h2></div>
+              <button type="button" className="game-shell__close" onClick={() => setShowControls(false)} aria-label="Close controls">×</button>
             </div>
-
-            {/* Divider */}
-            <div
-              aria-hidden
-              style={{
-                height: '1px',
-                background:
-                  'linear-gradient(90deg, transparent, rgba(201,168,76,0.25), transparent)',
-              }}
-            />
-
-            {/* Controls table */}
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-              }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      textAlign: 'left',
-                      fontSize: '0.68rem',
-                      color: '#7a7060',
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      paddingBottom: '0.6rem',
-                      borderBottom: '1px solid rgba(42, 37, 32, 0.95)',
-                      fontWeight: 400,
-                    }}
-                  >
-                    Key
-                  </th>
-                  <th
-                    style={{
-                      textAlign: 'left',
-                      fontSize: '0.68rem',
-                      color: '#7a7060',
-                      fontFamily: 'var(--ds-font-mono, monospace)',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      paddingBottom: '0.6rem',
-                      paddingLeft: '1rem',
-                      borderBottom: '1px solid rgba(42, 37, 32, 0.95)',
-                      fontWeight: 400,
-                    }}
-                  >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {controls.map((item, i) => (
-                  <tr key={i}>
-                    <td
-                      style={{
-                        padding: '0.55rem 0',
-                        borderBottom:
-                          i < controls.length - 1
-                            ? '1px solid rgba(42, 37, 32, 0.6)'
-                            : 'none',
-                        verticalAlign: 'middle',
-                      }}
-                    >
-                      <kbd
-                        style={{
-                          display: 'inline-block',
-                          padding: '0.2rem 0.5rem',
-                          borderRadius: '0.35rem',
-                          border: '1px solid rgba(201, 168, 76, 0.3)',
-                          background: 'rgba(201, 168, 76, 0.08)',
-                          color: '#c9a84c',
-                          fontFamily: 'var(--ds-font-mono, monospace)',
-                          fontSize: '0.78rem',
-                          fontWeight: 500,
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {item.key}
-                      </kbd>
-                    </td>
-                    <td
-                      style={{
-                        padding: '0.55rem 0 0.55rem 1rem',
-                        borderBottom:
-                          i < controls.length - 1
-                            ? '1px solid rgba(42, 37, 32, 0.6)'
-                            : 'none',
-                        fontSize: '0.85rem',
-                        color: '#a89878',
-                        fontFamily: 'var(--ds-font-body, sans-serif)',
-                        verticalAlign: 'middle',
-                      }}
-                    >
-                      {item.action}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Tip footer */}
-            <p
-              style={{
-                margin: 0,
-                fontSize: '0.72rem',
-                color: '#7a7060',
-                fontFamily: 'var(--ds-font-mono, monospace)',
-                textAlign: 'center',
-                letterSpacing: '0.03em',
-              }}
-            >
-              Esc — pause · click outside to close
-            </p>
+            <div className="game-shell__control-list">
+              {controls.map((item) => <div className="game-shell__control-row" key={`${item.key}-${item.action}`}><kbd>{item.key}</kbd><span>{item.action}</span></div>)}
+            </div>
+            <p className="game-shell__controls-tip">Esc pauses the run · click outside to close</p>
           </div>
         </div>
-      )}
-    </div>
+      ) : null}
+    </section>
   )
 }

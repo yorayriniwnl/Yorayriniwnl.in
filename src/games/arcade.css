@@ -10,6 +10,10 @@
   --arcade-acid: #ff3e64;
   --arcade-orange: #ffb15c;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   isolation: isolate;
   overflow: hidden;
   background:
@@ -191,11 +195,290 @@
 .game-shell__game {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   min-height: 100%;
 }
 
 .game-shell__game:focus-within {
   box-shadow: inset 0 0 0 1px rgba(255, 62, 100, 0.18);
+}
+
+.game-shell__arena {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.game-shell__separator {
+  width: 1px;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.game-shell__identity {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.game-shell__eyebrow {
+  color: var(--arcade-acid);
+  font: 0.5rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.game-shell__spacer {
+  flex: 1 1 auto;
+  min-width: 0.25rem;
+}
+
+.game-shell__action {
+  font: 0.75rem/1 var(--ds-font-mono, monospace);
+}
+
+.game-shell__metric > strong {
+  min-width: 2ch;
+  color: var(--arcade-ink);
+  font: 600 0.78rem/1 var(--ds-font-mono, monospace);
+  text-align: right;
+}
+
+.game-shell__metric:last-of-type > strong {
+  color: var(--arcade-orange);
+}
+
+.game-shell__overlay,
+.game-shell__controls-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.game-shell__controls-overlay {
+  position: fixed;
+  z-index: 100;
+}
+
+.game-shell__overlay-card,
+.game-shell__controls-card {
+  width: min(100%, 28rem);
+  padding: clamp(1.4rem, 4vw, 2.2rem);
+  color: var(--arcade-ink);
+}
+
+.game-shell__overlay-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+
+.game-shell__overlay-card h2,
+.game-shell__controls-card h2 {
+  margin: 0;
+  color: #fff;
+  font: 700 clamp(1.8rem, 5vw, 2.6rem)/0.95 var(--ds-font-display, sans-serif);
+  letter-spacing: -0.04em;
+}
+
+.game-shell__overlay-card p {
+  max-width: 23rem;
+  margin: 0;
+  color: var(--arcade-muted);
+  font: 0.78rem/1.6 var(--ds-font-body, sans-serif);
+}
+
+.game-shell__overlay-kicker {
+  color: var(--arcade-orange);
+  font: 0.56rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.game-shell__primary,
+.game-shell__secondary,
+.game-shell__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.6rem;
+  border-radius: 0.55rem;
+  font: 0.68rem/1 var(--ds-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.game-shell__primary {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--arcade-line-strong);
+  background: linear-gradient(135deg, rgba(255, 62, 100, 0.2), rgba(255, 177, 92, 0.1));
+  color: #fff;
+}
+
+.game-shell__primary:hover {
+  transform: translateY(-1px);
+  border-color: var(--arcade-orange);
+  background: linear-gradient(135deg, rgba(255, 62, 100, 0.32), rgba(255, 177, 92, 0.18));
+}
+
+.game-shell__secondary {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--arcade-muted);
+  text-decoration: none;
+}
+
+.game-shell__secondary:hover {
+  border-color: var(--arcade-line-strong);
+  color: #fff;
+}
+
+.game-shell__result-score {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-block: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.game-shell__result-score span,
+.game-shell__result-meta,
+.game-shell__name-form label,
+.game-shell__controls-tip {
+  color: var(--arcade-muted);
+  font: 0.58rem/1.4 var(--ds-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.game-shell__result-score strong {
+  color: var(--arcade-orange);
+  font: 700 clamp(2.2rem, 8vw, 3.6rem)/0.9 var(--ds-font-display, sans-serif);
+  letter-spacing: -0.05em;
+}
+
+.game-shell__result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  width: 100%;
+}
+
+.game-shell__result-meta span:first-child {
+  color: var(--arcade-acid);
+}
+
+.game-shell__result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+}
+
+.game-shell__name-form {
+  display: grid;
+  gap: 0.55rem;
+  width: 100%;
+  text-align: left;
+}
+
+.game-shell__name-form > div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.game-shell__name-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 0.72rem 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.5rem;
+  outline: none;
+  background: rgba(0, 0, 0, 0.26);
+  color: #fff;
+  font: 0.75rem/1 var(--ds-font-mono, monospace);
+}
+
+.game-shell__name-form input:focus {
+  border-color: var(--arcade-orange);
+  box-shadow: 0 0 0 3px rgba(255, 177, 92, 0.12);
+}
+
+.game-shell__controls-card {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.game-shell__controls-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.game-shell__controls-heading h2 {
+  margin-top: 0.55rem;
+  font-size: clamp(1.6rem, 5vw, 2.1rem);
+}
+
+.game-shell__close {
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--arcade-muted);
+}
+
+.game-shell__close:hover {
+  border-color: var(--arcade-line-strong);
+  color: #fff;
+}
+
+.game-shell__control-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.game-shell__control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--arcade-muted);
+  font-size: 0.78rem;
+}
+
+.game-shell__control-row kbd {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.48rem;
+  border: 1px solid var(--arcade-line);
+  border-radius: 0.35rem;
+  background: rgba(255, 62, 100, 0.08);
+  color: var(--arcade-acid);
+  font: 0.66rem/1 var(--ds-font-mono, monospace);
+}
+
+.game-shell__controls-tip {
+  margin: 0;
+  text-align: center;
+  text-transform: none;
 }
 
 .game-shell__overlay,
@@ -382,6 +665,25 @@
   box-shadow: 0 0 0 1px rgba(255, 62, 100, 0.08), 0 22px 70px rgba(0, 0, 0, 0.62), 0 0 4rem rgba(255, 62, 100, 0.08) !important;
 }
 
+.game-scene--snake .game-scene__start-hint {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 62, 100, 0.42);
+  border-radius: 0.45rem;
+  background: rgba(8, 8, 12, 0.8);
+  color: #ffb15c;
+  font: 0.6rem/1.35 var(--ds-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
 .game-shell[data-game='snake'] .game-shell__game > div:last-child {
   border-color: rgba(255, 62, 100, 0.16) !important;
   background: rgba(7, 8, 12, 0.92) !important;
@@ -493,6 +795,10 @@
   background:
     radial-gradient(circle at 50% 20%, rgba(255, 62, 100, 0.13), transparent 24rem),
     #07080b !important;
+}
+
+.game-scene--strike-arena > div {
+  border-color: rgba(255, 62, 100, 0.22);
 }
 
 .game-scene--strike-arena::after { content: 'COMBAT / 07'; }
