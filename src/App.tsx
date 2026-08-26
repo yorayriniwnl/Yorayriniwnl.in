@@ -369,7 +369,6 @@ function App() {
                 height={640}
                 loading="eager"
                 decoding="async"
-                fetchPriority="high"
               />
               <span className="player-card__status"><i /> Online</span>
               <span className="player-card__level">125</span>
