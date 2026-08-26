@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid">
+  <defs>
+    <linearGradient id="bg3" x1="0" x2="1"><stop offset="0" stop-color="#02030a"/><stop offset="1" stop-color="#071428"/></linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg3)" />
+
+  <g transform="translate(120,100)" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto" fill="#fff">
+    <text x="0" y="0" font-size="40" font-weight="800">Yor Zenith - Solar Energy Planning</text>
+    <text x="0" y="40" font-size="16" fill="#9aa7c6">Resume project - rooftop feasibility, energy estimation, and 3D dashboards</text>
+
+    <g transform="translate(0,80)">
+      <rect x="0" y="0" width="980" height="520" rx="18" fill="#0b1220" stroke="#ffffff11" />
+
+      <!-- left: map/visual -->
+      <g transform="translate(24,24)">
+        <rect x="0" y="0" width="540" height="472" rx="12" fill="#07102a" />
+        <g fill="#0ea5a5" opacity="0.9">
+          <circle cx="120" cy="120" r="10" />
+          <circle cx="260" cy="210" r="8" />
+          <circle cx="420" cy="320" r="12" />
+        </g>
+      </g>
+
+      <!-- right: details -->
+      <g transform="translate(600,44)" font-size="16" fill="#dbe7ff">
+        <text x="0" y="0" font-size="22" font-weight="700">Overview</text>
+        <text x="0" y="30" font-size="15" fill="#9aa7c6">Solar planning platform with rooftop analysis and generation forecasting.</text>
+
+        <text x="0" y="80" font-size="18" font-weight="700">Impact</text>
+        <text x="0" y="110" font-size="15" fill="#cde7ff">- Rooftop feasibility analysis</text>
+        <text x="0" y="135" font-size="15" fill="#cde7ff">- Solar generation estimation</text>
+
+        <text x="0" y="190" font-size="18" font-weight="700">Tech</text>
+        <text x="0" y="220" font-size="15" fill="#9aa7c6">Python - React - Three.js - TypeScript</text>
+      </g>
+    </g>
+  </g>
+
+  <text x="40" y="860" font-size="12" fill="#8b96b2">Yor Zenith case study - core metrics and visual sample</text>
+</svg>
+

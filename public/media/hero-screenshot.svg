@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1">
+      <stop offset="0" stop-color="#02030a" />
+      <stop offset="1" stop-color="#071428" />
+    </linearGradient>
+    <radialGradient id="purpleGlow" cx="30%" cy="35%" r="60%">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0.96" />
+      <stop offset="0.45" stop-color="#7c3aed" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="tealGlow" cx="65%" cy="45%" r="50%">
+      <stop offset="0" stop-color="#06b6d4" stop-opacity="0.82" />
+      <stop offset="0.4" stop-color="#06b6d4" stop-opacity="0.12" />
+      <stop offset="1" stop-color="#06b6d4" stop-opacity="0" />
+    </radialGradient>
+    <filter id="fBlur"><feGaussianBlur stdDeviation="28" /></filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)" />
+
+  <!-- 3D floating forms (stylized) -->
+  <g filter="url(#fBlur)" opacity="0.95">
+    <ellipse cx="460" cy="260" rx="420" ry="160" fill="url(#purpleGlow)" />
+    <ellipse cx="760" cy="340" rx="320" ry="120" fill="url(#tealGlow)" />
+    <g transform="translate(980,240)">
+      <circle r="78" fill="#ffffff22" />
+      <circle r="36" fill="#ffffff11" />
+    </g>
+  </g>
+
+  <!-- subtle vignette -->
+  <rect width="1600" height="900" fill="#000" opacity="0.06" />
+
+  <!-- hero text -->
+  <g transform="translate(120,220)" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial" fill="#fff">
+    <text x="0" y="0" font-size="96" font-weight="800">Ayush Roy</text>
+    <text x="0" y="96" font-size="28" font-weight="600" fill="#c7bfff">System Builder | React • AI • 3D</text>
+    <text x="0" y="150" font-size="20" fill="#9aa7c6">Building high-performance systems, interactive experiences, and real-world solutions.</text>
+
+    <!-- CTA buttons -->
+    <g transform="translate(0,190)">
+      <rect x="0" y="0" rx="10" ry="10" width="180" height="44" fill="#7c3aed" />
+      <text x="24" y="30" font-size="16" font-weight="700">View Projects</text>
+
+      <rect x="200" y="0" rx="10" ry="10" width="160" height="44" fill="#ffffff11" stroke="#ffffff22" />
+      <text x="232" y="30" font-size="16" font-weight="700" fill="#c7bfff">Contact Me</text>
+    </g>
+  </g>
+
+  <!-- small label -->
+  <text x="40" y="840" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto" font-size="12" fill="#8b96b2">Interactive 3D preview — reduced for screenshot</text>
+</svg>
