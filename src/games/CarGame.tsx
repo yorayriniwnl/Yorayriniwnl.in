@@ -990,6 +990,8 @@ function CarGameCanvas(props: GameRenderProps): React.ReactElement {
     >
       <canvas
         ref={canvasRef}
+        aria-label="Road Runner game canvas. Use left and right arrow keys or swipe to change lanes."
+        tabIndex={0}
         style={{ display: 'block', width: '100%', height: '100%' }}
       />
     </div>

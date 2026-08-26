@@ -74,7 +74,6 @@ const projects = [
     description: "A weighted coordination system that turns hidden spreadsheet work into a repeatable process.",
     tone: "match",
     signal: "SYSTEM",
-    live: "https://mentor-mentee-system.vercel.app",
     source: "https://github.com/yorayriniwnl/mentor-mentee-system",
   },
   {
@@ -265,6 +264,7 @@ function App() {
   const [activeSection, setActiveSection] = useState("world");
   const [scrolled, setScrolled] = useState(false);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const gameRoomRef = useRef<HTMLDivElement | null>(null);
 
   const closeGame = useCallback(() => {
     setActiveGame(null);
@@ -300,7 +300,28 @@ function App() {
   useEffect(() => {
     if (!activeGame) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && (event.shiftKey || activeGame === "chess")) closeGame();
+      if (event.key === "Escape" && (event.shiftKey || activeGame === "chess")) {
+        closeGame();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const room = gameRoomRef.current;
+      if (!room) return;
+      const focusable = Array.from(room.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )).filter((element) => element.offsetParent !== null);
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -341,7 +362,15 @@ function App() {
         <section className="hub-hero hub-container" aria-labelledby="hub-title">
           <aside className="player-card" aria-label="Yor Ayrin player profile">
             <div className="player-card__cover">
-              <img src="/ayush-avatar.png" alt="Ayush Roy" />
+              <img
+                src="/ayush-avatar.png"
+                alt="Ayush Roy"
+                width={640}
+                height={640}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
               <span className="player-card__status"><i /> Online</span>
               <span className="player-card__level">125</span>
             </div>
@@ -392,7 +421,10 @@ function App() {
                   <span>{project.type}</span>
                   <h3>{project.title}</h3>
                   <p>{project.description}</p>
-                  <div><a href={project.live} target="_blank" rel="noreferrer">Open world <Arrow /></a><a href={project.source} target="_blank" rel="noreferrer">Source</a></div>
+                  <div>
+                    {project.live ? <a href={project.live} target="_blank" rel="noreferrer">Open world <Arrow /></a> : <span className="world-link--offline">Live build offline</span>}
+                    <a href={project.source} target="_blank" rel="noreferrer">Source</a>
+                  </div>
                 </div>
               </article>
             ))}
@@ -480,7 +512,17 @@ function App() {
       </footer>
 
       {CurrentGame && currentGame && (
-        <div className={`game-room game-room--${currentGame.color}`} role="dialog" aria-modal="true" aria-label={`${currentGame.name} game room`}>
+        <div
+          ref={gameRoomRef}
+          className={`game-room game-room--${currentGame.color}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${currentGame.name} game room`}
+          onClickCapture={(event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('a[href="#arcade"]')) closeGame();
+          }}
+        >
           <header className="game-room__header">
             <div className="game-room__identity"><span>{currentGame.index}</span><div><small>{currentGame.category}</small><strong>{currentGame.name}</strong></div></div>
             <div className="game-room__session"><i /> LIVE SESSION <span>{currentGame.input}</span></div>

@@ -576,6 +576,7 @@ function TypingGame({ isPaused, setScore }: GameRenderProps) {
         {/* Hidden textarea — captures all typing */}
         <textarea
           ref={textareaRef}
+          aria-label="Code typing input"
           value={userInput}
           onChange={handleInputChange}
           disabled={isPaused || phase !== 'playing'}

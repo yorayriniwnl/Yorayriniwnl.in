@@ -205,6 +205,7 @@ function makeHudSnapshot(
   locked: boolean,
   pointerSupported: boolean,
   coarsePointer: boolean,
+  engaged = false,
 ): HudSnapshot {
   const enemiesAlive = state.enemies.filter((enemy) => enemy.alive).length
   const defaultMessage = !pointerSupported
@@ -213,7 +214,9 @@ function makeHudSnapshot(
       ? 'Mouse and keyboard are recommended for this mode.'
       : locked
         ? 'Live arena. Hold angles, strafe, reload, survive.'
-        : 'Click Enter Arena to lock the mouse and take control.'
+        : engaged
+          ? 'Arena active. Click the arena to recapture mouse control.'
+          : 'Click Enter Arena to lock the mouse and take control.'
 
   return {
     health: state.health,
@@ -244,9 +247,11 @@ function nearestHitPoint(
 function ArenaHud({
   hud,
   onEngage,
+  engaged,
 }: {
   hud: HudSnapshot
   onEngage: () => void
+  engaged: boolean
 }): JSX.Element {
   return (
     <div
@@ -459,7 +464,7 @@ function ArenaHud({
         {hud.message}
       </div>
 
-      {!hud.locked && (
+      {!hud.locked && !engaged && (
         <div
           style={{
             position: 'absolute',
@@ -606,6 +611,7 @@ function ArenaSimulation({
   keys,
   isPaused,
   isGameOver,
+  engaged,
   setGameOver,
   onHudSync,
 }: {
@@ -613,6 +619,7 @@ function ArenaSimulation({
   keys: Record<string, boolean>
   isPaused: boolean
   isGameOver: boolean
+  engaged: boolean
   setGameOver: (gameOver: boolean, finalScore?: number) => void
   onHudSync: (state: MatchState) => void
 }): JSX.Element {
@@ -643,7 +650,7 @@ function ArenaSimulation({
       setMessage(state, 'Magazine seated. Hold the angle.', 0.7)
     }
 
-    if (!isPaused && !isGameOver) {
+    if (engaged && !isPaused && !isGameOver) {
       const forward = new THREE.Vector3(Math.sin(state.yaw), 0, -Math.cos(state.yaw))
       const right = new THREE.Vector3(Math.cos(state.yaw), 0, Math.sin(state.yaw))
       const move = new THREE.Vector3()
@@ -913,12 +920,13 @@ function ArenaStage(props: {
   keys: Record<string, boolean>
   isPaused: boolean
   isGameOver: boolean
+  engaged: boolean
   setGameOver: (gameOver: boolean, finalScore?: number) => void
   onHudSync: (state: MatchState) => void
 }): JSX.Element {
   return (
     <Canvas
-      shadows
+      shadows="percentage"
       dpr={[1, 1.4]}
       gl={{ antialias: true }}
       camera={{ position: [0, PLAYER_EYE_HEIGHT, 8.2], fov: 76 }}
@@ -940,6 +948,7 @@ function ClassicShooterViewport({
   const stateRef = useRef<MatchState>(initialState)
   const lockTimestampRef = useRef(0)
   const [locked, setLocked] = useState(false)
+  const [engaged, setEngaged] = useState(false)
   const [pointerSupported] = useState(canUsePointerLock)
   const [coarsePointer] = useState(hasCoarsePointer)
   const [hud, setHud] = useState<HudSnapshot>(() =>
@@ -955,7 +964,7 @@ function ClassicShooterViewport({
         lockTimestampRef.current = performance.now()
       }
       setLocked(nextLocked)
-      setHud(makeHudSnapshot(stateRef.current, nextLocked, pointerSupported, coarsePointer))
+      setHud(makeHudSnapshot(stateRef.current, nextLocked, pointerSupported, coarsePointer, engaged))
     }
 
     function onMouseMove(event: MouseEvent) {
@@ -974,7 +983,7 @@ function ClassicShooterViewport({
       document.removeEventListener('pointerlockchange', onPointerLockChange)
       document.removeEventListener('mousemove', onMouseMove)
     }
-  }, [coarsePointer, isGameOver, isPaused, pointerSupported])
+  }, [coarsePointer, engaged, isGameOver, isPaused, pointerSupported])
 
   useEffect(() => {
     if ((isPaused || isGameOver) && document.pointerLockElement === wrapperRef.current) {
@@ -996,10 +1005,10 @@ function ClassicShooterViewport({
         if (state.reserve > 0) {
           state.reloadTimer = 1.05
           setMessage(state, 'Reloading weapon.', 0.9)
-          setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer))
+          setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer, engaged))
         } else {
           setMessage(state, 'No reserve rounds left.', 0.9)
-          setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer))
+          setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer, engaged))
         }
         return
       }
@@ -1048,7 +1057,7 @@ function ClassicShooterViewport({
         addImpact(state, hitPoint, '#f59e0b', 0.12)
       }
 
-      setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer))
+      setHud(makeHudSnapshot(state, true, pointerSupported, coarsePointer, engaged))
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -1061,7 +1070,7 @@ function ClassicShooterViewport({
 
       state.reloadTimer = 1.05
       setMessage(state, 'Reloading weapon.', 0.9)
-      setHud(makeHudSnapshot(state, locked, pointerSupported, coarsePointer))
+      setHud(makeHudSnapshot(state, locked, pointerSupported, coarsePointer, engaged))
     }
 
     window.addEventListener('mousedown', handleMouseDown)
@@ -1071,10 +1080,13 @@ function ClassicShooterViewport({
       window.removeEventListener('mousedown', handleMouseDown)
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [coarsePointer, isGameOver, isPaused, locked, pointerSupported, setScore])
+  }, [coarsePointer, engaged, isGameOver, isPaused, locked, pointerSupported, setScore])
 
   async function handleEngage() {
-    if (!pointerSupported || coarsePointer || isPaused || isGameOver) return
+    if (isPaused || isGameOver) return
+    setEngaged(true)
+    setHud(makeHudSnapshot(stateRef.current, locked, pointerSupported, coarsePointer, true))
+    if (!pointerSupported || coarsePointer) return
     try {
       await wrapperRef.current?.requestPointerLock()
     } catch {
@@ -1082,7 +1094,7 @@ function ClassicShooterViewport({
       // active document. Keep the room usable and let the user click again.
       setHud((current) => ({
         ...current,
-        message: 'Click the arena directly to take control.',
+        message: 'Arena active. Click the arena directly to take control.',
       }))
     }
   }
@@ -1091,7 +1103,7 @@ function ClassicShooterViewport({
     if (state.health <= 0) {
       setGameOver(true, state.kills)
     }
-    setHud(makeHudSnapshot(state, locked, pointerSupported, coarsePointer))
+    setHud(makeHudSnapshot(state, locked, pointerSupported, coarsePointer, engaged))
   }
 
   return (
@@ -1112,11 +1124,12 @@ function ClassicShooterViewport({
         keys={keys}
         isPaused={isPaused}
         isGameOver={isGameOver}
+        engaged={engaged}
         setGameOver={setGameOver}
         onHudSync={handleHudSync}
       />
 
-      <ArenaHud hud={hud} onEngage={handleEngage} />
+      <ArenaHud hud={hud} onEngage={handleEngage} engaged={engaged} />
 
       {hud.damageFlash > 0 && (
         <div

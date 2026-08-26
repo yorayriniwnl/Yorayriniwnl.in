@@ -198,24 +198,78 @@ function getFiles(flipped: boolean) {
   return flipped ? ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'] : ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 }
 
-async function requestEngineBestMove(fen: string, depth: number): Promise<string | null> {
-  try {
-    const params = new URLSearchParams({
-      fen,
-      depth: String(depth),
-    });
-
-    const response = await fetch(`/api/chess-engine?${params.toString()}`, {
-      cache: 'no-store',
-    });
-
-    if (!response.ok) return null;
-
-    const payload = (await response.json()) as { bestmove?: string };
-    return typeof payload.bestmove === 'string' ? payload.bestmove : null;
-  } catch {
-    return null;
+function evaluatePosition(position: ChessInstance): number {
+  if (position.isGameOver()) {
+    if (!position.in_checkmate()) return 0;
+    return position.turn() === 'b' ? -10000 : 10000;
   }
+
+  const board = position.board();
+  let score = 0;
+  for (const row of board) {
+    for (const piece of row) {
+      if (!piece) continue;
+      const value = PIECE_VALUES[piece.type.toUpperCase()] ?? 0;
+      score += piece.color === 'b' ? value : -value;
+    }
+  }
+
+  const mobility = position.moves().length;
+  return score + (position.turn() === 'b' ? mobility : -mobility) * 0.03;
+}
+
+function minimax(position: ChessInstance, depth: number, alpha: number, beta: number): number {
+  if (depth === 0 || position.isGameOver()) return evaluatePosition(position);
+
+  const moves = position.moves({ verbose: true });
+  if (!moves.length) return evaluatePosition(position);
+
+  const maximizing = position.turn() === 'b';
+  let best = maximizing ? -Infinity : Infinity;
+
+  for (const move of moves) {
+    position.move(move);
+    const value = minimax(position, depth - 1, alpha, beta);
+    position.undo();
+
+    if (maximizing) {
+      best = Math.max(best, value);
+      alpha = Math.max(alpha, value);
+    } else {
+      best = Math.min(best, value);
+      beta = Math.min(beta, value);
+    }
+
+    if (beta <= alpha) break;
+  }
+
+  return best;
+}
+
+async function requestEngineBestMove(position: ChessInstance, depth: number): Promise<string | null> {
+  // Yield once so the thinking state paints before the local search starts.
+  await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+
+  const moves = position.moves({ verbose: true });
+  if (!moves.length) return null;
+
+  // The public labels remain Easy / Hard / Max, while the bounded local search
+  // keeps the browser responsive instead of depending on a missing API route.
+  const searchDepth = depth >= 18 ? 3 : depth >= 14 ? 2 : 1;
+  let bestMove = moves[0];
+  let bestScore = -Infinity;
+
+  for (const move of moves) {
+    position.move(move);
+    const score = minimax(position, searchDepth - 1, -Infinity, Infinity);
+    position.undo();
+    if (score > bestScore) {
+      bestScore = score;
+      bestMove = move;
+    }
+  }
+
+  return `${bestMove.from}${bestMove.to}${bestMove.promotion ?? ''}`;
 }
 
 export default function YorChess() {
@@ -264,6 +318,7 @@ export default function YorChess() {
 
   // Feature 5: Post-game analysis
   const [endMoveCount, setEndMoveCount] = useState(0);
+  const moveEpochRef = useRef(0);
 
   // Feature 6: Blitz timer
   const [blitzEnabled, setBlitzEnabled] = useState(false);
@@ -455,8 +510,7 @@ export default function YorChess() {
   }
 
   async function botMove(nextGame: ChessInstance) {
-    const fen = nextGame.fen();
-    const bestMove = await requestEngineBestMove(fen, aiDepth);
+    const bestMove = await requestEngineBestMove(nextGame, aiDepth);
 
     if (bestMove) {
       const fm = bestMove.slice(0, 2);
@@ -499,6 +553,7 @@ export default function YorChess() {
   }
 
   async function playerMove(from: string, to: string) {
+    const moveEpoch = moveEpochRef.current;
     let pro: string | undefined;
     const p = game.get(from);
     if (p && p.type === 'p') {
@@ -516,6 +571,7 @@ export default function YorChess() {
     if (p) {
       await animateMove(from, to, pieceKey(p.color, p.type));
     }
+    if (moveEpoch !== moveEpochRef.current) return;
 
     setGame(next);
     gameRef.current = next;
@@ -532,9 +588,11 @@ export default function YorChess() {
     setBotThinking(true);
 
     await new Promise((r) => setTimeout(r, 320));
+    if (moveEpoch !== moveEpochRef.current) return;
 
     const botGame = new ChessCtor(next.fen());
     const botMv = await botMove(botGame);
+    if (moveEpoch !== moveEpochRef.current) return;
     setBotThinking(false);
 
     if (botMv) {
@@ -543,6 +601,7 @@ export default function YorChess() {
       if (botPiece) {
         await animateMove(String(botMv.from), String(botMv.to), pieceKey(botPiece.color, botPiece.type));
       }
+      if (moveEpoch !== moveEpochRef.current) return;
 
       const after = new ChessCtor(botGame.fen());
       setGame(after);
@@ -564,7 +623,7 @@ export default function YorChess() {
   }
 
   async function onSq(sq: string) {
-    if (gameOver || game.turn() !== 'w' || isAnimatingRef.current) return;
+    if (gameOver || botThinking || game.turn() !== 'w' || isAnimatingRef.current) return;
 
     // Feature 4: clear hint on any board interaction
     setHintFrom(null);
@@ -587,6 +646,7 @@ export default function YorChess() {
   }
 
   function newGame() {
+    moveEpochRef.current += 1;
     const g = new ChessCtor();
     setGame(g);
     gameRef.current = g;
@@ -617,7 +677,7 @@ export default function YorChess() {
   }
 
   function undoMove() {
-    if (gameOver || isAnimatingRef.current) return;
+    if (gameOver || botThinking || isAnimatingRef.current) return;
     const g = new ChessCtor(game.fen());
     g.undo();
     g.undo();
@@ -649,7 +709,7 @@ export default function YorChess() {
   async function getHint() {
     if (gameOver || game.turn() !== 'w' || hintLoading || isAnimatingRef.current) return;
     setHintLoading(true);
-    const bestMove = await requestEngineBestMove(game.fen(), 12);
+    const bestMove = await requestEngineBestMove(new ChessCtor(game.fen()), 12);
 
     if (bestMove) {
       setHintFrom(bestMove.slice(0, 2));
@@ -1204,10 +1264,21 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
   cursor: pointer;
   overflow: hidden;
   transition: filter .1s;
   user-select: none;
+}
+
+.sq:focus-visible {
+  outline: 2px solid #f5ecd8;
+  outline-offset: -2px;
+  z-index: 4;
 }
 
 .sq.lt {
@@ -2112,9 +2183,13 @@ header {
                       const piece = game.get(sq);
                       const isLight = ((rr.indexOf(rank) + fIdx) % 2) === 0;
                       const key = piece ? pieceKey(piece.color, piece.type) : null;
+                      const squareLabel = piece
+                        ? `${sq}, ${piece.color === 'w' ? 'white' : 'black'} ${piece.type.toUpperCase()}`
+                        : `${sq}, empty`;
                       const hideThisPiece = animHideSq === sq;
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={sq}
                           className={[
                             'sq',
@@ -2131,6 +2206,7 @@ header {
                             sq === hintTo ? 'hint-to' : '',        // Feature 4
                           ].filter(Boolean).join(' ')}
                           data-sq={sq}
+                          aria-label={squareLabel}
                           onClick={() => onSq(sq)}
                         >
                           {piece && key && !hideThisPiece && (
@@ -2138,7 +2214,7 @@ header {
                               <LuxuryPiece pieceCode={key} />
                             </div>
                           )}
-                        </div>
+                        </button>
                       );
                     }),
                   )}

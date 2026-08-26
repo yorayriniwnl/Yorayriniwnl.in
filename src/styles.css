@@ -761,6 +761,15 @@ button:hover .arrow {
   color: var(--hub-muted);
 }
 
+.world-link--offline {
+  display: inline-flex;
+  align-items: center;
+  color: var(--hub-dim);
+  font: 500 0.5rem var(--hub-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .arcade-section {
   position: relative;
   z-index: 2;
