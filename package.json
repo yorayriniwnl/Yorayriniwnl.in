@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "design:check": "node scripts/check-design.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },

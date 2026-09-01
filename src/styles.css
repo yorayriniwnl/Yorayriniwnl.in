@@ -1,25 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,600&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
 :root {
-  --hub-bg: #07090d;
-  --hub-surface: #0d121a;
-  --hub-surface-2: #141b25;
-  --hub-paper: #f2f3ef;
-  --hub-muted: #9ca7b6;
-  --hub-dim: #687383;
-  --hub-line: rgba(188, 205, 226, 0.14);
-  --hub-line-strong: rgba(188, 205, 226, 0.27);
-  --hub-red: #ff4166;
-  --hub-red-deep: #641936;
-  --hub-blue: #6cbcff;
-  --hub-acid: #c9ff66;
-  --hub-amber: #ffbd63;
-  --hub-violet: #ad9aff;
+  --yor-void: #000000;
+  --yor-graphite: #050505;
+  --yor-crimson: #e84b4b;
+  --yor-deep-crimson: #671515;
+  --yor-signal: #ff8a7f;
+  --yor-warm-white: #f5eaea;
+  --yor-muted: #c4c4c4;
+  --yor-field: linear-gradient(135deg, #671515, #8c1616, #2a0505);
+  --hub-bg: var(--yor-void);
+  --hub-surface: var(--yor-graphite);
+  --hub-surface-2: #1a0505;
+  --hub-paper: var(--yor-warm-white);
+  --hub-muted: var(--yor-muted);
+  --hub-dim: #858585;
+  --hub-line: rgba(245, 234, 234, 0.16);
+  --hub-line-strong: rgba(255, 138, 127, 0.3);
+  --hub-red: var(--yor-crimson);
+  --hub-red-deep: var(--yor-deep-crimson);
+  --hub-blue: var(--yor-signal);
+  --hub-acid: var(--yor-signal);
+  --hub-amber: var(--yor-crimson);
+  --hub-violet: var(--yor-signal);
   --hub-max: 1440px;
   --hub-gutter: clamp(1rem, 4vw, 4.75rem);
-  --hub-display: 'Barlow Condensed', sans-serif;
-  --hub-body: 'Space Grotesk', sans-serif;
-  --hub-mono: 'IBM Plex Mono', monospace;
+  --hub-display: Arial, "Helvetica Neue", sans-serif;
+  --hub-body: Arial, "Helvetica Neue", sans-serif;
+  --hub-mono: "Cascadia Mono", Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -33,7 +39,8 @@ body {
   margin: 0;
   min-width: 320px;
   overflow-x: hidden;
-  background: var(--hub-bg);
+  background-color: var(--yor-void);
+  background-image: var(--yor-field);
   color: var(--hub-paper);
   font-family: var(--hub-body);
   text-rendering: optimizeLegibility;
@@ -51,8 +58,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--hub-blue); outl
   min-height: 100vh;
   overflow: clip;
   background:
-    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255, 255, 255, 0.026) 50%, transparent calc(50% + 1px)),
-    var(--hub-bg);
+    linear-gradient(rgba(232, 75, 75, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 75, 75, 0.045) 1px, transparent 1px),
+    var(--yor-void);
+  background-size: 32px 32px, 32px 32px, 100% 100%;
 }
 
 .hub-shell::before {
@@ -62,9 +71,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--hub-blue); outl
   pointer-events: none;
   opacity: 0.32;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 84px 84px;
+    linear-gradient(rgba(255, 138, 127, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 138, 127, 0.055) 1px, transparent 1px);
+  background-size: 32px 32px;
   mask-image: linear-gradient(to bottom, black, transparent 22%, transparent 82%, black);
 }
 
