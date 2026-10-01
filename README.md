@@ -18,7 +18,7 @@ Run `npm run design:check` to guard the contract.
 
 The broader personal internet around the portfolio: experiments, shipped project links, playable games, field notes, media, and activity.
 
-The focused portfolio lives in the separate [Yor / Ayrin portfolio](https://yorayriniwnl.vercel.app).
+The canonical recruiter-facing portfolio is maintained in [Portfolio-Ayush-Roy](https://github.com/yorayriniwnl/Portfolio-Ayush-Roy) and deployed at [yorayriniwnl.in](https://yorayriniwnl.in). This repository is a separate experimental field hub and is not the source of the canonical portfolio.
 
 ## Run locally
 
