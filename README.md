@@ -30,6 +30,23 @@ The broader personal internet around the portfolio: experiments, shipped project
 
 The canonical recruiter-facing portfolio is maintained in [Portfolio-Ayush-Roy](https://github.com/yorayriniwnl/Portfolio-Ayush-Roy) and deployed at [yorayriniwnl.in](https://yorayriniwnl.in). This repository is a separate experimental field hub and is not the source of the canonical portfolio.
 
+<!-- YOR REDLINE / EXPERIENCE V2 -->
+
+<a id="system-map"></a>
+## System map
+
+<div align="center"><picture><source media="(max-width: 600px)" srcset="docs/yor-redline-system-mobile.svg"/><img src="docs/yor-redline-system.svg" width="100%" alt="Personal field hub: Explore index to Discover projects to Open experiments to Follow source links"/></picture></div>
+
+| Project signal | Documented scope |
+| :--- | :--- |
+| **Current maturity** | LOCAL FRONTEND |
+| **Technical focus** | Vite/React project index, experiment launcher, game modal, and field-note links. |
+| **Evidence boundary** | Project and external link targets are curated metadata, not guarantees of uptime. |
+
+**Navigate:** [Run locally](#run-locally) · [Build](#build) · [Structure](#structure)
+
+<!-- END YOR REDLINE / EXPERIENCE V2 -->
+
 ## Run locally
 
 ```bash
