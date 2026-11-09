@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg-primary: #08070c;
+  --bg-elevated: #120d1b;
+  --bg-surface: rgba(255, 255, 255, 0.03);
+  --bg-surface-hover: rgba(255, 255, 255, 0.06);
+  --bg-surface-active: rgba(255, 255, 255, 0.08);
+
+  --border-subtle: rgba(184, 155, 211, 0.08);
+  --border-default: rgba(184, 155, 211, 0.16);
+  --border-active: rgba(186, 150, 226, 0.45);
+
+  --glow-indigo: rgba(168, 132, 202, 0.15);
+  --glow-violet: rgba(168, 132, 202, 0.22);
+
+  --text-primary: #eee6f5;
+  --text-secondary: #aa9ab6;
+  --text-muted: #8e7b9f;
+  --text-accent: #c9abec;
+
+  --background: #08070c;
+  --foreground: #ede5f5;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 155, 211, 0.25) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(184, 155, 211, 0.25);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 155, 211, 0.4);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  color: #f7efff;
+  background: #725194;
+}
+
+:focus-visible {
+  outline: 2px solid #c4a2ff;
+  outline-offset: 4px;
+}
+
+.studio-atmosphere {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at 80% 0%, rgba(121, 80, 157, 0.12), transparent 42%),
+              radial-gradient(ellipse at 5% 85%, rgba(87, 56, 104, 0.08), transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(32, 19, 48, 0.3), transparent 70%);
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(184, 155, 211, 0.12);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(184, 155, 211, 0.12);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(186, 150, 226, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(168, 132, 202, 0.12);
+  }
+}
