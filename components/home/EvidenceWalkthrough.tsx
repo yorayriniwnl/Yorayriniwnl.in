@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, type KeyboardEvent } from 'react';
-import { ArrowRight, ArrowUpRight, Braces, Check, FileCode, GitBranch, Terminal, ShieldAlert } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Braces, Check, FileCode, Terminal } from 'lucide-react';
 import Link from 'next/link';
+import { sound } from '@/lib/audio';
 import styles from './walkthrough.module.css';
 
 const STEPS = [
@@ -37,6 +38,7 @@ export function EvidenceWalkthrough() {
     else if (event.key === 'End') next = STEPS.length - 1;
     else return;
     event.preventDefault();
+    sound.playClick();
     setActive(next);
     buttonRefs.current[next]?.focus();
   }
@@ -55,7 +57,11 @@ export function EvidenceWalkthrough() {
               aria-selected={active === index}
               aria-controls="evidence-example-panel"
               tabIndex={active === index ? 0 : -1}
-              onClick={() => setActive(index)}
+              onMouseEnter={() => sound.playHover()}
+              onClick={() => {
+                sound.playClick();
+                setActive(index);
+              }}
               onKeyDown={event => navigate(event, index)}
             >
               <span className={styles.stepNumber}>0{index + 1}</span>
@@ -67,7 +73,13 @@ export function EvidenceWalkthrough() {
             </button>
           ))}
         </div>
-        <Link href="https://github.com/yorayriniwnl" target="_blank" rel="noopener noreferrer" className={styles.tryLink}>
+        <Link
+          href="https://github.com/yorayriniwnl"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => sound.playClick()}
+          className={styles.tryLink}
+        >
           Inspect GitHub repositories <ArrowUpRight size={14} aria-hidden="true" />
         </Link>
       </div>
@@ -167,7 +179,13 @@ export function EvidenceWalkthrough() {
         </div>
         <div className={styles.exampleFooter}>
           <span>Every system is backed by verifiable code and tests.</span>
-          <button type="button" onClick={() => setActive((active + 1) % STEPS.length)}>
+          <button
+            type="button"
+            onClick={() => {
+              sound.playClick();
+              setActive((active + 1) % STEPS.length);
+            }}
+          >
             <span>Next inspection</span>
             <ArrowRight size={13} aria-hidden="true" />
           </button>

@@ -1,72 +1,93 @@
-import { ArrowDown, ArrowRight, ArrowUpRight, Cpu, Fingerprint, Layers, MessagesSquare, Network, ScanSearch, ShieldCheck, Sparkles, Terminal } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Cpu, Eye, FileSearch, Layers, Network, Terminal, Activity, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { SignalConstellation } from '@/components/home/SignalConstellation';
 import { EvidenceWalkthrough } from '@/components/home/EvidenceWalkthrough';
 import { PlatformHeader } from '@/components/navigation/PlatformHeader';
+import { InteractiveSimulators } from '@/components/home/InteractiveSimulators';
+import { SystemDossierModal } from '@/components/ui/SystemDossierModal';
+import { CommandPalette } from '@/components/ui/CommandPalette';
+import { sound } from '@/lib/audio';
 import styles from './home.module.css';
 
 const PROJECTS = [
   {
-    index: 'SYS / 01',
+    index: 'SYS // 01',
     title: 'CandidateX',
-    badge: 'FLAGSHIP / LIVE',
+    badge: 'FLAGSHIP // LIVE',
     subtitle: 'Evidence-First Hiring Intelligence Platform',
-    desc: 'Brings live evidence review into a human-led technical interview workflow. Connects resume claims to public code artifacts, telemetry, and focused interview probes.',
+    desc: 'Brings live evidence review into a human-led technical interview workflow. Connects resume claims to public code artifacts, AST traversal, and telemetry without executing untrusted code.',
     tags: ['Next.js 16', 'FastAPI', 'PostgreSQL', 'Three.js', 'Playwright'],
     link: 'https://github.com/yorayriniwnl/CandidateX',
   },
   {
-    index: 'SYS / 02',
+    index: 'SYS // 02',
     title: 'Yor Zenith',
-    badge: 'SHIPPED / OPEN',
+    badge: 'SHIPPED // OPEN',
     subtitle: 'Rooftop Solar Intelligence & Planning',
-    desc: 'Geospatial feasibility, solar irradiance modeling, subsidy calculation, and financial yield return in one inspectable planning surface.',
+    desc: 'Geospatial rooftop feasibility, solar irradiance raymarching, subsidy calculation, and financial yield return in one inspectable planning surface.',
     tags: ['TypeScript', 'Python', 'Geospatial ML', 'PostgreSQL', 'Vite'],
     link: 'https://github.com/yorayriniwnl/Yor-Zenith',
   },
   {
-    index: 'SYS / 03',
+    index: 'SYS // 03',
     title: 'Trading Telemetry & Orderbook',
-    badge: 'REALTIME / HIGH-THROUGHPUT',
+    badge: 'REALTIME // HIGH-THROUGHPUT',
     subtitle: 'Low-Latency Market Execution Streamer',
-    desc: 'High-frequency orderbook feeds with deterministic backpressure handling, monotonic sequence checks, and risk circuit breakers.',
+    desc: 'High-frequency orderbook feeds with deterministic backpressure handling, monotonic sequence checks, and automated risk circuit breakers.',
     tags: ['Python', 'AsyncIO', 'WebSockets', 'Redis', 'Telemetry'],
     link: 'https://github.com/yorayriniwnl/Hyperliquid_Analysis',
   },
   {
-    index: 'SYS / 04',
+    index: 'SYS // 04',
     title: 'Hybrid Network Intrusion Detection',
-    badge: 'RESEARCH / ML',
+    badge: 'RESEARCH // ML',
     subtitle: 'Statistical Anomaly & Neural Threat Classifier',
     desc: 'Two-stage network intrusion detection system combining flow-level statistical anomaly heuristics with deep neural threat classification.',
     tags: ['Python', 'PyTorch', 'Scikit-Learn', 'Packet Inspection', 'Security'],
     link: 'https://github.com/yorayriniwnl/Hybrid-Intelligent-Network-Intrusion-Detection-System',
   },
   {
-    index: 'SYS / 05',
+    index: 'SYS // 05',
     title: 'Taskflow Engine',
-    badge: 'CORE / RUNTIME',
+    badge: 'CORE // RUNTIME',
     subtitle: 'Distributed Job Orchestrator & Event Broker',
-    desc: 'Distributed async task queue and DAG workflow pipeline with automatic retries, dead-letter isolation, and Redis-backed state replication.',
+    desc: 'Distributed async task queue and DAG workflow pipeline with atomic Redis Lua locks, dead-letter isolation, and persistent worker metrics.',
     tags: ['TypeScript', 'Node.js', 'Redis', 'Docker', 'Distributed Systems'],
     link: 'https://github.com/yorayriniwnl/Taskflow',
   },
   {
-    index: 'SYS / 06',
+    index: 'SYS // 06',
     title: 'Mentor-Mentee System',
-    badge: 'PLATFORM / INSTITUTION',
+    badge: 'PLATFORM // INSTITUTION',
     subtitle: 'Academic OS & Role-Based Workflows',
-    desc: 'Full-stack platform tracking student progress, milestone deliverables, and automated evaluation workflows for university engineering programs.',
+    desc: 'Full-stack platform tracking student progress, milestone deliverables, and immutable cryptographic audit trails for university engineering cohorts.',
     tags: ['Full-Stack', 'FastAPI', 'PostgreSQL', 'Tailwind CSS', 'Docker'],
     link: 'https://github.com/yorayriniwnl/mentor-mentee-system',
   },
 ];
 
 export default function HomePage() {
+  const [selectedDossier, setSelectedDossier] = useState<string | null>(null);
+
+  const triggerConstellationWarp = () => {
+    sound.playWarp();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('yor-constellation-warp'));
+    }
+  };
+
   return (
     <div className={styles.home}>
-      <PlatformHeader />
-      
+      <PlatformHeader onOpenCommand={() => {
+        sound.playWarp();
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+        }
+      }} />
+
       <main className={styles.homeMain} id="main-content">
         {/* HERO SECTION */}
         <section className={styles.hero} aria-labelledby="home-title">
@@ -83,14 +104,24 @@ export default function HomePage() {
               I design backend-heavy product systems, realtime streaming architectures, applied ML workflows, and evidence-grounded engineering with Python, TypeScript, PostgreSQL, and Redis.
             </p>
             <div className={styles.heroActions}>
-              <a href="#projects" className={styles.primaryAction}>
+              <a
+                href="#projects"
+                onClick={() => sound.playClick()}
+                onMouseEnter={() => sound.playHover()}
+                className={styles.primaryAction}
+              >
                 Explore Shipped Systems
                 <span>
                   <ArrowUpRight size={17} aria-hidden="true" />
                 </span>
               </a>
-              <a href="#craft" className={styles.secondaryAction}>
-                The Evidence Loop <ArrowDown size={14} aria-hidden="true" />
+              <a
+                href="#simulators"
+                onClick={() => sound.playClick()}
+                onMouseEnter={() => sound.playHover()}
+                className={styles.secondaryAction}
+              >
+                Live Telemetry Labs <ArrowDown size={14} aria-hidden="true" />
               </a>
             </div>
             <p className={styles.heroNote}>
@@ -105,9 +136,13 @@ export default function HomePage() {
 
           <div className={styles.heroFootnote}>
             <span>ENGINEERED FOR RESILIENCE</span>
-            <a href="#projects">
-              Follow the systems <ArrowDown size={12} aria-hidden="true" />
-            </a>
+            <button
+              type="button"
+              onClick={triggerConstellationWarp}
+              className="hover:text-[#e4d6fa] transition-colors underline cursor-pointer"
+            >
+              Accelerate constellation warp ↗
+            </button>
             <span>EST. IN CURIOSITY / BUILT FOR PRODUCTION</span>
           </div>
         </section>
@@ -157,6 +192,22 @@ export default function HomePage() {
                 <h3>{project.title}</h3>
                 <p className={styles.projectSubtitle}>{project.subtitle}</p>
                 <p className={styles.projectDesc}>{project.desc}</p>
+
+                <div className="flex items-center gap-3 my-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sound.playClick();
+                      setSelectedDossier(project.title);
+                    }}
+                    onMouseEnter={() => sound.playHover()}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#b89bd312] hover:bg-[#b89bd325] border border-[#b89bd325] text-xs font-mono text-[#d6c3f0] transition-all hover:scale-102"
+                  >
+                    <Eye size={13} className="text-[#c6b1ef]" />
+                    <span>Inspect System Dossier</span>
+                  </button>
+                </div>
+
                 <div className={styles.projectTags}>
                   {project.tags.map((tag) => (
                     <span key={tag} className={styles.projectTag}>{tag}</span>
@@ -165,10 +216,11 @@ export default function HomePage() {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => sound.playClick()}
                     className={styles.projectAction}
                     aria-label={`View ${project.title} on GitHub`}
                   >
-                    Inspect Code <ArrowUpRight size={13} aria-hidden="true" />
+                    GitHub Code <ArrowUpRight size={13} aria-hidden="true" />
                   </a>
                 </div>
               </article>
@@ -176,11 +228,28 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* INTERACTIVE SIMULATORS SECTION */}
+        <section id="simulators" className={styles.section} aria-labelledby="simulators-title">
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionEyebrow}>02 / REALTIME TELEMETRY LABS</p>
+              <h2 id="simulators-title">
+                Inspect systems in motion.<br />
+                <span>Live telemetry playground.</span>
+              </h2>
+            </div>
+            <p>
+              Test orderbook throughput, adjust neural threat sensitivity, and model geospatial rooftop solar geometry in real time.
+            </p>
+          </div>
+          <InteractiveSimulators />
+        </section>
+
         {/* EVIDENCE WALKTHROUGH SECTION */}
         <section id="craft" className={styles.section} aria-labelledby="craft-title">
           <div className={styles.sectionHeading}>
             <div>
-              <p className={styles.sectionEyebrow}>02 / THE EVIDENCE LOOP</p>
+              <p className={styles.sectionEyebrow}>03 / THE EVIDENCE LOOP</p>
               <h2 id="craft-title">
                 From an architectural claim.<br />
                 <span>To verifiable code.</span>
@@ -197,7 +266,7 @@ export default function HomePage() {
         <section className={styles.section} aria-labelledby="trust-title">
           <div className={styles.sectionHeading}>
             <div>
-              <p className={styles.sectionEyebrow}>03 / THE PRACTICE</p>
+              <p className={styles.sectionEyebrow}>04 / THE PRACTICE</p>
               <h2 id="trust-title">
                 The craft is in<br />
                 <span>the connections.</span>
@@ -236,7 +305,7 @@ export default function HomePage() {
         <section id="about" className={styles.section} aria-labelledby="about-title">
           <div className={styles.sectionHeading}>
             <div>
-              <p className={styles.sectionEyebrow}>04 / THE PERSON BEHIND THE CODE</p>
+              <p className={styles.sectionEyebrow}>05 / THE PERSON BEHIND THE CODE</p>
               <h2 id="about-title">
                 Curious by<br />
                 <span>design.</span>
@@ -297,6 +366,7 @@ export default function HomePage() {
           </h2>
           <Link
             href="mailto:ayushroy.dev@gmail.com"
+            onClick={() => sound.playClick()}
             className={styles.primaryAction}
           >
             <span>Reach out directly (ayushroy.dev@gmail.com)</span>
@@ -314,7 +384,7 @@ export default function HomePage() {
       <footer className={styles.footer}>
         <div className={styles.footerMain}>
           <div className={styles.footerIdentity}>
-            <Link href="/" className={styles.footerBrand}>
+            <Link href="/" onClick={() => sound.playClick()} className={styles.footerBrand}>
               YOR <span>/ AYUSH ROY</span>
             </Link>
             <p>
@@ -333,6 +403,7 @@ export default function HomePage() {
           <div className={styles.footerColumn}>
             <h2>Navigation</h2>
             <a href="#projects">Shipped Work</a>
+            <a href="#simulators">Telemetry Labs</a>
             <a href="#craft">The Evidence Loop</a>
             <a href="#about">About &amp; Background</a>
             <a href="#contact">Contact</a>
@@ -354,6 +425,18 @@ export default function HomePage() {
           <span>DESIGNED WITH CURIOSITY. BUILT WITH CARE.</span>
         </div>
       </footer>
+
+      {/* Interactive System Dossier Modal */}
+      <SystemDossierModal
+        selectedSystem={selectedDossier}
+        onClose={() => setSelectedDossier(null)}
+      />
+
+      {/* Interactive Command Center (⌘K) */}
+      <CommandPalette
+        onSelectSystem={(name) => setSelectedDossier(name)}
+        onTriggerWarp={triggerConstellationWarp}
+      />
     </div>
   );
 }

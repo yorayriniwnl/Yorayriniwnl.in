@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import type { SignalScene } from './signal-scene';
 import styles from './signal.module.css';
+import { sound } from '@/lib/audio';
 
 const STAGES = [
   { label: 'Architecture', title: 'Systems engineered with weight.', detail: 'Backend pipelines, state management, and memory boundaries built for production load.' },
@@ -38,6 +39,18 @@ export function SignalConstellation() {
     };
     updatePreference();
     preference.addEventListener('change', updatePreference);
+
+    const onWarpEvent = () => {
+      if (scene.current) {
+        scene.current.triggerSurprise();
+        const nextStage = (activeRef.current + 1) % STAGES.length;
+        activeRef.current = nextStage;
+        setActive(nextStage);
+        scene.current.setStage(nextStage);
+      }
+    };
+    window.addEventListener('yor-constellation-warp', onWarpEvent);
+
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       scene.current?.setVisible(visible);
@@ -72,17 +85,21 @@ export function SignalConstellation() {
       if (surpriseTimer.current) clearTimeout(surpriseTimer.current);
       observer.disconnect();
       preference.removeEventListener('change', updatePreference);
+      window.removeEventListener('yor-constellation-warp', onWarpEvent);
       scene.current?.dispose();
       scene.current = null;
     };
   }, []);
 
   function toggleMotion() {
+    sound.playClick();
     pausedRef.current = !pausedRef.current;
     setPaused(pausedRef.current);
     scene.current?.setPaused(pausedRef.current);
   }
+
   function selectStage(index: number) {
+    sound.playClick();
     activeRef.current = index;
     setActive(index);
     scene.current?.setStage(index);
@@ -126,6 +143,7 @@ export function SignalConstellation() {
                 type="button"
                 role="tab"
                 aria-pressed={active === idx}
+                onMouseEnter={() => sound.playHover()}
                 onClick={() => selectStage(idx)}
               >
                 <span>0{idx + 1}</span>

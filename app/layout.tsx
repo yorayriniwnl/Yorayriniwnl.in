@@ -4,6 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import { MotionProvider } from "@/components/studio/MotionProvider";
 import { NavigationScrollManager } from "@/components/navigation/NavigationScrollManager";
+import { CyberCursor } from "@/components/ui/CyberCursor";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <CyberCursor />
         <div className="studio-atmosphere" aria-hidden="true" />
         <Suspense fallback={null}>
           <NavigationScrollManager />
