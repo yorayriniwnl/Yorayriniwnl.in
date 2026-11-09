@@ -10,12 +10,14 @@
   --bg-surface-hover: rgba(255, 255, 255, 0.06);
   --bg-surface-active: rgba(255, 255, 255, 0.08);
 
+  --accent-color: #c6b1ef;
+  --accent-muted: #9c79c5;
+  --glow-theme: rgba(168, 132, 202, 0.25);
+  --border-theme-active: rgba(186, 150, 226, 0.45);
+  --gradient-theme-text: linear-gradient(100deg, #f1deff 0%, #bea1ee 42%, #8b7cb7 100%);
+
   --border-subtle: rgba(184, 155, 211, 0.08);
   --border-default: rgba(184, 155, 211, 0.16);
-  --border-active: rgba(186, 150, 226, 0.45);
-
-  --glow-indigo: rgba(168, 132, 202, 0.15);
-  --glow-violet: rgba(168, 132, 202, 0.22);
 
   --text-primary: #eee6f5;
   --text-secondary: #aa9ab6;
@@ -24,6 +26,27 @@
 
   --background: #08070c;
   --foreground: #ede5f5;
+}
+
+[data-theme='supernova'] {
+  --bg-primary: #090605;
+  --bg-elevated: #1a0f0a;
+  --border-subtle: rgba(255, 107, 53, 0.1);
+  --border-default: rgba(255, 107, 53, 0.2);
+}
+
+[data-theme='emerald'] {
+  --bg-primary: #040907;
+  --bg-elevated: #091a13;
+  --border-subtle: rgba(16, 185, 129, 0.1);
+  --border-default: rgba(16, 185, 129, 0.2);
+}
+
+[data-theme='hyperdrive'] {
+  --bg-primary: #0a0408;
+  --bg-elevated: #1a0814;
+  --border-subtle: rgba(244, 63, 94, 0.1);
+  --border-default: rgba(244, 63, 94, 0.2);
 }
 
 * {
@@ -59,15 +82,16 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 ::selection {
-  color: #f7efff;
-  background: #725194;
+  color: #ffffff;
+  background: var(--accent-muted);
 }
 
 :focus-visible {
-  outline: 2px solid #c4a2ff;
+  outline: 2px solid var(--accent-color);
   outline-offset: 4px;
 }
 
@@ -77,9 +101,10 @@ body {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(ellipse at 80% 0%, rgba(121, 80, 157, 0.12), transparent 42%),
-              radial-gradient(ellipse at 5% 85%, rgba(87, 56, 104, 0.08), transparent 50%),
-              radial-gradient(ellipse at 50% 50%, rgba(32, 19, 48, 0.3), transparent 70%);
+  background: radial-gradient(ellipse at 80% 0%, var(--glow-theme), transparent 45%),
+              radial-gradient(ellipse at 5% 85%, var(--glow-theme), transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(15, 10, 24, 0.3), transparent 70%);
+  transition: background 0.5s ease;
 }
 
 @layer components {
@@ -99,8 +124,8 @@ body {
 
   .glass-card:hover {
     background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(186, 150, 226, 0.35);
+    border-color: var(--border-theme-active);
     transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(168, 132, 202, 0.12);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 30px var(--glow-theme);
   }
 }

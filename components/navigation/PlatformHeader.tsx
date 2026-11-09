@@ -5,6 +5,7 @@ import { ArrowUpRight, Menu, Sparkles, Terminal, X } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { SurfaceBadge } from './SurfaceBadge';
 import { AmbientAudioToggle } from '../ui/AmbientAudioToggle';
+import { TelemetryHUD } from '../ui/TelemetryHUD';
 import { sound } from '@/lib/audio';
 
 const NAVIGATION_ITEMS = [
@@ -38,7 +39,10 @@ export function PlatformHeader({
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#08070ce6] border-b border-[#b89bd318] backdrop-blur-2xl">
-      <div className="w-[min(1440px,calc(100%-96px))] max-sm:w-[calc(100%-40px)] mx-auto min-h-[76px] flex items-center justify-between gap-4">
+      {/* Realtime Telemetry & Theme HUD Bar */}
+      <TelemetryHUD />
+
+      <div className="w-[min(1440px,calc(100%-96px))] max-sm:w-[calc(100%-40px)] mx-auto min-h-[70px] flex items-center justify-between gap-4">
         {/* Brand */}
         <Link
           href="/"

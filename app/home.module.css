@@ -55,8 +55,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #c6b1ef;
-  box-shadow: 0 0 14px rgba(205, 169, 255, 0.8);
+  background: var(--accent-color, #c6b1ef);
+  box-shadow: 0 0 14px var(--accent-color, rgba(205, 169, 255, 0.8));
   animation: pulseDot 2.4s ease-in-out infinite;
 }
 
@@ -74,10 +74,11 @@
 }
 
 .hero h1 > span {
-  background: linear-gradient(100deg, #f1deff 0%, #bea1ee 42%, #8b7cb7 100%);
+  background: var(--gradient-theme-text, linear-gradient(100deg, #f1deff 0%, #bea1ee 42%, #8b7cb7 100%));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  transition: all 0.4s ease;
 }
 
 .heroDescription {
