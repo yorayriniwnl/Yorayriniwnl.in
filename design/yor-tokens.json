@@ -1,5 +1,5 @@
 {
-  "name": "YOR // Ayrin field hub",
+  "name": "YOR // war room",
   "palette": {
     "void": "#000000",
     "graphite": "#050505",
@@ -10,5 +10,13 @@
     "muted": "#c4c4c4"
   },
   "gradient": "linear-gradient(135deg, #671515, #8c1616, #2a0505)",
-  "evidenceStates": ["VERIFIED", "REPORTED", "DEMO", "EXPERIMENTAL", "PLANNED", "UNVERIFIED"]
+  "evidenceStates": [
+    "VERIFIED",
+    "REPORTED",
+    "DEMO",
+    "EXPERIMENTAL",
+    "PLANNED",
+    "UNVERIFIED"
+  ],
+  "title": "Ayush Roy \u00b7 YOR war room"
 }
