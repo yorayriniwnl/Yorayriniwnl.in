@@ -4,8 +4,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/3d", "destination": "/index.html" },
-    { "source": "/3d/", "destination": "/index.html" }
+    { "source": "/3d", "destination": "/game.html" },
+    { "source": "/3d/", "destination": "/game.html" },
+    { "source": "/war-room-assets/:asset*", "destination": "/:asset*" }
   ],
   "headers": [
     {

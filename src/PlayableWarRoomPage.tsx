@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, useEffect, useState, type ErrorInfo, type ReactNode } from "react";
+import { publicAsset } from "./lib/publicAsset";
 import { useArcade } from "./Arcade";
 import { archiveLinks, games, glbAssets, mediaItems, playerStats, projects, WAR_ROOM_HOTSPOTS, type HotspotConfig } from "./data/hubData";
 import "./playable-war-room.css";
@@ -180,7 +181,7 @@ export default function PlayableWarRoomPage() {
                 {activeHotspot.section === "media" && (
                   <div className="drawer-stack">
                     <figure className="drawer-media">
-                      <img src="/renders/warroom-hero-1600.jpg" alt="4K Blender render of YOR War Room" loading="lazy" />
+                      <img src={publicAsset("renders/warroom-hero-1600.jpg")} alt="4K Blender render of YOR War Room" loading="lazy" />
                       <figcaption>
                         <span>M00 / 4K BLENDER RENDER</span>
                         <strong>War Room master render</strong>
@@ -219,7 +220,7 @@ export default function PlayableWarRoomPage() {
                 {activeHotspot.section === "about" && (
                   <div className="drawer-stack">
                     <figure className="drawer-media">
-                      <img src="/textures/ayush-portrait.jpg" alt="Chiaroscuro oil portrait of Ayush Roy" loading="lazy" />
+                      <img src={publicAsset("textures/ayush-portrait.jpg")} alt="Chiaroscuro oil portrait of Ayush Roy" loading="lazy" />
                       <figcaption>
                         <span>PLAYER_01 / INDIA</span>
                         <strong>Ayush Roy (Yor Ayrin - iwnl)</strong>
@@ -237,7 +238,7 @@ export default function PlayableWarRoomPage() {
                 {activeHotspot.section === "manifest" && (
                   <div className="drawer-stack">
                     <figure className="drawer-media">
-                      <img src="/textures/notebook-pages.jpg" alt="IDEAS BUILD GRIND REPEAT notebook spread" loading="lazy" />
+                      <img src={publicAsset("textures/notebook-pages.jpg")} alt="IDEAS BUILD GRIND REPEAT notebook spread" loading="lazy" />
                       <figcaption>
                         <span>MANIFEST / 001</span>
                         <strong>IDEAS. BUILD. GRIND. REPEAT.</strong>
@@ -284,7 +285,7 @@ export default function PlayableWarRoomPage() {
                       <h3>War Room 4K Master Render</h3>
                       <p>High-resolution Blender 5.2 render assembling all three exported GLB files.</p>
                       <div className="drawer-card__links">
-                        <a href="/renders/warroom-hero-4k.png" target="_blank" rel="noreferrer">Open 4K PNG <Arrow /></a>
+                        <a href={publicAsset("renders/warroom-hero-4k.png")} target="_blank" rel="noreferrer">Open 4K PNG <Arrow /></a>
                       </div>
                     </div>
                   </div>

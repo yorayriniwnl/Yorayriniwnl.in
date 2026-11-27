@@ -1,6 +1,9 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
-const Page = lazy(() => window.location.pathname.replace(/\/+$/, "") === "/3d"
+
+const isWarRoom = document.documentElement.dataset.page === "war-room"
+  || window.location.pathname.replace(/\/+$/, "") === "/3d";
+const Page = lazy(() => isWarRoom
   ? import("./PlayableWarRoomPage")
   : import("./App"));
 

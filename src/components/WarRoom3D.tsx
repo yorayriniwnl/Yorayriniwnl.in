@@ -1,3 +1,4 @@
+import { publicAsset } from "../lib/publicAsset";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
@@ -1125,7 +1126,7 @@ export default function WarRoom3D({
     const loadHdri = () =>
       new Promise<THREE.Texture | null>((resolve) => {
         hdrLoader.load(
-          "/textures/warroom_env.hdr",
+          publicAsset("textures/warroom_env.hdr"),
           (tex) => {
             tex.mapping = THREE.EquirectangularReflectionMapping;
             progress.hdri = 1;
@@ -1142,9 +1143,9 @@ export default function WarRoom3D({
       });
 
     Promise.all([
-      loadGltf("/models/playable-war-room/room.glb", "room"),
-      loadGltf("/models/playable-war-room/operator.glb", "operator"),
-      loadGltf("/models/playable-war-room/husky.glb", "husky"),
+      loadGltf(publicAsset("models/playable-war-room/room.glb"), "room"),
+      loadGltf(publicAsset("models/playable-war-room/operator.glb"), "operator"),
+      loadGltf(publicAsset("models/playable-war-room/husky.glb"), "husky"),
       loadHdri(),
     ])
       .then(([roomRes, opRes, hkRes, envMap]) => {

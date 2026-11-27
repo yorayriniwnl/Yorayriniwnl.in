@@ -1,3 +1,5 @@
+import { publicAsset } from "../lib/publicAsset";
+
 export type GameId =
   | "snake"
   | "memory"
@@ -74,7 +76,7 @@ export const projects: ProjectItem[] = [
     signal: "LIVE BUILD",
     stage: "SHIPPED / OPEN",
     result: "Turns a technical proposal into a confident next move.",
-    media: "/media/zenith-case-screenshot.svg",
+    media: publicAsset("media/zenith-case-screenshot.svg"),
     live: "https://zenith-xi-snowy.vercel.app/",
     source: "https://github.com/yorayriniwnl/Yor-Zenith",
   },
@@ -87,7 +89,7 @@ export const projects: ProjectItem[] = [
     signal: "LIVE BUILD",
     stage: "SHIPPED / OPEN",
     result: "Makes model output legible instead of asking for blind trust.",
-    media: "/media/projects-screenshot.svg",
+    media: publicAsset("media/projects-screenshot.svg"),
     live: "https://yor-ai-vs-real-image.vercel.app",
     source: "https://github.com/yorayriniwnl/Yor-Ai-vs-real-image",
   },
@@ -100,7 +102,7 @@ export const projects: ProjectItem[] = [
     signal: "SOURCE STUDY",
     stage: "DOCUMENTED / OFFLINE",
     result: "Maps the decision surface before the interface exists.",
-    media: "/media/hero-screenshot.svg",
+    media: publicAsset("media/hero-screenshot.svg"),
     source: "https://github.com/yorayriniwnl/mentor-mentee-system",
   },
   {
@@ -112,7 +114,7 @@ export const projects: ProjectItem[] = [
     signal: "EXPERIENCE",
     stage: "SHIPPED / OPEN",
     result: "Uses restraint and rhythm to make personal content feel inhabitable.",
-    media: "/media/hero-screenshot.svg",
+    media: publicAsset("media/hero-screenshot.svg"),
     live: "https://yor-smriti.vercel.app",
     source: "https://github.com/yorayriniwnl/Yor-Smriti",
   },
@@ -137,9 +139,9 @@ export const playerStats = [
 ];
 
 export const mediaItems = [
-  { index: "M01", title: "Yor Zenith / system view", type: "PRODUCT ARTIFACT", body: "A decision surface with the evidence close to the action.", image: "/media/zenith-case-screenshot.svg" },
-  { index: "M02", title: "AI vs Real / review state", type: "TRUST INTERFACE", body: "A model becomes useful when a person can inspect the reasoning.", image: "/media/projects-screenshot.svg" },
-  { index: "M03", title: "The profile / field note", type: "PERSONAL INTERNET", body: "A portrait of the person behind the builds, games, and experiments.", image: "/media/hero-screenshot.svg" },
+  { index: "M01", title: "Yor Zenith / system view", type: "PRODUCT ARTIFACT", body: "A decision surface with the evidence close to the action.", image: publicAsset("media/zenith-case-screenshot.svg") },
+  { index: "M02", title: "AI vs Real / review state", type: "TRUST INTERFACE", body: "A model becomes useful when a person can inspect the reasoning.", image: publicAsset("media/projects-screenshot.svg") },
+  { index: "M03", title: "The profile / field note", type: "PERSONAL INTERNET", body: "A portrait of the person behind the builds, games, and experiments.", image: publicAsset("media/hero-screenshot.svg") },
 ];
 
 export const archiveLinks = [
@@ -153,19 +155,19 @@ export const glbAssets = [
   {
     name: "room.glb",
     title: "360 AAA War Room Interior",
-    href: "/models/playable-war-room/room.glb",
+    href: publicAsset("models/playable-war-room/room.glb"),
     specs: "Closed 4-wall study built with Poly Haven CC0 studio assets & scanned PBRs: leather sofa, dark walnut war desk, sculpted chess knight, hurricane lantern, twin bookshelves, ornate frames, gothic doors, eclipse window",
   },
   {
     name: "operator.glb",
     title: "Playable 3rd-Person YA Operator",
-    href: "/models/playable-war-room/operator.glb",
+    href: publicAsset("models/playable-war-room/operator.glb"),
     specs: "Mixamo-rigged tactical operator with real Idle/Walk/Run skeletal animations, crimson stealth visor, YA headphones, chest dog-tag, and 24K baroque gold-engraved AK-47 (064532) slung across back",
   },
   {
     name: "husky.glb",
     title: "Tactical Siberian Husky",
-    href: "/models/playable-war-room/husky.glb",
+    href: publicAsset("models/playable-war-room/husky.glb"),
     specs: "Rigged quadruped with real-time 10-layer GPU shell-fur coat, crimson wolf eyes, YA tactical K9 helmet, flipped-up NVG scope, compact canine respirator, and flush K9 harness",
   },
 ];
