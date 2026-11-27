@@ -8,7 +8,7 @@ const readme = await readFile(new URL("README.md", root), "utf8");
 const required = [...Object.values(tokens.palette), tokens.gradient];
 const missing = required.filter((value) => !css.toLowerCase().includes(value.toLowerCase()));
 missing.push(...tokens.evidenceStates.filter((state) => !readme.includes(state)));
-if (!index.includes("#000000") || !index.includes("YOR // Ayrin field hub")) missing.push("YOR index metadata");
+if (!index.includes("#000000") || !index.includes(tokens.title)) missing.push("YOR index metadata");
 if (missing.length) {
   console.error(`YOR design contract failed: ${missing.join(", ")}`);
   process.exit(1);
