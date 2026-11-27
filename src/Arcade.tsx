@@ -90,7 +90,11 @@ export function useArcade() {
   const View = active ? views[active] : null;
   const room =
     game && View ? (
-      <div ref={roomRef} className={"game-room game-room--" + game.color} role="dialog" aria-modal="true" aria-label={game.name}>
+      <div ref={roomRef} className={"game-room game-room--" + game.color} role="dialog" aria-modal="true" aria-label={game.name} onClickCapture={(event) => {
+        if (!(event.target instanceof Element) || !event.target.closest('a[href="#arcade"]')) return;
+        event.preventDefault();
+        close();
+      }}>
         <header className="game-room__header">
           <div className="game-room__identity">
             <span>{game.index}</span>

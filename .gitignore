@@ -3,3 +3,8 @@ dist
 
 .vercel
 __pycache__
+
+# Blender pipeline outputs
+scripts/blender/aaa_assets/
+scripts/blender/generated_tex/
+scripts/blender/previews/

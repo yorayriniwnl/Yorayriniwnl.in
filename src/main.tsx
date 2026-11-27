@@ -1,9 +1,13 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+const Page = lazy(() => window.location.pathname.replace(/\/+$/, "") === "/3d"
+  ? import("./PlayableWarRoomPage")
+  : import("./App"));
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <Suspense fallback={null}>
+      <Page />
+    </Suspense>
   </React.StrictMode>,
 );

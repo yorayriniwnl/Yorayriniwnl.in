@@ -212,6 +212,7 @@ export default function App() {
             <p className="hero__lede">{profile.positioning}</p>
             <div className="actions">
               <a className="btn btn--primary" href="#operations">View operations</a>
+              <a className="btn" href="/3d">Play the 3D game</a>
               <a className="btn" href={`mailto:${profile.email}`}>Open a channel</a>
             </div>
           </div>

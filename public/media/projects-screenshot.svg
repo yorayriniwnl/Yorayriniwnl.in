@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid">
+  <defs>
+    <linearGradient id="bg2" x1="0" x2="1"><stop offset="0" stop-color="#02030a"/><stop offset="1" stop-color="#071428"/></linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg2)" />
+
+  <g transform="translate(120,80)" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto" fill="#fff">
+    <text x="0" y="0" font-size="44" font-weight="700">Projects</text>
+    <text x="0" y="44" font-size="18" fill="#9aa7c6">Selected work across solar planning, AI, and Python systems</text>
+
+    <!-- cards -->
+    <g transform="translate(0,80)">
+      <!-- card 1 -->
+      <rect x="0" y="0" width="420" height="300" rx="14" fill="#0b1220" stroke="#ffffff11" />
+      <rect x="18" y="18" width="384" height="160" rx="8" fill="#111827" />
+      <text x="28" y="200" font-size="20" font-weight="700">Yor Zenith - Solar Planning</text>
+      <text x="28" y="228" font-size="14" fill="#9aa7c6">Rooftop feasibility and energy estimation.</text>
+
+      <!-- card 2 -->
+      <g transform="translate(460,0)">
+        <rect x="0" y="0" width="420" height="300" rx="14" fill="#0b1220" stroke="#ffffff11" />
+        <rect x="18" y="18" width="384" height="160" rx="8" fill="#0f1724" />
+        <text x="28" y="200" font-size="20" font-weight="700">Yor AI vs Real Image</text>
+        <text x="28" y="228" font-size="14" fill="#9aa7c6">OpenCV texture features and SVM classification.</text>
+      </g>
+
+      <!-- card 3 -->
+      <g transform="translate(920,0)">
+        <rect x="0" y="0" width="420" height="300" rx="14" fill="#0b1220" stroke="#ffffff11" />
+        <rect x="18" y="18" width="384" height="160" rx="8" fill="#081023" />
+        <text x="28" y="200" font-size="20" font-weight="700">Mentor-Mentee System</text>
+        <text x="28" y="228" font-size="14" fill="#9aa7c6">Flask, Tkinter, SQLite, and matching logic.</text>
+      </g>
+    </g>
+  </g>
+
+  <text x="40" y="860" font-size="12" fill="#8b96b2">Clean, high-contrast project card previews</text>
+</svg>
