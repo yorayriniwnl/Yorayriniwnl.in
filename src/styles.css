@@ -100,7 +100,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--hub-blue); outl
 
 .hub-aurora--red { top: 8rem; left: -18rem; background: var(--hub-red); }
 .hub-aurora--blue { top: 58rem; right: -20rem; background: var(--hub-blue); opacity: 0.08; }
-.hub-shell > *:not(.hub-noise):not(.hub-aurora):not(.yor-cursor) { position: relative; z-index: 2; }
+.hub-shell > *:not(.hub-noise):not(.hub-aurora) { position: relative; z-index: 2; }
 .hub-container { width: min(calc(100% - (var(--hub-gutter) * 2)), var(--hub-max)); margin: 0 auto; }
 
 .command-nav {
@@ -460,11 +460,11 @@ a:hover .arrow, button:hover .arrow { transform: translate(2px, -2px); }
 .nav-mode-switch button.is-active, .nav-mode-switch a.is-active { background: var(--hub-red); color: #120405; font-weight: 700; }
 .nav-mode-switch button:hover:not(.is-active), .nav-mode-switch a:hover:not(.is-active) { color: var(--hub-paper); }
 
-.warroom-main { position: relative; flex: 1; min-height: 0; width: 100%; overflow: hidden; background: #050203; }
+.warroom-main { position: relative; flex: 1; min-height: 0; width: 100%; overflow: hidden; background: #020203; }
 .warroom-stage { position: relative; width: 100%; height: 100%; }
 .warroom-stage canvas { display: block; width: 100% !important; height: 100% !important; }
 
-.warroom-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 48%, transparent 52%, rgba(0, 0, 0, 0.65) 100%); }
+.warroom-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 48%, transparent 62%, rgba(0, 0, 0, 0.38) 100%); }
 
 .warroom-loader { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.65rem; background: radial-gradient(circle at 50% 45%, rgba(103, 21, 21, 0.35), #050203 68%); text-align: center; padding: 2rem; }
 .warroom-loader__ring { width: 3.8rem; height: 3.8rem; border: 1px solid rgba(232, 75, 75, 0.28); border-top-color: var(--hub-red); border-radius: 50%; animation: loading-spin 850ms linear infinite; margin-bottom: 0.4rem; }
@@ -552,140 +552,6 @@ a:hover .arrow, button:hover .arrow { transform: translate(2px, -2px); }
   .warroom-dock { bottom: 0.6rem; left: 0.6rem; right: 0.6rem; }
 }
 
-/* Minimal YOR precision cursor */
-.warroom-stage canvas { cursor: default; }
-
-@media (hover: hover) and (pointer: fine) {
-  html.has-custom-cursor,
-  html.has-custom-cursor * {
-    cursor: none !important;
-  }
-
-  html.has-custom-cursor input,
-  html.has-custom-cursor textarea,
-  html.has-custom-cursor select,
-  html.has-custom-cursor [contenteditable="true"] {
-    cursor: text !important;
-  }
-}
-
-.yor-cursor {
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-
-.yor-cursor[data-visible="true"] {
-  opacity: 1;
-  transition: opacity 90ms ease;
-}
-
-.yor-cursor__dot-pos,
-.yor-cursor__ring-pos {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.yor-cursor__dot-pos {
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  display: grid;
-  place-items: center;
-}
-
-.yor-cursor__ring-pos {
-  width: 36px;
-  height: 36px;
-  margin: -18px 0 0 -18px;
-  display: grid;
-  place-items: center;
-}
-
-.yor-cursor__dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--yor-warm-white);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.78), 0 0 8px rgba(245, 234, 234, 0.32);
-  transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1), background-color 140ms ease, box-shadow 140ms ease;
-}
-
-.yor-cursor__ring {
-  display: block;
-  transform: scale(0.62);
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), filter 160ms ease;
-}
-
-.yor-cursor__circle {
-  stroke: rgba(245, 234, 234, 0.28);
-  fill: transparent;
-  transition: stroke 160ms ease, fill 160ms ease;
-}
-
-.yor-cursor__ticks {
-  stroke: var(--yor-crimson);
-  opacity: 0;
-  transition: opacity 150ms ease;
-}
-
-.yor-cursor[data-mode="interactive"] .yor-cursor__ring {
-  transform: scale(0.78);
-}
-
-.yor-cursor[data-mode="interactive"] .yor-cursor__circle {
-  stroke: rgba(232, 75, 75, 0.78);
-  fill: rgba(232, 75, 75, 0.08);
-}
-
-.yor-cursor[data-mode="hotspot"] .yor-cursor__dot {
-  transform: scale(1.2);
-  background: var(--yor-signal);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(232, 75, 75, 0.75);
-}
-
-.yor-cursor[data-mode="hotspot"] .yor-cursor__ring {
-  transform: scale(1) rotate(45deg);
-  filter: drop-shadow(0 0 6px rgba(232, 75, 75, 0.45));
-}
-
-.yor-cursor[data-mode="hotspot"] .yor-cursor__circle {
-  stroke: var(--yor-crimson);
-  fill: rgba(232, 75, 75, 0.06);
-}
-
-.yor-cursor[data-mode="hotspot"] .yor-cursor__ticks {
-  opacity: 1;
-}
-
-.yor-cursor[data-pressed="true"] .yor-cursor__dot {
-  transform: scale(0.8);
-}
-
-.yor-cursor[data-pressed="true"] .yor-cursor__ring {
-  transform: scale(0.5);
-}
-
-.yor-cursor[data-mode="interactive"][data-pressed="true"] .yor-cursor__ring {
-  transform: scale(0.64);
-}
-
-.yor-cursor[data-mode="hotspot"][data-pressed="true"] .yor-cursor__ring {
-  transform: scale(0.84) rotate(45deg);
-}
-
-@media (hover: none), (pointer: coarse) {
-  .yor-cursor {
-    display: none;
-  }
-}
-
 /* Home page: 3D game feature card linking to /3d */
 .game3d-feature { position: relative; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr); margin-top: 4.5rem; border: 1px solid var(--hub-line-strong); background: #0b0506; color: var(--hub-paper); text-decoration: none; overflow: hidden; transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
 .game3d-feature:hover, .game3d-feature:focus-visible { border-color: var(--hub-red); transform: translateY(-3px); box-shadow: 0 22px 60px rgba(232, 75, 75, 0.16); }
@@ -708,4 +574,381 @@ a:hover .arrow, button:hover .arrow { transform: translate(2px, -2px); }
 @media (max-width: 820px) {
   .game3d-feature { grid-template-columns: 1fr; margin-top: 2.5rem; }
   .game3d-feature__media { min-height: 0; border-right: 0; border-bottom: 1px solid var(--hub-line-strong); }
+}
+
+/* Cinematic War Room Mode & Mode Switcher */
+.warroom-mode-switch {
+  position: absolute;
+  top: 1rem;
+  right: var(--hub-gutter);
+  z-index: 26;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--hub-line-strong);
+  background: rgba(5, 5, 5, 0.84);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+  transition: right 200ms ease;
+}
+.warroom-mode-switch.has-drawer {
+  right: calc(var(--hub-gutter) + min(420px, calc(100vw - 2rem)) + 0.75rem);
+}
+.warroom-mode-switch button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--hub-muted);
+  padding: 0.5rem 0.78rem;
+  font: 600 0.49rem var(--hub-mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.warroom-mode-switch button:hover:not(.is-active) {
+  color: var(--hub-paper);
+  border-color: rgba(232, 75, 75, 0.42);
+}
+.warroom-mode-switch button.is-active {
+  background: var(--hub-red);
+  border-color: var(--hub-red);
+  color: #120405;
+  font-weight: 700;
+}
+
+.cinematic-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #050203;
+  cursor: default;
+  user-select: none;
+}
+.cinematic-stage.is-hotspot-hover {
+  cursor: pointer;
+}
+
+.cinematic-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.cinematic-fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #050203;
+}
+.cinematic-fallback__img,
+.cinematic-fallback__blur {
+  position: absolute;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+}
+.cinematic-fallback__blur-wrap {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.cinematic-fallback__blur-wrap.is-active {
+  opacity: 1;
+}
+.cinematic-fallback__blur {
+  filter: blur(7px) brightness(0.76) saturate(0.92);
+}
+
+.cinematic-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  overflow: visible;
+}
+.cinematic-outline__fill {
+  fill: rgba(232, 75, 75, 0.09);
+}
+.cinematic-outline__glow {
+  fill: none;
+  stroke: var(--hub-red);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.82;
+}
+.cinematic-outline__core {
+  fill: none;
+  stroke: #ffb5ad;
+  stroke-width: 1.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.cinematic-outline__dash {
+  fill: none;
+  stroke: var(--hub-paper);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-dasharray: 10 18;
+  opacity: 0.88;
+  animation: cinematic-dash-flow 1.8s linear infinite;
+}
+@keyframes cinematic-dash-flow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -56; }
+}
+.cinematic-stage.is-reduced-motion .cinematic-outline__dash {
+  animation: none;
+  opacity: 0.35;
+}
+
+.cinematic-reticle-leader {
+  fill: none;
+  stroke: var(--hub-signal);
+  stroke-width: 1.15;
+  opacity: 0.85;
+}
+.cinematic-reticle-node path {
+  stroke: var(--hub-signal);
+  stroke-width: 1.25;
+  fill: none;
+}
+.cinematic-reticle-node__ring {
+  fill: rgba(5, 5, 5, 0.35);
+  stroke: var(--hub-red);
+  stroke-width: 1.25;
+  stroke-dasharray: 4 3;
+  animation: cinematic-reticle-spin 9s linear infinite;
+}
+.cinematic-stage.is-reduced-motion .cinematic-reticle-node__ring {
+  animation: none;
+}
+@keyframes cinematic-reticle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.cinematic-reticle-node__dot {
+  fill: var(--hub-paper);
+}
+
+.cinematic-markers {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cinematic-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  will-change: transform;
+  transition: opacity 160ms ease;
+}
+.cinematic-markers.is-subtle .cinematic-marker:not(.is-active):not(:focus-visible) {
+  opacity: 0.08;
+}
+.cinematic-marker__ring {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 138, 127, 0.52);
+  background: rgba(5, 5, 5, 0.42);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.cinematic-marker__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hub-signal);
+  box-shadow: 0 0 10px var(--hub-red);
+  transition: transform 160ms ease, background 160ms ease;
+}
+.cinematic-marker:hover .cinematic-marker__ring,
+.cinematic-marker.is-active .cinematic-marker__ring,
+.cinematic-marker:focus-visible .cinematic-marker__ring {
+  transform: scale(1.38);
+  border-color: var(--hub-red);
+  box-shadow: 0 0 16px rgba(232, 75, 75, 0.65);
+}
+.cinematic-marker.is-active .cinematic-marker__dot,
+.cinematic-marker:focus-visible .cinematic-marker__dot {
+  background: var(--hub-paper);
+  transform: scale(1.15);
+}
+.cinematic-marker.is-selected .cinematic-marker__ring {
+  border-color: var(--hub-paper);
+}
+.cinematic-marker:focus-visible {
+  outline: 2px solid var(--hub-signal);
+  outline-offset: 2px;
+}
+
+.cinematic-reticle-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 15;
+  width: min(264px, calc(100vw - 2rem));
+  padding: 0.68rem 0.85rem;
+  border: 1px solid var(--hub-red);
+  background: rgba(7, 3, 4, 0.9);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.65), 0 0 26px rgba(232, 75, 75, 0.24);
+  pointer-events: none;
+  will-change: transform;
+}
+.cinematic-reticle-card::before,
+.cinematic-reticle-card::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--hub-signal);
+  border-style: solid;
+}
+.cinematic-reticle-card::before {
+  top: -2px;
+  left: -2px;
+  border-width: 2px 0 0 2px;
+}
+.cinematic-reticle-card::after {
+  right: -2px;
+  bottom: -2px;
+  border-width: 0 2px 2px 0;
+}
+.cinematic-reticle-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font: 600 0.45rem var(--hub-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.cinematic-reticle-card__top span {
+  color: var(--hub-red);
+}
+.cinematic-reticle-card__top small {
+  color: var(--hub-signal);
+}
+.cinematic-reticle-card strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: var(--hub-paper);
+  font: 700 0.88rem/1.1 var(--hub-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.cinematic-reticle-card p {
+  margin: 0.28rem 0 0;
+  color: var(--hub-muted);
+  font-size: 0.65rem;
+  line-height: 1.4;
+}
+.cinematic-reticle-card__hint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.48rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--hub-line);
+  font: 600 0.43rem var(--hub-mono);
+  letter-spacing: 0.09em;
+}
+.cinematic-reticle-card__hint span {
+  color: var(--hub-signal);
+}
+.cinematic-reticle-card__hint small {
+  color: var(--hub-dim);
+}
+
+.cinematic-dock {
+  left: 50%;
+  right: auto;
+  bottom: 0.8rem;
+  transform: translateX(-50%);
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 1.5rem);
+}
+.cinematic-dock__status {
+  align-items: center;
+}
+.cinematic-dock__readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.12rem 0.6rem 0.12rem 0.35rem;
+  border-right: 1px solid var(--hub-line);
+  font-family: var(--hub-mono);
+}
+.cinematic-dock__readout b {
+  color: var(--hub-red);
+  font-size: 0.48rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.warroom-telemetry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.38rem 0.6rem;
+  border-left: 1px solid var(--hub-line);
+  border-right: 1px solid var(--hub-line);
+  font: 600 0.46rem var(--hub-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.warroom-telemetry b {
+  color: var(--hub-red);
+}
+.warroom-telemetry i {
+  font-style: normal;
+  color: var(--hub-paper);
+}
+.warroom-telemetry small {
+  color: var(--hub-dim);
+  font-size: 0.44rem;
+}
+.cinematic-dock__readout small {
+  color: var(--hub-muted);
+  font-size: 0.43rem;
+  letter-spacing: 0.07em;
+}
+
+@media (max-width: 820px) {
+  .warroom-mode-switch,
+  .warroom-mode-switch.has-drawer {
+    top: 0.7rem;
+    right: 0.75rem;
+    left: auto;
+  }
+  .cinematic-dock {
+    bottom: 0.6rem;
+  }
+  .cinematic-dock__readout,
+  .warroom-telemetry {
+    display: none;
+  }
 }

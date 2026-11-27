@@ -25,16 +25,19 @@ import {
   type HotspotConfig,
 } from "./data/hubData";
 
+const WarRoomCinematic = lazy(() => import("./components/WarRoomCinematic"));
 const WarRoom3D = lazy(() => import("./components/WarRoom3D"));
 
 type Route = "home" | "game";
+type WarRoomMode = "cinematic" | "free-roam";
 
-const GAME_PATH = "/3d";
+const GAME_PATH = "/game";
+const GAME_PATHS = new Set(["/game", "/3d"]);
 const HOME_TITLE = "YOR // Ayrin field hub";
-const GAME_TITLE = "3D War Room // YOR Ayrin";
+const GAME_TITLE = "War Room // YOR Ayrin";
 
 function routeFromPath(pathname: string): Route {
-  return pathname.replace(/\/+$/, "") === GAME_PATH ? "game" : "home";
+  return GAME_PATHS.has(pathname.replace(/\/+$/, "")) ? "game" : "home";
 }
 
 const gameViews: Record<GameId, LazyExoticComponent<ComponentType>> = {
@@ -86,6 +89,7 @@ class GameErrorBoundary extends Component<GameErrorBoundaryProps, { failed: bool
 function App() {
   const [route, setRoute] = useState<Route>(() => routeFromPath(window.location.pathname));
   const viewMode = route === "game" ? "warroom" : "index";
+  const [warRoomMode, setWarRoomMode] = useState<WarRoomMode>("cinematic");
   const [activeHotspot, setActiveHotspot] = useState<HotspotConfig | null>(null);
   const [activePreset, setActivePreset] = useState("overview");
   const [lanternBright, setLanternBright] = useState(true);
@@ -113,6 +117,7 @@ function App() {
     setActiveHotspot(null);
     setActiveGame(null);
     setActivePreset("overview");
+    if (next === "game") setWarRoomMode("cinematic");
     setRoute(next);
     window.scrollTo(0, 0);
   }, []);
@@ -230,7 +235,7 @@ function App() {
           aria-label="Yor Ayrin home"
           onClick={routeLink("home")}
         >
-          <i /><span>YOR // AYRIN</span><small>{viewMode === "warroom" ? "3D GAME / WAR ROOM" : "PERSONAL INTERNET"}</small>
+          <i /><span>YOR // AYRIN</span><small>{viewMode === "warroom" ? (warRoomMode === "cinematic" ? "CINEMATIC / WAR ROOM" : "FREE ROAM 3D / WAR ROOM") : "PERSONAL INTERNET"}</small>
         </a>
 
         <nav className="command-links" aria-label="Primary navigation">
@@ -320,30 +325,86 @@ function App() {
 
       {viewMode === "warroom" ? (
         <main id="top" className="warroom-main">
-          <GameErrorBoundary gameName="3D War Room" onExit={() => navigate("home")} exitLabel="Return home">
-            <Suspense
-              fallback={
-                <div className="warroom-loader" role="status">
-                  <div className="warroom-loader__ring" />
-                  <span>BOOTING THREE.JS ENGINE</span>
-                  <small>Preparing 360° War Room canvas</small>
-                </div>
-              }
+          <div
+            className={"warroom-mode-switch" + (activeHotspot ? " has-drawer" : "")}
+            role="group"
+            aria-label="War Room view mode"
+          >
+            <button
+              type="button"
+              className={warRoomMode === "cinematic" ? "is-active" : ""}
+              aria-pressed={warRoomMode === "cinematic"}
+              onClick={() => setWarRoomMode("cinematic")}
             >
-              <WarRoom3D
-                selectedHotspot={activeHotspot?.id ?? null}
-                onSelectHotspot={setActiveHotspot}
-                lanternBright={lanternBright}
-                onToggleLantern={() => setLanternBright((v) => !v)}
-                activePreset={activePreset}
-                onPresetChange={setActivePreset}
-                autoOrbit={autoOrbit}
-                onToggleAutoOrbit={() => setAutoOrbit((v) => !v)}
-                onOpenAssets={openAssetsDrawer}
-                inputSuspended={Boolean(activeGame)}
-              />
-            </Suspense>
-          </GameErrorBoundary>
+              Cinematic
+            </button>
+            <button
+              type="button"
+              className={warRoomMode === "free-roam" ? "is-active" : ""}
+              aria-pressed={warRoomMode === "free-roam"}
+              onClick={() => setWarRoomMode("free-roam")}
+            >
+              Free Roam 3D
+            </button>
+          </div>
+
+          {warRoomMode === "cinematic" ? (
+            <GameErrorBoundary
+              key="cinematic"
+              gameName="Cinematic War Room"
+              onExit={() => navigate("home")}
+              exitLabel="Return home"
+            >
+              <Suspense
+                fallback={
+                  <div className="warroom-loader" role="status">
+                    <div className="warroom-loader__ring" />
+                    <span>LOADING CINEMATIC WAR ROOM</span>
+                    <small>Preparing depth map and interactive hotspots</small>
+                  </div>
+                }
+              >
+                <WarRoomCinematic
+                  selectedHotspot={activeHotspot?.id ?? null}
+                  onSelectHotspot={setActiveHotspot}
+                  lanternBright={lanternBright}
+                  onToggleLantern={() => setLanternBright((v) => !v)}
+                  onOpenAssets={openAssetsDrawer}
+                  inputSuspended={Boolean(activeGame)}
+                />
+              </Suspense>
+            </GameErrorBoundary>
+          ) : (
+            <GameErrorBoundary
+              key="free-roam"
+              gameName="3D War Room"
+              onExit={() => setWarRoomMode("cinematic")}
+              exitLabel="Return to Cinematic"
+            >
+              <Suspense
+                fallback={
+                  <div className="warroom-loader" role="status">
+                    <div className="warroom-loader__ring" />
+                    <span>BOOTING THREE.JS ENGINE</span>
+                    <small>Preparing 360° Free Roam 3D War Room canvas</small>
+                  </div>
+                }
+              >
+                <WarRoom3D
+                  selectedHotspot={activeHotspot?.id ?? null}
+                  onSelectHotspot={setActiveHotspot}
+                  lanternBright={lanternBright}
+                  onToggleLantern={() => setLanternBright((v) => !v)}
+                  activePreset={activePreset}
+                  onPresetChange={setActivePreset}
+                  autoOrbit={autoOrbit}
+                  onToggleAutoOrbit={() => setAutoOrbit((v) => !v)}
+                  onOpenAssets={openAssetsDrawer}
+                  inputSuspended={Boolean(activeGame)}
+                />
+              </Suspense>
+            </GameErrorBoundary>
+          )}
 
           {/* Interactive Tactical Drawer opened when clicking any 3D object */}
           {activeHotspot && (

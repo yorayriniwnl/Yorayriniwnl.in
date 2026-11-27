@@ -326,10 +326,10 @@ export const CAMERA_PRESETS: Array<{
   pos: [number, number, number];
   target: [number, number, number];
 }> = [
-  { id: "overview", label: "Hero View", pos: [0.35, 1.56, 3.15], target: [-0.05, 1.24, -2.15] },
-  { id: "desk", label: "War Desk", pos: [0.05, 1.46, 1.55], target: [0.0, 0.88, 0.25] },
-  { id: "bookshelf", label: "Bookshelf", pos: [1.10, 1.65, 0.35], target: [4.25, 1.60, 0.15] },
-  { id: "husky", label: "Sofa & Husky", pos: [0.55, 1.42, -0.55], target: [0.45, 0.90, -2.15] },
-  { id: "west", label: "Portrait & NVG", pos: [-1.45, 1.75, 0.15], target: [-4.20, 1.90, -0.15] },
-  { id: "entry", label: "South Doors", pos: [0.0, 1.65, 0.45], target: [0.0, 1.65, 4.05] },
+  { id: "overview", label: "Hero View", pos: [0.17, 1.35, 2.66], target: [0.02, 1.15, -1.75] },
+  { id: "desk", label: "War Desk", pos: [0.04, 1.36, 1.48], target: [0.0, 0.88, 0.25] },
+  { id: "husky", label: "Sofa & Husky", pos: [0.46, 1.24, -0.68], target: [0.56, 0.96, -2.02] },
+  { id: "bookshelf", label: "Bookshelf", pos: [1.35, 1.62, 0.30], target: [4.22, 1.58, 0.15] },
+  { id: "west", label: "Portrait & NVG", pos: [-1.35, 1.68, 0.05], target: [-4.15, 1.88, -0.15] },
+  { id: "entry", label: "South Doors", pos: [0.0, 1.58, 0.65], target: [0.0, 1.62, 4.05] },
 ];

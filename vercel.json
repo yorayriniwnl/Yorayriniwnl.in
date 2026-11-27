@@ -4,6 +4,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/game", "destination": "/index.html" },
+    { "source": "/game/", "destination": "/index.html" },
     { "source": "/3d", "destination": "/index.html" },
     { "source": "/3d/", "destination": "/index.html" }
   ],
