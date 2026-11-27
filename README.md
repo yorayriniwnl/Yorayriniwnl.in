@@ -69,3 +69,22 @@ npm run preview
 - `src/data/`, `src/hooks/`, and `src/lib/games/` — game data and reusable game logic.
 
 Games open in an accessible full-screen modal so the main field stays lightweight and the experiences stay contained.
+
+## War room prototype (`/warroom.html`)
+
+A second page built from the "Neon Warroom with Husky and Arsenal" painting
+itself, so it keeps every detail of the artwork:
+
+- The painting sits on a finely subdivided plane displaced by a depth map, so
+  it shifts in 3D with the pointer. Scrolling moves the camera through one shot
+  per section (`src/warroom/main.js`, `SHOTS`).
+- Shader effects add rain on the window glass, breathing neon, a light sweep
+  over the gold engraving, glowing eyes and lantern, helicopter strobes and
+  drifting haze. "Show original" turns them off for comparison.
+- `art/depth.py` regenerates `public/media/warroom/depth.png` with the MiDaS
+  v2.1 small ONNX model (onnxruntime, numpy, opencv-python-headless):
+  `python art/depth.py model-small.onnx painting.png depth.png`.
+
+Limits: the camera can only move a little (nothing behind the figures exists),
+the characters themselves do not animate, and close-ups soften because the
+source image is 1672 px wide.

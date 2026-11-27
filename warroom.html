@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<title>Ayush Roy · YOR war room</title>
+<meta name="description" content="Ayush Roy, backend and full-stack engineer. A live war room built from the Neon Warroom painting." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oxanium:wght@500;600;700&display=swap" />
+<style>
+/* Layout: the painting is the whole stage; copy rides over it in framed panels, one per camera shot. Single dark look on purpose. */
+:root {
+  --void: #000000;
+  --graphite: #050505;
+  --crimson: #e84b4b;
+  --deep: #671515;
+  --signal: #ff8a7f;
+  --warm: #f5eaea;
+  --muted: #c4c4c4;
+  --panel: rgba(6, 2, 3, 0.72);
+  --line: rgba(232, 75, 75, 0.38);
+  --display: "Oxanium", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { background: var(--void); color: var(--warm); }
+body { font: 400 16px/1.6 var(--body); margin: 0; }
+canvas#stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0; }
+.fallback { position: fixed; inset: 0; background: var(--void) url("/media/warroom/painting.webp") center / cover no-repeat; z-index: 0; }
+
+.hud {
+  position: fixed; inset: 0 0 auto; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 14px); padding-bottom: 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: linear-gradient(to bottom, rgba(0,0,0,.7), rgba(0,0,0,0));
+  pointer-events: none;
+}
+.hud > * { pointer-events: auto; }
+.mark { display: flex; align-items: center; gap: 10px; font: 600 13px/1 var(--display); letter-spacing: .18em; text-transform: uppercase; }
+.mark b { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--crimson); color: var(--crimson); font-weight: 700; letter-spacing: 0; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.btn {
+  font: 600 11px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--warm);
+  background: rgba(0,0,0,.55); border: 1px solid var(--line); padding: 10px 12px; cursor: pointer;
+}
+.btn:hover { border-color: var(--crimson); color: var(--signal); }
+.btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.btn[aria-pressed="true"] { background: var(--deep); border-color: var(--crimson); }
+
+main { position: relative; z-index: 2; }
+section {
+  min-height: 115vh; display: flex; align-items: flex-end;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18vh 10vh;
+}
+section:first-child { min-height: 100vh; }
+.panel {
+  max-width: 30rem; background: var(--panel); border: 1px solid var(--line); padding: 22px 24px 24px;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); position: relative;
+}
+.panel::before, .panel::after { content: ""; position: absolute; width: 12px; height: 12px; border: 2px solid var(--crimson); }
+.panel::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.panel::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+.eyebrow { font: 600 11px/1.2 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--signal); margin: 0 0 10px; }
+h1, h2 { font-family: var(--display); text-transform: uppercase; margin: 0 0 10px; text-wrap: balance; line-height: 1.02; }
+h1 { font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 700; letter-spacing: .02em; }
+h1 span { display: block; color: var(--crimson); }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 700; }
+p { margin: 0; color: var(--muted); }
+.hero { align-items: flex-end; }
+.hero .panel { background: linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.35)); }
+.right { justify-content: flex-end; }
+.tag { margin-top: 14px; font: 500 12px/1.4 var(--display); letter-spacing: .12em; color: var(--warm); text-transform: uppercase; }
+.note { font-size: 13px; }
+.mail { display: inline-block; margin-top: 12px; color: var(--warm); font: 600 15px/1.3 var(--display); letter-spacing: .04em; border-bottom: 1px solid var(--crimson); user-select: all; }
+
+.loading {
+  position: fixed; inset: 0; z-index: 9; display: grid; place-items: center; background: var(--void);
+  font: 600 12px/1 var(--display); letter-spacing: .3em; color: var(--signal); text-transform: uppercase; transition: opacity .8s ease;
+}
+.loading.done { opacity: 0; pointer-events: none; }
+
+@media (max-width: 700px) {
+  section { padding-block: 55vh 8vh; }
+  .panel { max-width: none; width: 100%; padding: 18px; }
+  .right { justify-content: flex-start; }
+  .btn { padding: 9px 10px; font-size: 10px; }
+  .mark span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .loading { transition: none; } }
+</style>
+</head>
+<body>
+<div class="loading" id="loading">Entering the war room</div>
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<header class="hud">
+  <div class="mark"><b>YA</b><span>YOR // Ayush Roy</span></div>
+  <div class="controls">
+    <button class="btn" id="compare" type="button" aria-pressed="false">Show original</button>
+    <button class="btn" id="motion" type="button" aria-pressed="false">Pause motion</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" data-shot="hero">
+    <div class="panel">
+      <p class="eyebrow">Open to software engineering roles · Bhubaneswar</p>
+      <h1>Ayush <span>Roy</span></h1>
+      <p>Backend / full-stack engineer. I build backend-heavy product systems with Python, TypeScript, PostgreSQL, Redis, realtime APIs, testing and applied ML.</p>
+      <p class="tag">Scroll to move through the room</p>
+    </div>
+  </section>
+
+  <section data-shot="dossier" class="right">
+    <div class="panel">
+      <p class="eyebrow">Dossier</p>
+      <h2>The operator.</h2>
+      <p>KPIT Technologies campus selection (Associate Engineer, 2027). B.Tech in Computer Science and Communication Engineering at KIIT, 2023 to 2027. BSNL internship, June 2026.</p>
+    </div>
+  </section>
+
+  <section data-shot="arsenal">
+    <div class="panel">
+      <p class="eyebrow">Arsenal</p>
+      <h2>Discipline. Execution. Compound.</h2>
+      <p>Python, TypeScript, PostgreSQL, Redis, FastAPI, Next.js, WebSockets, testing gates and applied ML, kept on the shelf the way the painting keeps its books.</p>
+    </div>
+  </section>
+
+  <section data-shot="operations" class="right">
+    <div class="panel">
+      <p class="eyebrow">Operations</p>
+      <h2>Six missions, evidence attached.</h2>
+      <p>CandidateX, Avelry, Zenith, Velvetclip, FalseQuiet and this room. In the full site each project card drives what the laptop on the table shows.</p>
+    </div>
+  </section>
+
+  <section data-shot="offduty">
+    <div class="panel">
+      <p class="eyebrow">Off duty</p>
+      <h2>Ideas. Build. Grind. Repeat.</h2>
+      <p>Eight browser games built from scratch, launched from here.</p>
+    </div>
+  </section>
+
+  <section data-shot="comms" class="right">
+    <div class="panel">
+      <p class="eyebrow">Comms</p>
+      <h2>Open a channel.</h2>
+      <p>Looking for software engineering roles where backend depth matters.</p>
+      <span class="mail">ayushroy.dev@gmail.com</span>
+      <p class="tag note">Prototype built directly from the painting</p>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="/src/warroom/main.js"></script>
+</body>
+</html>
